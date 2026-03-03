@@ -27,13 +27,13 @@ SPDX-License-Identifier: MIT
 
 <p align="center"> <img alt="Space Station 14" width="880" height="200" src="https://github.com/funky-station/funky-station/blob/master/Resources/Textures/Logo/logo.png" /></p>
 
-This is a fork from the primary repo for Goob Station 14 called Funky Station. To prevent people forking RobustToolbox, a "content" pack is loaded by the client and server. This content pack contains everything needed to play the game on one specific server.
+This is a fork from the primary repo for Goob Station 14 which was then forked from Funky Station. To prevent people forking RobustToolbox, a "content" pack is loaded by the client and server. This content pack contains everything needed to play the game on one specific server.
 
 If you want to host or create content for SS14, or for Goob Station, go to the [Space Station 14 repository](https://github.com/space-wizards/space-station-14), or the [Goob Station repository](https://github.com/Goob-Station/Goob-Station).
 
 ## Links
 
-[Funky Station Discord Server](https://discord.gg/5FqgaAA2qF)
+[PLACEHOLDER](PLACEHOLDER)
 
 ## Documentation/Wiki
 
@@ -83,4 +83,4 @@ Most media assets are licensed under [CC-BY-SA 3.0](https://creativecommons.org/
 
 Note that some assets are licensed under the non-commercial [CC-BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/) or similar non-commercial licenses and will need to be removed if you wish to use this project commercially.
 
-If you find that your work is misattributed or someone elses work is misattributed, please create an issue on this repos GitHub page, or email the Funky Station Maintainers @ `maintainers@funkystation.org`.
+If you find that your work is misattributed or someone elses work is misattributed, please create an issue on this repos GitHub page, or contact via the discord.
