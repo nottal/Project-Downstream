@@ -48,7 +48,7 @@ We recommend you read the contribution guidelines. [Contribution Guidelines](htt
 
 ## Building
 
-We provide some scripts shown below to make the job easier.
+Funky has provided some scripts shown below to make the job easier. Thank them in advance, they do a wonderful job of streamlining the process!
 
 ### Build dependencies
 
