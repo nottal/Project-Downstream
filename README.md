@@ -29,9 +29,9 @@ SPDX-License-Identifier: MIT
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
-This is a fork from the primary repo for Goob Station 14 which was then forked from Funky Station (now we are using it!). To prevent people forking RobustToolbox, a "content" pack is loaded by the client and server. This content pack contains everything needed to play the game on one specific server.
+This is a fork from the primary repo for Goob Station 14 which was then forked from Funky Station (now we are using it!). To prevent people forking RobustToolbox, a "content" pack is loaded by the client and server. Everything you find in here is on our server, further steps for booting up developer environments are listed further below.
 
-If you want to host or create content for SS14, or for Goob Station, go to the [Space Station 14 repository](https://github.com/space-wizards/space-station-14), or the [Goob Station repository](https://github.com/Goob-Station/Goob-Station).
+If you want to host or create content for SS14, for Goob Station, OR for Funky Station, go to the [Space Station 14 repository](https://github.com/space-wizards/space-station-14) / [Goob Station repository](https://github.com/Goob-Station/Goob-Station) or, [Funky Station Repository](https://github.com/funky-station/funky-station)
 
 ## Links
 
@@ -43,7 +43,7 @@ The Goob Station [docs site](https://docs.goobstation.com/) has documentation on
 
 ## Contributing
 
-We welcome everyone to contribute to our fork. Please join our Discord for collaborating!
+We welcome everyone to contribute to Space Station 14 as a whole! If you have any interest in creating content for a specific fork, reach out to them and get involved! If you want to help out our server in specific (thanks!) Join us at our discord below.
 We recommend you read the contribution guidelines. [Contribution Guidelines](https://docs.spacestation14.com/en/general-development/codebase-info/pull-request-guidelines.html)
 
 ## Building
