@@ -98,19 +98,19 @@
   editorHidden: true
   weight: 120
 
-- type: department
-  id: CentralCommand
-  name: department-CentralCommand
-  description: department-CentralCommand-description
-  color: "#0c344d"
-  roles:
+#- type: department
+  #id: CentralCommand
+  #name: department-CentralCommand
+  #description: department-CentralCommand-description
+  #color: "#0c344d"
+  #roles:
 #  - BlueshieldOfficer # Funky station - commented out because bso dead
-  - NanotrasenRepresentative # Goobstation
-  - Magistrate
-  - InternalAffairsAgent # FunkyStation
-  - CentralCommandIntern
-  editorHidden: false
-  weight: 120
+  #- NanotrasenRepresentative # Goobstation
+  #- Magistrate
+ # - InternalAffairsAgent # FunkyStation
+  #- CentralCommandIntern
+  #editorHidden: false
+  #weight: 120
 
 - type: department
   id: Command
