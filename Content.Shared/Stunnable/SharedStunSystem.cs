@@ -80,7 +80,7 @@ public abstract partial class SharedStunSystem : EntitySystem
     private readonly Dictionary<EntityUid, TimeSpan> _nextToggleKnockdownAt = new();
     private readonly Dictionary<EntityUid, TimeSpan> _nextStandAttemptAt = new();
     private static readonly TimeSpan AutoStandRetryDelay = TimeSpan.FromSeconds(0.25);
-    private static readonly TimeSpan ManualStandAttemptCooldown = TimeSpan.FromSeconds(0.7);
+    private static readonly TimeSpan ManualStandAttemptCooldown = TimeSpan.FromSeconds(0.75);
 
     [Dependency] private readonly ActionBlockerSystem _blocker = default!;
     [Dependency] private readonly SharedBroadphaseSystem _broadphase = default!;
