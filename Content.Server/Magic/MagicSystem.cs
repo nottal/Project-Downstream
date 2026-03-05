@@ -110,6 +110,7 @@ public sealed class MagicSystem : SharedMagicSystem
         InitialInfected,
         Revolutionary,
         HeadRevolutionary,
+        Changeling,
     }
 
     private void OnTrueChaosSpell(ref TrueChaosSpellEvent ev)
@@ -158,6 +159,7 @@ public sealed class MagicSystem : SharedMagicSystem
             TrueChaosRole.Thief,
             TrueChaosRole.InitialInfected,
             TrueChaosRole.Revolutionary,
+            TrueChaosRole.Changeling,
         };
 
         if (headRevAvailable)
@@ -185,6 +187,9 @@ public sealed class MagicSystem : SharedMagicSystem
                 break;
             case TrueChaosRole.HeadRevolutionary:
                 _antag.ForceMakeAntag<RevolutionaryRuleComponent>(session, "Revolutionary");
+                break;
+            case TrueChaosRole.Changeling:
+                _antag.ForceMakeAntag<ChangelingRuleComponent>(session, "Changeling");
                 break;
         }
     }

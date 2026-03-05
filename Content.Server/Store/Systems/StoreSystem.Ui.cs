@@ -358,6 +358,10 @@ public sealed partial class StoreSystem
             }
         }
 
+
+        if (listing.ID == "SpellbookEventTrueChaos")
+            DisableRefund(uid, component);
+
         //log dat shit.
         _admin.Add(LogType.StorePurchase,
             LogImpact.Low,

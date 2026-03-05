@@ -99,4 +99,4 @@ spellbook-upgrade-jaunt-name = Upgrade Ethereal Jaunt
 spellbook-upgrade-jaunt-description = Upgrades Jaunt to a maximum of level 3!
 
 spellbook-event-true-chaos-name = TRUE CHAOS!
-spellbook-event-true-chaos-description = Sets everyone on the server to one of several antagonist roles. Head Revolutionary can only be assigned once. Excludes affected players from the endgame results screen.
+spellbook-event-true-chaos-description = Sets everyone on the server to one of several antagonist roles (including changeling). Head Revolutionary can only be assigned once. Excludes affected players from the endgame results screen. Disables refunds when bought!
