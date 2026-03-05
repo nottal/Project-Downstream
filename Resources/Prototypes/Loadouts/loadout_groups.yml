@@ -1415,8 +1415,6 @@
   - SeniorEngineerJumpsuitArmored
   - SeniorEngineerJumpsuit
   - SeniorEngineerJumpskirt
-  - AtmosphericTechnicianJumpsuit
-  - AtmosphericTechnicianJumpskirt
 
 - type: loadoutGroup
   id: StationEngineerBackpack
@@ -1433,7 +1431,6 @@
   loadouts:
   - StationEngineerOuterVest
   - StationEngineerWintercoat
-  - AtmosphericTechnicianWintercoat
 
 - type: loadoutGroup
   id: StationEngineerBelt
@@ -1495,7 +1492,6 @@
   minLimit: 0
   loadouts:
   - AtmosphericTechnicianWintercoat
-
 - type: loadoutGroup
   id: AtmosphericTechnicianBelt
   name: loadout-group-atmospheric-technician-belt

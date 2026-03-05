@@ -48,6 +48,10 @@
   - Engineering
   - External
   - Atmospherics
+  alternateTitles:
+  - AtmosphericTechnicianAtmosphericsTechnician
+  - AtmosphericTechnicianAirController
+  - AtmosphericTechnicianIndustrialFirefighter
   special:
   - !type:GiveItemOnHolidaySpecial
     holiday: FirefighterDay
@@ -62,3 +66,15 @@
   #storage:
     #back:
     #- Stuff
+
+- type: jobAlternateTitle
+  id: AtmosphericTechnicianAtmosphericsTechnician
+  name: job-name-alt-atmos-1
+
+- type: jobAlternateTitle
+  id: AtmosphericTechnicianAirController
+  name: job-name-alt-atmos-2
+
+- type: jobAlternateTitle
+  id: AtmosphericTechnicianIndustrialFirefighter
+  name: job-name-alt-atmos-3
