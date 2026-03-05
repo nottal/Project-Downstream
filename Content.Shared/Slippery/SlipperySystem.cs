@@ -247,3 +247,4 @@ public sealed class SlippedEvent : EntityEventArgs, IInventoryRelayEvent
         SuperSlippery = superSlippery;
     }
 }
+

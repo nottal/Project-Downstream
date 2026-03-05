@@ -90,3 +90,4 @@ public sealed class LayingDownSystem : SharedLayingDownSystem
         rotationVisuals.HorizontalRotation = Angle.FromDegrees(90);
     }
 }
+

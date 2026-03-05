@@ -194,3 +194,4 @@ public sealed class StoodEvent : EntityEventArgs
 public sealed class DownedEvent : EntityEventArgs
 {
 }
+

@@ -198,3 +198,4 @@ namespace Content.Shared.Input
         public static readonly BoundKeyFunction MappingOpenContextMenu = "MappingOpenContextMenu";
     }
 }
+

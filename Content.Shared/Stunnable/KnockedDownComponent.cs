@@ -39,3 +39,4 @@ public sealed partial class KnockedDownComponent : Component
     public float SpeedModifier = 1f;
 
 }
+
