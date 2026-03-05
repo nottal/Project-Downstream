@@ -1,0 +1,100 @@
+# SPDX-FileCopyrightText: 2026 OpenAI
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later AND MIT
+
+# Additional wizard spells (placeholder-friendly, inspired by DnD/high-magic concepts).
+
+- type: entity
+  id: ActionMeteorSwarm
+  parent: ActionFireballIII
+  name: Meteor Swarm
+  description: Placeholder high-destruction spell. Launches an empowered explosive projectile.
+  components:
+  - type: WorldTargetAction
+    useDelay: 20
+    renewCharges: true
+    itemIconStyle: BigAction
+    checkCanAccess: false
+    raiseOnUser: true
+    range: 60
+    sound: !type:SoundPathSpecifier
+      path: /Audio/Magic/fireball.ogg
+    icon:
+      sprite: Objects/Magic/magicactions.rsi
+      state: fireball
+    event: !type:ProjectileSpellEvent
+      prototype: ProjectileFireball
+      speech: action-speech-spell-fireball
+
+- type: entity
+  id: ActionTimeStopPlaceholder
+  parent: ActionSmoke
+  name: Time Stop
+  description: Placeholder control spell. Currently creates thick smoke around the caster.
+  components:
+  - type: InstantAction
+    useDelay: 40
+    itemIconStyle: BigAction
+    icon:
+      sprite: Actions/smokeaction.rsi
+      state: smokeaction
+    event: !type:InstantSpawnSpellEvent
+      prototype: WizardSmoke
+      posData: !type:TargetInFront
+
+- type: entity
+  id: ActionChainLightningPlaceholder
+  parent: ActionRepulse
+  name: Chain Lightning
+  description: Placeholder offensive spell. Currently uses repulse behavior.
+  components:
+  - type: RepulseAttract
+    speed: 12
+    range: 6
+    whitelist:
+      components:
+      - MobMover
+      - Item
+  - type: InstantAction
+    useDelay: 18
+    raiseOnAction: true
+    itemIconStyle: BigAction
+    icon:
+      sprite: Objects/Magic/magicactions.rsi
+      state: repulse
+    event: !type:RepulseAttractActionEvent
+
+- type: entity
+  id: ActionGreaterRecharge
+  parent: ActionChargeSpell
+  name: Greater Recharge
+  description: Recharges magical implements by 2 charges.
+  components:
+  - type: InstantAction
+    useDelay: 40
+    itemIconStyle: BigAction
+    icon:
+      sprite: Objects/Weapons/Guns/Basic/wands.rsi
+      state: nothing
+    event: !type:ChargeSpellEvent
+      charge: 2
+      speech: DI'RI CEL!
+
+- type: entity
+  id: ActionArcaneBulwark
+  parent: ActionForceWall
+  name: Arcane Bulwark
+  description: Placeholder defensive spell. Currently creates force walls like Force Wall.
+  components:
+  - type: InstantAction
+    useDelay: 16
+    itemIconStyle: BigAction
+    sound: !type:SoundPathSpecifier
+      path: /Audio/Magic/forcewall.ogg
+    icon:
+      sprite: Objects/Magic/magicactions.rsi
+      state: shield
+    event: !type:InstantSpawnSpellEvent
+      prototype: WallForce
+      posData: !type:TargetInFront
+      speech: action-speech-spell-forcewall

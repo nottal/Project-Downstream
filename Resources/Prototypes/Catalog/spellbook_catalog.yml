@@ -65,6 +65,33 @@
     stock: 1
 
 # Defensive
+
+- type: listing
+  id: SpellbookMeteorSwarm
+  name: spellbook-meteor-swarm-name
+  description: spellbook-meteor-swarm-desc
+  productAction: ActionMeteorSwarm
+  cost:
+    WizCoin: 4
+  categories:
+  - SpellbookOffensive
+  conditions:
+  - !type:ListingLimitedStockCondition
+    stock: 1
+
+- type: listing
+  id: SpellbookChainLightningPlaceholder
+  name: spellbook-chain-lightning-name
+  description: spellbook-chain-lightning-desc
+  productAction: ActionChainLightningPlaceholder
+  cost:
+    WizCoin: 3
+  categories:
+  - SpellbookOffensive
+  conditions:
+  - !type:ListingLimitedStockCondition
+    stock: 1
+
 - type: listing
   id: SpellbookForceWall
   name: spellbook-force-wall-name
@@ -128,6 +155,46 @@
     WizCoin: 2
   categories:
   - SpellbookUtility
+  conditions:
+  - !type:ListingLimitedStockCondition
+    stock: 1
+
+
+- type: listing
+  id: SpellbookTimeStopPlaceholder
+  name: spellbook-time-stop-name
+  description: spellbook-time-stop-desc
+  productAction: ActionTimeStopPlaceholder
+  cost:
+    WizCoin: 2
+  categories:
+  - SpellbookUtility
+  conditions:
+  - !type:ListingLimitedStockCondition
+    stock: 1
+
+- type: listing
+  id: SpellbookGreaterRecharge
+  name: spellbook-greater-recharge-name
+  description: spellbook-greater-recharge-desc
+  productAction: ActionGreaterRecharge
+  cost:
+    WizCoin: 2
+  categories:
+  - SpellbookUtility
+  conditions:
+  - !type:ListingLimitedStockCondition
+    stock: 1
+
+- type: listing
+  id: SpellbookArcaneBulwark
+  name: spellbook-arcane-bulwark-name
+  description: spellbook-arcane-bulwark-desc
+  productAction: ActionArcaneBulwark
+  cost:
+    WizCoin: 2
+  categories:
+  - SpellbookDefensive
   conditions:
   - !type:ListingLimitedStockCondition
     stock: 1

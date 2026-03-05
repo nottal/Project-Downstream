@@ -100,3 +100,19 @@ spellbook-upgrade-jaunt-description = Upgrades Jaunt to a maximum of level 3!
 
 spellbook-event-true-chaos-name = TRUE CHAOS!
 spellbook-event-true-chaos-description = Sets everyone on the server to one of several antagonist roles (including changeling). Head Revolutionary can only be assigned once. Excludes affected players from the endgame results screen. Disables refunds when bought!
+
+
+spellbook-meteor-swarm-name = Meteor Swarm
+spellbook-meteor-swarm-desc = Call down destructive arcane fire. Placeholder implementation for now.
+
+spellbook-chain-lightning-name = Chain Lightning
+spellbook-chain-lightning-desc = Arc lightning between nearby targets. Placeholder implementation for now.
+
+spellbook-time-stop-name = Time Stop
+spellbook-time-stop-desc = Freeze the moment itself. Placeholder implementation for now.
+
+spellbook-greater-recharge-name = Greater Recharge
+spellbook-greater-recharge-desc = Push extra power into wands and rods, restoring additional charges.
+
+spellbook-arcane-bulwark-name = Arcane Bulwark
+spellbook-arcane-bulwark-desc = Raise reinforced magical barriers. Placeholder implementation for now.
