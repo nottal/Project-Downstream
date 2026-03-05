@@ -54,7 +54,8 @@ public abstract class SharedLayingDownSystem : EntitySystem
     {
         if (session?.AttachedEntity == null ||
             !HasComp<LayingDownComponent>(session.AttachedEntity) ||
-            _gravity.IsWeightless(session.AttachedEntity.Value))
+            _gravity.IsWeightless(session.AttachedEntity.Value) ||
+            HasComp<CrawlerComponent>(session.AttachedEntity.Value))
         {
             return;
         }
