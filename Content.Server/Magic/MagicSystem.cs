@@ -42,6 +42,7 @@ using Content.Shared.Magic.Events;
 using Content.Shared.Mind;
 using Content.Shared.Revolutionary.Components;
 using Content.Shared.Roles;
+using Content.Shared.Roles.Jobs;
 using Content.Shared.Tag;
 using Robust.Server.Player;
 using Robust.Shared.Player;
@@ -57,6 +58,7 @@ public sealed class MagicSystem : SharedMagicSystem
     [Dependency] private readonly TagSystem _tag = default!;
     [Dependency] private readonly SharedMindSystem _mind = default!;
     [Dependency] private readonly SharedRoleSystem _roles = default!;
+    [Dependency] private readonly SharedJobSystem _jobs = default!;
     [Dependency] private readonly IPlayerManager _player = default!;
     [Dependency] private readonly IRobustRandom _random = default!;
 
@@ -131,6 +133,9 @@ public sealed class MagicSystem : SharedMagicSystem
             if (_roles.MindHasRole<ObserverRoleComponent>(mindId))
                 continue;
 
+            if (!_jobs.CanBeAntag(session))
+                continue;
+
             candidates.Add((attached, mindId));
         }
 
@@ -139,6 +144,8 @@ public sealed class MagicSystem : SharedMagicSystem
         {
             if (_roles.MindHasRole<WizardRoleComponent>(mindId))
                 _roles.MindRemoveRole<WizardRoleComponent>(mindId);
+
+            ClearAntagRoles(mindId);
 
             var role = PickTrueChaosRole(headRevAvailable);
             if (role == TrueChaosRole.HeadRevolutionary)
@@ -171,6 +178,27 @@ public sealed class MagicSystem : SharedMagicSystem
             possible.Add(TrueChaosRole.HeadRevolutionary);
 
         return _random.Pick(possible);
+    }
+
+    private void ClearAntagRoles(EntityUid mindId)
+    {
+        if (!TryComp<MindComponent>(mindId, out var mindComp))
+            return;
+
+        var toRemove = new List<EntityUid>();
+        foreach (var roleUid in mindComp.MindRoles)
+        {
+            if (!TryComp<MindRoleComponent>(roleUid, out var roleComp))
+                continue;
+
+            if (roleComp.Antag)
+                toRemove.Add(roleUid);
+        }
+
+        foreach (var roleUid in toRemove)
+        {
+            Del(roleUid);
+        }
     }
 
     private void AssignTrueChaosRole(EntityUid mob, EntityUid mindId, TrueChaosRole role)
