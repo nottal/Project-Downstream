@@ -38,9 +38,4 @@ public sealed partial class KnockedDownComponent : Component
     [DataField, AutoNetworkedField]
     public float SpeedModifier = 1f;
 
-    /// <summary>
-    /// How long does it take us to get up?
-    /// </summary>
-    [DataField, AutoNetworkedField]
-    public TimeSpan GetUpDoAfter = TimeSpan.FromSeconds(1);
 }

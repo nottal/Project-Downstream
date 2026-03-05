@@ -33,7 +33,7 @@ public abstract class SharedLayingDownSystem : EntitySystem
     public override void Initialize()
     {
         CommandBinds.Builder
-            .Bind(ContentKeyFunctions.ToggleStanding, InputCmdHandler.FromDelegate(ToggleStanding))
+            .Bind(ContentKeyFunctions.ToggleKnockdown, InputCmdHandler.FromDelegate(ToggleStanding, handle: false))
             .Register<SharedLayingDownSystem>();
 
         SubscribeNetworkEvent<ChangeLayingDownEvent>(OnChangeState);

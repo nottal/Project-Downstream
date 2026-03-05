@@ -91,12 +91,6 @@ public abstract partial class SharedStunSystem : EntitySystem
     [Dependency] private readonly EntityLookupSystem _entityLookup = default!;
     [Dependency] private readonly IGameTiming _timing = default!;
 
-    /// <summary>
-    /// Friction modifier for knocked down players.
-    /// Doesn't make them faster but makes them slow down... slower.
-    /// </summary>
-    public const float KnockDownModifier = 0.4f;
-
     public override void Initialize()
     {
         SubscribeLocalEvent<KnockedDownComponent, ComponentInit>(OnKnockInit);
@@ -572,7 +566,7 @@ public abstract partial class SharedStunSystem : EntitySystem
 
     private void OnKnockedTileFriction(EntityUid uid, KnockedDownComponent component, ref TileFrictionEvent args)
     {
-        args.Modifier *= KnockDownModifier;
+        args.Modifier *= component.FrictionModifier;
     }
 
     #region Attempt Event Handling
