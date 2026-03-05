@@ -51,6 +51,8 @@
   alternateTitles:
   - AtmosphericTechnicianAirController
   - AtmosphericTechnicianIndustrialFirefighter
+  - AtmosphericTechnicianChillGuy
+  - AtmosphericTechnicianFreezonProductionManager
   special:
   - !type:GiveItemOnHolidaySpecial
     holiday: FirefighterDay
@@ -77,3 +79,11 @@
 - type: jobAlternateTitle
   id: AtmosphericTechnicianIndustrialFirefighter
   name: job-name-alt-atmos-3
+
+- type: jobAlternateTitle
+  id: AtmosphericTechnicianChillGuy
+  name: job-name-alt-atmos-4
+
+- type: jobAlternateTitle
+  id: AtmosphericTechnicianFreezonProductionManager
+  name: job-name-alt-atmos-5

@@ -57,6 +57,8 @@ job-name-alt-engineer-6 = EVA Technician
 job-name-alt-atmos-1 = Atmospherics Technician
 job-name-alt-atmos-2 = Air Controller
 job-name-alt-atmos-3 = Industrial Firefighter
+job-name-alt-atmos-4 = Chill Guy
+job-name-alt-atmos-5 = Freezon Production Manager
 
 job-name-alt-rd-1 = Lead Researcher
 job-name-alt-rd-2 = Research Supervisor
