@@ -116,6 +116,7 @@
     - id: FalseAlarm
     - id: DerelictCyborgSpawn
     - id: WizardSpawn
+    - id: FugitivesSpawn
     - id: ColossusSpawn # Funky
 
 - type: entity
@@ -856,3 +857,41 @@
     - SecurityClown
     - PartyMaker
     - CommandMaid
+
+- type: entity
+  id: FugitivesSpawn
+  parent: BaseGameRule
+  components:
+  - type: StationEvent
+    earliestStart: 45
+    minimumPlayers: 25
+    weight: 1
+    duration: 1
+    maxOccurrences: 1
+    chaos:
+      Hostile: 40
+      Friend: 40
+      Combat: 80
+      Death: 80
+  - type: AntagSelection
+    definitions:
+    - prefRoles: [ Fugitive ]
+      min: 3
+      max: 4
+      playerRatio: 15
+      pickPlayer: true
+      blacklist:
+        components:
+        - AntagImmune
+      startingGear: FugitiveGear
+      mindRoles:
+      - MindRoleFugitive
+    - prefRoles: [ FugitiveHunter ]
+      min: 3
+      max: 4
+      playerRatio: 15
+      pickPlayer: false
+      spawnerPrototype: SpawnPointGhostFugitiveHunter
+      startingGear: FugitiveHunterGear
+      mindRoles:
+      - MindRoleFugitiveHunter

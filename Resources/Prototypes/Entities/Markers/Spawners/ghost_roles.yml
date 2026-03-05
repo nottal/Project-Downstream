@@ -285,3 +285,43 @@
     - state: green
     - sprite: Clothing/Head/Hats/wizardhat.rsi
       state: icon
+
+- type: entity
+  categories: [ HideSpawnMenu, Spawner ]
+  parent: BaseAntagSpawner
+  id: SpawnPointGhostFugitive
+  components:
+  - type: GhostRole
+    name: roles-antag-fugitive-name
+    description: roles-antag-fugitive-objective
+    rules: ghost-role-information-antagonist-rules
+    mindRoles:
+    - MindRoleGhostRoleTeamAntagonist
+    raffle:
+      settings: default
+  - type: Sprite
+    layers:
+    - sprite: Markers/jobs.rsi
+      state: green
+    - sprite: Clothing/Uniforms/Jumpsuit/orange.rsi
+      state: icon
+
+- type: entity
+  categories: [ HideSpawnMenu, Spawner ]
+  parent: BaseAntagSpawner
+  id: SpawnPointGhostFugitiveHunter
+  components:
+  - type: GhostRole
+    name: roles-antag-fugitive-hunter-name
+    description: roles-antag-fugitive-hunter-objective
+    rules: ghost-role-information-rules-team-antagonist
+    mindRoles:
+    - MindRoleGhostRoleTeamAntagonist
+    raffle:
+      settings: default
+  - type: Sprite
+    layers:
+    - sprite: Markers/jobs.rsi
+      state: green
+    - sprite: Objects/Misc/handcuffs.rsi
+      state: handcuff

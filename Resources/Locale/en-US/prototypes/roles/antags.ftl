@@ -74,3 +74,7 @@ roles-antag-dragon-objective = Create a carp army to take over this quadrant.
 
 roles-antag-malfunctioning-ai-name = Malfunctioning AI
 roles-antag-malfunctioning-ai-objective = Sabotage the station as a malfunctioning AI.
+roles-antag-fugitive-name = Fugitive
+roles-antag-fugitive-objective = Avoid capture by the fugitive hunters and survive.
+roles-antag-fugitive-hunter-name = Fugitive Hunter
+roles-antag-fugitive-hunter-objective = Hunt down and capture the fugitives by any means necessary.

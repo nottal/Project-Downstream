@@ -1,0 +1,45 @@
+# SPDX-FileCopyrightText: 2026 OpenAI
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later AND MIT
+
+- type: antag
+  id: Fugitive
+  name: roles-antag-fugitive-name
+  antagonist: true
+  setPreference: true
+  objective: roles-antag-fugitive-objective
+
+- type: antag
+  id: FugitiveHunter
+  name: roles-antag-fugitive-hunter-name
+  antagonist: true
+  setPreference: true
+  objective: roles-antag-fugitive-hunter-objective
+
+- type: startingGear
+  id: FugitiveGear
+  equipment:
+    jumpsuit: ClothingUniformJumpsuitColorOrange
+    shoes: ClothingShoesColorOrange
+    back: ClothingBackpack
+    pocket1: WeaponMeleeShiv
+
+- type: startingGear
+  id: FugitiveHunterGear
+  equipment:
+    jumpsuit: ClothingUniformJumpsuitOperative
+    shoes: ClothingShoesBootsCombatFilled
+    outerClothing: ClothingOuterArmorBasic
+    gloves: ClothingHandsGlovesCombat
+    back: ClothingBackpackSecurity
+    belt: ClothingBeltSecurityWebbing
+    eyes: ClothingEyesGlassesSunglasses
+    ears: ClothingHeadsetSecurity
+    pocket1: Zipties
+    pocket2: WeaponPistolMk58
+  storage:
+    back:
+    - MagazinePistol
+    - MagazinePistol
+    - Flash
+    - Handcuffs
