@@ -80,6 +80,7 @@ public abstract partial class SharedStunSystem : EntitySystem
     private readonly Dictionary<EntityUid, TimeSpan> _nextToggleKnockdownAt = new();
     private readonly Dictionary<EntityUid, TimeSpan> _nextStandAttemptAt = new();
     private static readonly TimeSpan AutoStandRetryDelay = TimeSpan.FromSeconds(0.25);
+    private static readonly TimeSpan ToggleKnockdownCooldown = TimeSpan.FromSeconds(0.8);
     private static readonly TimeSpan ManualStandAttemptCooldown = TimeSpan.FromSeconds(0.8);
 
     [Dependency] private readonly ActionBlockerSystem _blocker = default!;
@@ -349,13 +350,16 @@ public abstract partial class SharedStunSystem : EntitySystem
             return;
         }
 
+        if (!HasComp<CrawlerComponent>(uid))
+            return;
+
+        if (TryComp(uid, out KnockedDownComponent? activeKnocked) && activeKnocked.DoAfterId.HasValue)
+            return;
+
         if (_nextToggleKnockdownAt.TryGetValue(uid, out var nextToggle) && _timing.CurTime < nextToggle)
             return;
 
-        _nextToggleKnockdownAt[uid] = _timing.CurTime + TimeSpan.FromSeconds(0.8);
-
-        if (!HasComp<CrawlerComponent>(uid))
-            return;
+        _nextToggleKnockdownAt[uid] = _timing.CurTime + ToggleKnockdownCooldown;
 
         if (!TryComp(uid, out KnockedDownComponent? knocked))
         {
@@ -367,9 +371,6 @@ public abstract partial class SharedStunSystem : EntitySystem
             Dirty(uid, knocked);
             return;
         }
-
-        if (knocked.DoAfterId.HasValue)
-            return;
 
         var stand = true;
         if (_nextStandAttemptAt.TryGetValue(uid, out var nextStandAttempt) && _timing.CurTime < nextStandAttempt)
@@ -733,4 +734,3 @@ public record struct KnockedDownRefreshEvent()
 [ByRefEvent]
 [Serializable, NetSerializable]
 public sealed partial class TryStandDoAfterEvent : SimpleDoAfterEvent;
-
