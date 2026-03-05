@@ -87,6 +87,7 @@ public abstract partial class SharedStunSystem : EntitySystem
     [Dependency] private readonly ClothingModifyStunTimeSystem _modify = default!; // goob edit
     [Dependency] private readonly IConfigurationManager _cfg = default!;
     [Dependency] private readonly SharedDoAfterSystem _doAfter = default!;
+    [Dependency] private readonly SharedPhysicsSystem _physics = default!;
     [Dependency] private readonly EntityLookupSystem _entityLookup = default!;
     [Dependency] private readonly IGameTiming _timing = default!;
 
