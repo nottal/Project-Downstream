@@ -87,6 +87,7 @@ public abstract partial class SharedStunSystem : EntitySystem
     [Dependency] private readonly ClothingModifyStunTimeSystem _modify = default!; // goob edit
     [Dependency] private readonly IConfigurationManager _cfg = default!;
     [Dependency] private readonly SharedDoAfterSystem _doAfter = default!;
+    [Dependency] private readonly IGameTiming _timing = default!;
 
     /// <summary>
     /// Friction modifier for knocked down players.
@@ -192,7 +193,7 @@ public abstract partial class SharedStunSystem : EntitySystem
                 Dirty(uid, knocked);
             }
 
-            if (!knocked.AutoStand || knocked.DoAfterId != null || knocked.NextUpdate > Timing.CurTime)
+            if (!knocked.AutoStand || knocked.DoAfterId != null || knocked.NextUpdate > _timing.CurTime)
                 continue;
 
             TryStanding(uid, knocked);
@@ -235,7 +236,7 @@ public abstract partial class SharedStunSystem : EntitySystem
     private void OnKnockInit(EntityUid uid, KnockedDownComponent component, ComponentInit args)
     {
         if (component.NextUpdate == TimeSpan.Zero)
-            component.NextUpdate = Timing.CurTime + TimeSpan.FromSeconds(component.HelpInterval);
+            component.NextUpdate = _timing.CurTime + TimeSpan.FromSeconds(component.HelpInterval);
 
         RefreshKnockedMovement(uid, component);
         _standingState.Down(uid, true, false);
@@ -278,7 +279,7 @@ public abstract partial class SharedStunSystem : EntitySystem
             return;
 
         if (args.DamageDelta.GetTotal() >= component.KnockdownDamageThreshold)
-            knocked.NextUpdate = Timing.CurTime + component.DefaultKnockedDuration;
+            knocked.NextUpdate = _timing.CurTime + component.DefaultKnockedDuration;
     }
 
     private void HandleToggleKnockdown(ICommonSession? session)
@@ -291,10 +292,11 @@ public abstract partial class SharedStunSystem : EntitySystem
 
         if (!TryComp(uid, out KnockedDownComponent? knocked))
         {
-            EnsureComp(uid, out knocked);
+            EnsureComp<KnockedDownComponent>(uid);
+            knocked = Comp<KnockedDownComponent>(uid);
             knocked.AutoStand = false;
             if (TryComp(uid, out CrawlerComponent? crawler))
-                knocked.NextUpdate = Timing.CurTime + crawler.DefaultKnockedDuration;
+                knocked.NextUpdate = _timing.CurTime + crawler.DefaultKnockedDuration;
             Dirty(uid, knocked);
             return;
         }
@@ -319,7 +321,7 @@ public abstract partial class SharedStunSystem : EntitySystem
         if (!Resolve(uid, ref knocked, false))
             return true;
 
-        if (knocked.NextUpdate > Timing.CurTime || !_blocker.CanMove(uid))
+        if (knocked.NextUpdate > _timing.CurTime || !_blocker.CanMove(uid))
             return false;
 
         if (!TryComp(uid, out CrawlerComponent? crawler) || !_cfg.GetCVar(CCVars.MovementCrawling))
@@ -454,7 +456,7 @@ public abstract partial class SharedStunSystem : EntitySystem
 
         if (TryComp(uid, out KnockedDownComponent? knocked))
         {
-            knocked.NextUpdate = Timing.CurTime + time;
+            knocked.NextUpdate = _timing.CurTime + time;
             knocked.AutoStand = true;
             Dirty(uid, knocked);
         }
