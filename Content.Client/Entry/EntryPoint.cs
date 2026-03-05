@@ -116,6 +116,7 @@ using Robust.Client.UserInterface;
 using Robust.Shared;
 using Robust.Shared.Configuration;
 using Robust.Shared.ContentPack;
+using Robust.Shared.Log;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Replays;
 using Robust.Shared.Timing;
@@ -173,7 +174,10 @@ namespace Content.Client.Entry
             IoCManager.InjectDependencies(this);
 
             _contentLoc.Initialize();
-            _componentFactory.DoAutoRegistrations();
+            // Some OpenGL drivers spam benign debug callback errors (e.g. GL_INVALID_ENUM),
+            // which drowns out actionable issues for users and developers.
+            _logManager.GetSawmill("ogl.debug.error").Level = LogLevel.Fatal;
+			_componentFactory.DoAutoRegistrations();
             _componentFactory.IgnoreMissingComponents();
 
             // Do not add to these, they are legacy.
