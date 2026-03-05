@@ -31,7 +31,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later OR MIT
 
-using Content.Server.Antag;
 using Content.Server.Chat.Systems;
 using Content.Server.GameTicking;
 using Content.Server.GameTicking.Rules;
@@ -53,7 +52,6 @@ namespace Content.Server.Magic;
 
 public sealed class MagicSystem : SharedMagicSystem
 {
-    [Dependency] private readonly AntagSelectionSystem _antag = default!;
     [Dependency] private readonly ChatSystem _chat = default!;
     [Dependency] private readonly GameTicker _gameTicker = default!;
     [Dependency] private readonly TagSystem _tag = default!;
@@ -121,7 +119,7 @@ public sealed class MagicSystem : SharedMagicSystem
         if (ev.Handled)
             return;
 
-        var candidates = new List<ICommonSession>();
+        var candidates = new List<(EntityUid Mob, EntityUid Mind)>();
         foreach (var session in _player.Sessions)
         {
             if (session.AttachedEntity is not { Valid: true } attached)
@@ -133,15 +131,12 @@ public sealed class MagicSystem : SharedMagicSystem
             if (_roles.MindHasRole<ObserverRoleComponent>(mindId))
                 continue;
 
-            candidates.Add(session);
+            candidates.Add((attached, mindId));
         }
 
         var headRevAvailable = true;
-        foreach (var session in candidates)
+        foreach (var (mob, mindId) in candidates)
         {
-            if (session.AttachedEntity is not { Valid: true } attached || !_mind.TryGetMind(attached, out var mindId, out _))
-                continue;
-
             if (_roles.MindHasRole<WizardRoleComponent>(mindId))
                 _roles.MindRemoveRole<WizardRoleComponent>(mindId);
 
@@ -149,7 +144,7 @@ public sealed class MagicSystem : SharedMagicSystem
             if (role == TrueChaosRole.HeadRevolutionary)
                 headRevAvailable = false;
 
-            AssignTrueChaosRole(session, attached, mindId, role);
+            AssignTrueChaosRole(mob, mindId, role);
             EnsureComp<ExcludeFromRoundEndSummaryComponent>(mindId);
         }
 
@@ -178,28 +173,30 @@ public sealed class MagicSystem : SharedMagicSystem
         return _random.Pick(possible);
     }
 
-    private void AssignTrueChaosRole(ICommonSession session, EntityUid attached, EntityUid mindId, TrueChaosRole role)
+    private void AssignTrueChaosRole(EntityUid mob, EntityUid mindId, TrueChaosRole role)
     {
         switch (role)
         {
             case TrueChaosRole.SyndicateAgent:
-                _antag.ForceMakeAntag<TraitorRuleComponent>(session, "Traitor");
+                _roles.MindAddRole(mindId, "MindRoleTraitor", silent: true);
                 break;
             case TrueChaosRole.Thief:
-                _antag.ForceMakeAntag<ThiefRuleComponent>(session, "Thief");
+                _roles.MindAddRole(mindId, "MindRoleThief", silent: true);
                 break;
             case TrueChaosRole.InitialInfected:
-                _antag.ForceMakeAntag<ZombieRuleComponent>(session, "medZombies");
+                _roles.MindAddRole(mindId, "MindRoleInitialInfected", silent: true);
                 break;
             case TrueChaosRole.Revolutionary:
-                EnsureComp<RevolutionaryComponent>(attached);
+                EnsureComp<RevolutionaryComponent>(mob);
                 _roles.MindAddRole(mindId, "MindRoleRevolutionary", silent: true);
                 break;
             case TrueChaosRole.HeadRevolutionary:
-                _antag.ForceMakeAntag<RevolutionaryRuleComponent>(session, "Revolutionary");
+                EnsureComp<RevolutionaryComponent>(mob);
+                EnsureComp<HeadRevolutionaryComponent>(mob);
+                _roles.MindAddRole(mindId, "MindRoleHeadRevolutionary", silent: true);
                 break;
             case TrueChaosRole.Changeling:
-                _antag.ForceMakeAntag<ChangelingRuleComponent>(session, "Changeling");
+                _roles.MindAddRole(mindId, "MindRoleChangeling", silent: true);
                 break;
         }
     }
