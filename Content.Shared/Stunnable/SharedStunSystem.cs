@@ -410,6 +410,9 @@ public abstract partial class SharedStunSystem : EntitySystem
 
         foreach (var ent in intersecting)
         {
+            if (ent == uid)
+                continue;
+
             if (!fixtureQuery.TryGetComponent(ent, out var fixtures) || !xformQuery.TryComp(ent, out var xformOther))
                 continue;
 
