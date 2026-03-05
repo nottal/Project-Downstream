@@ -107,6 +107,9 @@ public abstract partial class SharedStunSystem : EntitySystem
         SubscribeLocalEvent<CrawlerComponent, KnockedDownRefreshEvent>(OnCrawlerKnockedRefresh);
         SubscribeLocalEvent<CrawlerComponent, global::Content.Shared.Damage.DamageChangedEvent>(OnCrawlerDamaged);
         SubscribeLocalEvent<KnockedDownComponent, TryStandDoAfterEvent>(OnStandDoAfter);
+        SubscribeLocalEvent<KnockedDownComponent, DidEquipHandEvent>(OnHandEquippedWhileKnocked);
+        SubscribeLocalEvent<KnockedDownComponent, DidUnequipHandEvent>(OnHandUnequippedWhileKnocked);
+        SubscribeLocalEvent<KnockedDownComponent, HandCountChangedEvent>(OnHandCountChangedWhileKnocked);
 
         CommandBinds.Builder
             .Bind(ContentKeyFunctions.ToggleKnockdown, InputCmdHandler.FromDelegate(HandleToggleKnockdown, handle: false))
@@ -283,6 +286,30 @@ public abstract partial class SharedStunSystem : EntitySystem
 
         if (args.DamageDelta.GetTotal() >= component.KnockdownDamageThreshold)
             knocked.NextUpdate = _timing.CurTime + component.DefaultKnockedDuration;
+    }
+
+    private void OnHandEquippedWhileKnocked(EntityUid uid, KnockedDownComponent component, ref DidEquipHandEvent args)
+    {
+        if (_timing.ApplyingState)
+            return;
+
+        RefreshKnockedMovement(uid, component);
+    }
+
+    private void OnHandUnequippedWhileKnocked(EntityUid uid, KnockedDownComponent component, ref DidUnequipHandEvent args)
+    {
+        if (_timing.ApplyingState)
+            return;
+
+        RefreshKnockedMovement(uid, component);
+    }
+
+    private void OnHandCountChangedWhileKnocked(EntityUid uid, KnockedDownComponent component, ref HandCountChangedEvent args)
+    {
+        if (_timing.ApplyingState)
+            return;
+
+        RefreshKnockedMovement(uid, component);
     }
 
     private void HandleToggleKnockdown(ICommonSession? session)
