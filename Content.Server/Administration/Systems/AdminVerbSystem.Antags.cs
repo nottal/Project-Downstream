@@ -81,6 +81,9 @@ public sealed partial class AdminVerbSystem
     [ValidatePrototypeId<EntityPrototype>]
     private const string DefaultThiefRule = "Thief";
 
+    [ValidatePrototypeId<EntityPrototype>]
+    private const string DefaultWizardRule = "Wizard";
+
     [ValidatePrototypeId<StartingGearPrototype>]
     private const string PirateGearId = "PirateGear";
 
@@ -189,6 +192,21 @@ public sealed partial class AdminVerbSystem
             Message = Loc.GetString("admin-verb-make-head-rev"),
         };
         args.Verbs.Add(headRev);
+
+
+        Verb wizard = new()
+        {
+            Text = Loc.GetString("admin-verb-text-make-wizard"),
+            Category = VerbCategory.Antag,
+            Icon = new SpriteSpecifier.Rsi(new ResPath("/Textures/Clothing/Head/Hats/wizardhat.rsi"), "icon"),
+            Act = () =>
+            {
+                _antag.ForceMakeAntag<WizardRuleComponent>(targetPlayer, DefaultWizardRule);
+            },
+            Impact = LogImpact.High,
+            Message = Loc.GetString("admin-verb-make-wizard"),
+        };
+        args.Verbs.Add(wizard);
 
         Verb thief = new()
         {

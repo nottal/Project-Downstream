@@ -33,12 +33,22 @@
 
 using Content.Server.Chat.Systems;
 using Content.Server.GameTicking;
+using Content.Server.GameTicking.Rules;
 using Content.Server.GameTicking.Rules.Components;
+using Content.Server.Ghost;
+using Content.Server.Roles;
 using Content.Shared.Magic;
 using Content.Shared.Magic.Events;
 using Content.Shared.Mind;
+using Content.Shared.Revolutionary.Components;
+using Content.Shared.Roles;
+using Content.Shared.Roles.Jobs;
 using Content.Shared.Tag;
+using Robust.Server.Player;
+using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
+using Robust.Shared.Random;
+
 namespace Content.Server.Magic;
 
 public sealed class MagicSystem : SharedMagicSystem
@@ -47,6 +57,10 @@ public sealed class MagicSystem : SharedMagicSystem
     [Dependency] private readonly GameTicker _gameTicker = default!;
     [Dependency] private readonly TagSystem _tag = default!;
     [Dependency] private readonly SharedMindSystem _mind = default!;
+    [Dependency] private readonly SharedRoleSystem _roles = default!;
+    [Dependency] private readonly SharedJobSystem _jobs = default!;
+    [Dependency] private readonly IPlayerManager _player = default!;
+    [Dependency] private readonly IRobustRandom _random = default!;
 
     private static readonly ProtoId<TagPrototype> InvalidForSurvivorAntagTag = "InvalidForSurvivorAntag";
 
@@ -55,6 +69,7 @@ public sealed class MagicSystem : SharedMagicSystem
         base.Initialize();
 
         SubscribeLocalEvent<SpeakSpellEvent>(OnSpellSpoken);
+        SubscribeLocalEvent<TrueChaosSpellEvent>(OnTrueChaosSpell);
     }
 
     private void OnSpellSpoken(ref SpeakSpellEvent args)
@@ -89,5 +104,128 @@ public sealed class MagicSystem : SharedMagicSystem
 
         if (!_gameTicker.IsGameRuleActive<SurvivorRuleComponent>())
             _gameTicker.StartGameRule(survivorRule);
+    }
+
+    private enum TrueChaosRole
+    {
+        SyndicateAgent,
+        Thief,
+        InitialInfected,
+        Revolutionary,
+        HeadRevolutionary,
+        Changeling,
+    }
+
+    private void OnTrueChaosSpell(TrueChaosSpellEvent ev)
+    {
+        if (ev.Handled)
+            return;
+
+        var candidates = new List<(EntityUid Mob, EntityUid Mind)>();
+        foreach (var session in _player.Sessions)
+        {
+            if (session.AttachedEntity is not { Valid: true } attached)
+                continue;
+
+            if (!_mind.TryGetMind(attached, out var mindId, out _))
+                continue;
+
+            if (_roles.MindHasRole<ObserverRoleComponent>(mindId))
+                continue;
+
+            if (!_jobs.CanBeAntag(session))
+                continue;
+
+            candidates.Add((attached, mindId));
+        }
+
+        var headRevAvailable = true;
+        foreach (var (mob, mindId) in candidates)
+        {
+            if (_roles.MindHasRole<WizardRoleComponent>(mindId))
+                _roles.MindRemoveRole<WizardRoleComponent>(mindId);
+
+            ClearAntagRoles(mindId);
+
+            var role = PickTrueChaosRole(headRevAvailable);
+            if (role == TrueChaosRole.HeadRevolutionary)
+                headRevAvailable = false;
+
+            AssignTrueChaosRole(mob, mindId, role);
+            EnsureComp<ExcludeFromRoundEndSummaryComponent>(mindId);
+        }
+
+        if (!string.IsNullOrWhiteSpace(ev.Speech))
+        {
+            var speakEvent = new SpeakSpellEvent(ev.Performer, ev.Speech);
+            RaiseLocalEvent(ref speakEvent);
+        }
+        ev.Handled = true;
+    }
+
+    private TrueChaosRole PickTrueChaosRole(bool headRevAvailable)
+    {
+        var possible = new List<TrueChaosRole>
+        {
+            TrueChaosRole.SyndicateAgent,
+            TrueChaosRole.Thief,
+            TrueChaosRole.InitialInfected,
+            TrueChaosRole.Revolutionary,
+            TrueChaosRole.Changeling,
+        };
+
+        if (headRevAvailable)
+            possible.Add(TrueChaosRole.HeadRevolutionary);
+
+        return _random.Pick(possible);
+    }
+
+    private void ClearAntagRoles(EntityUid mindId)
+    {
+        if (!TryComp<MindComponent>(mindId, out var mindComp))
+            return;
+
+        var toRemove = new List<EntityUid>();
+        foreach (var roleUid in mindComp.MindRoles)
+        {
+            if (!TryComp<MindRoleComponent>(roleUid, out var roleComp))
+                continue;
+
+            if (roleComp.Antag)
+                toRemove.Add(roleUid);
+        }
+
+        foreach (var roleUid in toRemove)
+        {
+            Del(roleUid);
+        }
+    }
+
+    private void AssignTrueChaosRole(EntityUid mob, EntityUid mindId, TrueChaosRole role)
+    {
+        switch (role)
+        {
+            case TrueChaosRole.SyndicateAgent:
+                _roles.MindAddRole(mindId, "MindRoleTraitor", silent: true);
+                break;
+            case TrueChaosRole.Thief:
+                _roles.MindAddRole(mindId, "MindRoleThief", silent: true);
+                break;
+            case TrueChaosRole.InitialInfected:
+                _roles.MindAddRole(mindId, "MindRoleInitialInfected", silent: true);
+                break;
+            case TrueChaosRole.Revolutionary:
+                EnsureComp<RevolutionaryComponent>(mob);
+                _roles.MindAddRole(mindId, "MindRoleRevolutionary", silent: true);
+                break;
+            case TrueChaosRole.HeadRevolutionary:
+                EnsureComp<RevolutionaryComponent>(mob);
+                EnsureComp<HeadRevolutionaryComponent>(mob);
+                _roles.MindAddRole(mindId, "MindRoleHeadRevolutionary", silent: true);
+                break;
+            case TrueChaosRole.Changeling:
+                _roles.MindAddRole(mindId, "MindRoleChangeling", silent: true);
+                break;
+        }
     }
 }
