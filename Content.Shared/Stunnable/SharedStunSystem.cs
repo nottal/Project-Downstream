@@ -55,6 +55,7 @@ using Content.Shared.Physics;
 using Content.Shared.StatusEffect;
 using Content.Shared.Throwing;
 using Content.Shared.Whitelist;
+using Content.Shared.Popups;
 using Robust.Shared.Audio.Systems;
 using Robust.Shared.Physics.Components;
 using Robust.Shared.Physics.Events;
@@ -91,6 +92,7 @@ public abstract partial class SharedStunSystem : EntitySystem
     [Dependency] private readonly SharedDoAfterSystem _doAfter = default!;
     [Dependency] private readonly EntityLookupSystem _entityLookup = default!;
     [Dependency] private readonly IGameTiming _timing = default!;
+    [Dependency] private readonly SharedPopupSystem _popup = default!;
 
     public override void Initialize()
     {
@@ -322,7 +324,7 @@ public abstract partial class SharedStunSystem : EntitySystem
         knocked.AutoStand = stand;
         Dirty(uid, knocked);
 
-        if (!stand || !TryStanding(uid, knocked))
+        if (!stand || !TryStanding(uid, knocked, popupOnBlocked: true))
         {
             if (knocked.DoAfterId.HasValue)
             {
@@ -368,13 +370,21 @@ public abstract partial class SharedStunSystem : EntitySystem
         return false;
     }
 
-    private bool TryStanding(EntityUid uid, KnockedDownComponent? knocked = null)
+    private bool TryStanding(EntityUid uid, KnockedDownComponent? knocked = null, bool popupOnBlocked = false)
     {
         if (!Resolve(uid, ref knocked, false))
             return true;
 
-        if (knocked.NextUpdate > _timing.CurTime || !_blocker.CanMove(uid) || IntersectingStandingColliders(uid))
+        if (knocked.NextUpdate > _timing.CurTime || !_blocker.CanMove(uid))
             return false;
+
+        if (IntersectingStandingColliders(uid))
+        {
+            if (popupOnBlocked)
+                _popup.PopupClient(Loc.GetString("knockdown-component-stand-no-room"), uid, uid, PopupType.SmallCaution);
+
+            return false;
+        }
 
         if (!TryComp(uid, out CrawlerComponent? crawler) || !_cfg.GetCVar(CCVars.MovementCrawling))
         {
@@ -408,6 +418,13 @@ public abstract partial class SharedStunSystem : EntitySystem
 
         if (args.Cancelled || !_blocker.CanMove(uid))
         {
+            Dirty(uid, knocked);
+            return;
+        }
+
+        if (IntersectingStandingColliders(uid))
+        {
+            _popup.PopupClient(Loc.GetString("knockdown-component-stand-no-room"), uid, uid, PopupType.SmallCaution);
             Dirty(uid, knocked);
             return;
         }
