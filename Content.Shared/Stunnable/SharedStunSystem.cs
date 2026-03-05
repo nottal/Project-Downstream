@@ -39,7 +39,6 @@ using Content.Shared.Interaction;
 using Content.Shared.Interaction.Events;
 using Content.Shared.Inventory.Events;
 using Content.Shared.Item;
-using Content.Shared.Bed.Sleep;
 using Content.Shared.CCVar;
 using Content.Shared.Database;
 using Content.Shared.DoAfter;
@@ -79,7 +78,6 @@ public abstract partial class SharedStunSystem : EntitySystem
     [Dependency] private readonly SharedBroadphaseSystem _broadphase = default!;
     [Dependency] private readonly ISharedAdminLogManager _adminLogger = default!;
     [Dependency] private readonly MovementSpeedModifierSystem _movementSpeedModifier = default!;
-    [Dependency] private readonly SharedAudioSystem _audio = default!;
     [Dependency] protected readonly SharedAppearanceSystem Appearance = default!;
     [Dependency] private readonly EntityWhitelistSystem _entityWhitelist = default!;
     [Dependency] private readonly StandingStateSystem _standingState = default!;
@@ -125,7 +123,6 @@ public abstract partial class SharedStunSystem : EntitySystem
         SubscribeLocalEvent<StunOnContactComponent, StartCollideEvent>(OnStunOnContactCollide);
 
         // helping people up if they're knocked down
-        SubscribeLocalEvent<KnockedDownComponent, InteractHandEvent>(OnInteractHand);
         SubscribeLocalEvent<SlowedDownComponent, RefreshMovementSpeedModifiersEvent>(OnRefreshMovespeed);
 
         SubscribeLocalEvent<KnockedDownComponent, TileFrictionEvent>(OnKnockedTileFriction);
@@ -193,12 +190,6 @@ public abstract partial class SharedStunSystem : EntitySystem
         var query = EntityQueryEnumerator<KnockedDownComponent>();
         while (query.MoveNext(out var uid, out var knocked))
         {
-            if (knocked.HelpTimer > 0f)
-            {
-                knocked.HelpTimer = MathF.Max(0f, knocked.HelpTimer - frameTime);
-                Dirty(uid, knocked);
-            }
-
             if (!knocked.AutoStand || knocked.DoAfterId != null || knocked.NextUpdate > _timing.CurTime)
                 continue;
 
@@ -242,7 +233,7 @@ public abstract partial class SharedStunSystem : EntitySystem
     private void OnKnockInit(EntityUid uid, KnockedDownComponent component, ComponentInit args)
     {
         if (component.NextUpdate == TimeSpan.Zero)
-            component.NextUpdate = _timing.CurTime + TimeSpan.FromSeconds(component.HelpInterval);
+            component.NextUpdate = _timing.CurTime + TimeSpan.FromSeconds(0.5f);
 
         RefreshKnockedMovement(uid, component);
         _standingState.Down(uid, true, false);
@@ -576,25 +567,6 @@ public abstract partial class SharedStunSystem : EntitySystem
         }
 
         return false;
-    }
-
-    private void OnInteractHand(EntityUid uid, KnockedDownComponent knocked, InteractHandEvent args)
-    {
-        if (args.Handled || knocked.HelpTimer > 0f)
-            return;
-
-        // TODO: This should be an event.
-        if (HasComp<SleepingComponent>(uid))
-            return;
-
-        // Set it to half the help interval so helping is actually useful...
-        knocked.HelpTimer = knocked.HelpInterval / 2f;
-
-        _statusEffect.TryRemoveTime(uid, "KnockedDown", TimeSpan.FromSeconds(knocked.HelpInterval));
-        _audio.PlayPredicted(knocked.StunAttemptSound, uid, args.User);
-        Dirty(uid, knocked);
-
-        args.Handled = true;
     }
 
     private void OnKnockedTileFriction(EntityUid uid, KnockedDownComponent component, ref TileFrictionEvent args)
