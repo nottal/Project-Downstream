@@ -60,8 +60,8 @@
         orGroup: Guns
       - id: WeaponRifleAk
         orGroup: Guns
-      #- id: WeaponRifleM90GrenadeLauncher #Funky: Extremely likely to destroy the station
-      #  orGroup: Guns
+      - id: WeaponRifleM90GrenadeLauncher
+        orGroup: Guns
       - id: WeaponRifleLecter
         orGroup: Guns
       - id: WeaponShotgunBulldog
@@ -96,10 +96,10 @@
         orGroup: Guns
       - id: WeaponPistolFlintlock
         orGroup: Guns
-      #- id: WeaponLauncherChinaLake #Funky: Extremely likely to destroy the station
-      #  orGroup: Guns
-      #- id: WeaponLauncherRocket #Funky: Extremely likely to destroy the station
-      #  orGroup: Guns
+      - id: WeaponLauncherChinaLake
+        orGroup: Guns
+      - id: WeaponLauncherRocket
+        orGroup: Guns
       - id: WeaponLauncherPirateCannon
         orGroup: Guns
       - id: WeaponTetherGun
@@ -136,10 +136,10 @@
         orGroup: Guns
       - id: WeaponDisablerPractice
         orGroup: Guns
-#      - id: WeaponDisabler # Funky
-#        orGroup: Guns
-#      - id: WeaponDisablerSMG
-#        orGroup: Guns
+      - id: WeaponDisabler
+        orGroup: Guns
+      - id: WeaponDisablerSMG
+        orGroup: Guns
       - id: WeaponTaser
         orGroup: Guns
       - id: WeaponAntiqueLaser
@@ -207,18 +207,18 @@
         orGroup: Magics
       - id: KnockSpellbook
         orGroup: Magics
-      #- id: FireballSpellbook #Funky: Extremely likely to destroy the station
-      #  orGroup: Magics
+      - id: FireballSpellbook
+        orGroup: Magics
       - id: WeaponWandPolymorphCarp
         orGroup: Magics
       - id: WeaponWandPolymorphMonkey
         orGroup: Magics
-      #- id: WeaponWandFireball #Funky: Extremely likely to destroy the station
-      #  orGroup: Magics
+      - id: WeaponWandFireball
+        orGroup: Magics
       - id: WeaponWandPolymorphDoor
         orGroup: Magics
-      #- id: WeaponWandCluwne # Funky: Disabling instant kill spells
-      #  orGroup: Magics
+      - id: WeaponWandCluwne
+        orGroup: Magics
       - id: WeaponWandPolymorphBread
         orGroup: Magics
       - id: WeaponStaffHealing

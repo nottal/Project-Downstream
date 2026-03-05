@@ -142,6 +142,9 @@ public sealed class MagicSystem : SharedMagicSystem
             if (session.AttachedEntity is not { Valid: true } attached || !_mind.TryGetMind(attached, out var mindId, out _))
                 continue;
 
+            if (_roles.MindHasRole<WizardRoleComponent>(mindId))
+                _roles.MindRemoveRole<WizardRoleComponent>(mindId);
+
             var role = PickTrueChaosRole(headRevAvailable);
             if (role == TrueChaosRole.HeadRevolutionary)
                 headRevAvailable = false;
