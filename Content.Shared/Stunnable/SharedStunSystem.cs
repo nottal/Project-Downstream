@@ -67,6 +67,7 @@ using Content.Shared.Jittering;
 using Robust.Shared.Timing;
 using Robust.Shared.Configuration;
 using Robust.Shared.Input.Binding;
+using Robust.Shared.Map;
 using Robust.Shared.Player;
 using Robust.Shared.Serialization;
 
@@ -87,7 +88,6 @@ public abstract partial class SharedStunSystem : EntitySystem
     [Dependency] private readonly ClothingModifyStunTimeSystem _modify = default!; // goob edit
     [Dependency] private readonly IConfigurationManager _cfg = default!;
     [Dependency] private readonly SharedDoAfterSystem _doAfter = default!;
-    [Dependency] private readonly SharedPhysicsSystem _physics = default!;
     [Dependency] private readonly EntityLookupSystem _entityLookup = default!;
     [Dependency] private readonly IGameTiming _timing = default!;
 
@@ -338,14 +338,11 @@ public abstract partial class SharedStunSystem : EntitySystem
             return false;
 
         var standingLayer = StandingStateSystem.StandingCollisionLayer;
-        var intersecting = _physics.GetEntitiesIntersectingBody(uid, standingLayer, false);
-
-        if (intersecting.Count == 0)
-            return false;
-
         var fixtureQuery = GetEntityQuery<FixturesComponent>();
         var xformQuery = GetEntityQuery<TransformComponent>();
         var ourAabb = _entityLookup.GetAABBNoContainer(uid, xformComp.LocalPosition, xformComp.LocalRotation);
+
+        var intersecting = _entityLookup.GetEntitiesIntersecting(xformComp.MapID, ourAabb, LookupFlags.Static | LookupFlags.Dynamic);
 
         foreach (var ent in intersecting)
         {
