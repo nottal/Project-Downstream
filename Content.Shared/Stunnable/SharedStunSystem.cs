@@ -234,12 +234,19 @@ public abstract partial class SharedStunSystem : EntitySystem
 
     private void OnKnockInit(EntityUid uid, KnockedDownComponent component, ComponentInit args)
     {
+        var dirty = false;
+
         if (component.NextUpdate == TimeSpan.Zero)
+        {
             component.NextUpdate = _timing.CurTime + TimeSpan.FromSeconds(0.5f);
+            dirty = true;
+        }
 
         RefreshKnockedMovement(uid, component);
         _standingState.Down(uid, true, false);
-        Dirty(uid, component);
+
+        if (dirty)
+            Dirty(uid, component);
     }
 
     private void OnKnockShutdown(EntityUid uid, KnockedDownComponent component, ComponentShutdown args)
@@ -293,7 +300,14 @@ public abstract partial class SharedStunSystem : EntitySystem
             return;
 
         if (args.DamageDelta.GetTotal() >= component.KnockdownDamageThreshold)
-            knocked.NextUpdate = _timing.CurTime + component.DefaultKnockedDuration;
+        {
+            var nextUpdate = _timing.CurTime + component.DefaultKnockedDuration;
+            if (knocked.NextUpdate < nextUpdate)
+            {
+                knocked.NextUpdate = nextUpdate;
+                Dirty(uid, knocked);
+            }
+        }
     }
 
     private void OnHandEquippedWhileKnocked(EntityUid uid, KnockedDownComponent component, ref DidEquipHandEvent args)
@@ -351,8 +365,11 @@ public abstract partial class SharedStunSystem : EntitySystem
         }
 
         var stand = !knocked.DoAfterId.HasValue;
-        knocked.AutoStand = stand;
-        Dirty(uid, knocked);
+        if (knocked.AutoStand != stand)
+        {
+            knocked.AutoStand = stand;
+            Dirty(uid, knocked);
+        }
 
         if (!stand || !TryStanding(uid, knocked, popupOnBlocked: true))
         {
@@ -541,7 +558,7 @@ public abstract partial class SharedStunSystem : EntitySystem
         if (!TryKnockdown(uid, time.Value, refresh))
             return false;
 
-        if (TryComp(uid, out KnockedDownComponent? knocked))
+        if (TryComp(uid, out KnockedDownComponent? knocked) && knocked.AutoStand != autoStand)
         {
             knocked.AutoStand = autoStand;
             Dirty(uid, knocked);
@@ -569,9 +586,23 @@ public abstract partial class SharedStunSystem : EntitySystem
 
         if (TryComp(uid, out KnockedDownComponent? knocked))
         {
-            knocked.NextUpdate = _timing.CurTime + time;
-            knocked.AutoStand = true;
-            Dirty(uid, knocked);
+            var dirty = false;
+            var nextUpdate = _timing.CurTime + time;
+
+            if (knocked.NextUpdate < nextUpdate)
+            {
+                knocked.NextUpdate = nextUpdate;
+                dirty = true;
+            }
+
+            if (!knocked.AutoStand)
+            {
+                knocked.AutoStand = true;
+                dirty = true;
+            }
+
+            if (dirty)
+                Dirty(uid, knocked);
         }
 
         var ev = new KnockedDownEvent();
