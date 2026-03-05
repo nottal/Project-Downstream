@@ -318,6 +318,20 @@
 #  - !type:ListingLimitedStockCondition
 #    stock: 1
 
+
+- type: listing
+  id: SpellbookEventTrueChaos
+  name: spellbook-event-true-chaos-name
+  description: spellbook-event-true-chaos-description
+  productAction: ActionTrueChaos
+  cost:
+    WizCoin: 11
+  categories:
+  - SpellbookEvents
+  conditions:
+  - !type:ListingLimitedStockCondition
+    stock: 1
+
 # Upgrades
 - type: listing
   id: SpellbookFireballUpgrade

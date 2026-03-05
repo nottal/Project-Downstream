@@ -276,6 +276,7 @@
     description: ghost-role-information-wizard-desc
     mindRoles:
     - MindRoleGhostRoleSoloAntagonist
+    - MindRoleWizard
     raffle:
       settings: default
   - type: Sprite

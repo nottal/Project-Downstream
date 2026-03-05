@@ -333,6 +333,7 @@
   parent: BaseWizardRule
   id: Wizard
   components:
+  - type: WizardRule
   - type: GameRule
     minPlayers: 10
   - type: AntagSelection

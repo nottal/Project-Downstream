@@ -37,3 +37,6 @@ admin-verb-text-make-thief = Make Thief
 admin-verb-text-make-paradox-clone = Create Paradox Clone
 
 admin-overlay-antag-classic = ANTAG
+
+admin-verb-make-wizard = Make the target into a wizard.
+admin-verb-text-make-wizard = Make Wizard
