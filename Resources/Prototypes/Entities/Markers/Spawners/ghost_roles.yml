@@ -317,8 +317,7 @@
     rules: ghost-role-information-freeagent-rules
     mindRoles:
     - MindRoleGhostRoleFreeAgent
-    raffle:
-      settings: default
+    raffle: null
   - type: Sprite
     layers:
     - sprite: Markers/jobs.rsi
