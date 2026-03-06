@@ -569,7 +569,11 @@ public sealed class GhostRoleSystem : EntitySystem
             return;
         }
 
-        if (player.AttachedEntity is not { } follower || !follower.IsValid() || TerminatingOrDeleted(follower) || !TryComp<TransformComponent>(follower, out _))
+        if (player.AttachedEntity is not { } follower ||
+            !follower.IsValid() ||
+            TerminatingOrDeleted(follower) ||
+            !TryComp<TransformComponent>(follower, out var followerXform) ||
+            followerXform.MapUid == null)
             return;
 
         _followerSystem.StartFollowingEntity(follower, role.Owner);
