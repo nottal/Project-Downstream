@@ -24,6 +24,7 @@
     gloves: ClothingHandsGlovesColorYellow
     back: ToolboxMechanicalFilled
     belt: ClothingBeltUtility
+    id: PrisonerIDCard
     pocket1: Shiv
   storage:
     belt:
@@ -67,6 +68,7 @@
     belt: ClothingBeltSecurityWebbing
     eyes: ClothingEyesGlassesSunglasses
     ears: ClothingHeadsetSecurity
+    id: BountyHunterPDA
     pocket1: Zipties
     pocket2: WeaponPistolMk58
   storage:
