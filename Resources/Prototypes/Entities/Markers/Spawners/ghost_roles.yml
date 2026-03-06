@@ -297,14 +297,14 @@
     rules: ghost-role-information-antagonist-rules
     mindRoles:
     - MindRoleGhostRoleTeamAntagonist
-    raffle:
-      settings: default
+    raffle: null
   - type: Sprite
     layers:
     - sprite: Markers/jobs.rsi
       state: green
-    - sprite: Clothing/Uniforms/Jumpsuit/orange.rsi
+    - sprite: _Funkystation/Clothing/Uniforms/Jumpsuit/color.rsi
       state: icon
+      color: "#ff8c19"
 
 - type: entity
   categories: [ HideSpawnMenu, Spawner ]
