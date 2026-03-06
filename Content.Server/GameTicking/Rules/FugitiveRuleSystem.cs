@@ -15,7 +15,7 @@ using Content.Shared.GameTicking;
 using Content.Shared.GameTicking.Components;
 using Content.Shared.Inventory;
 using Content.Shared.Mind;
-using Content.Shared.Objectives.Components;
+using Content.Server.Objectives.Components;
 using Content.Shared.Mobs;
 using Content.Shared.Mobs.Systems;
 using Content.Shared.Roles;
