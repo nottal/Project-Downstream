@@ -5,6 +5,7 @@
 using Content.Server.Antag;
 using Content.Server.GameTicking.Rules.Components;
 using Content.Server.GridPreloader;
+using Content.Server.Antag.Components;
 using Content.Server.Inventory;
 using Content.Server.Pinpointer;
 using Content.Server.Roles;
@@ -80,11 +81,17 @@ public sealed class FugitiveRuleSystem : GameRuleSystem<FugitiveRuleComponent>
             if (TryFindMaintenanceCoordinates(out var coords) || TryFindRandomTile(out _, out _, out _, out coords))
                 _xform.SetCoordinates(args.EntityUid, coords);
 
+            if (HasComp<GhostRoleAntagSpawnerComponent>(args.EntityUid))
+                return;
+
             UpdateHunterTrackers(ent.Comp);
             return;
         }
 
         if (!args.Def.PrefRoles.Contains("FugitiveHunter"))
+            return;
+
+        if (HasComp<GhostRoleAntagSpawnerComponent>(args.EntityUid))
             return;
 
         ConfigureHunterTrackers(args.EntityUid, ent.Comp);
