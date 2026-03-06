@@ -192,7 +192,7 @@
 - type: entity
   parent: BaseMindRole
   id: MindRoleFugitiveHunter
-  name: Fugitive Hunter Role
+  name: Bounty Hunter
   components:
   - type: MindRole
     antag: false

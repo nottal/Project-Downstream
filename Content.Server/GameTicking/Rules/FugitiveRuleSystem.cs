@@ -5,7 +5,6 @@
 using Content.Server.Antag;
 using Content.Server.GameTicking.Rules.Components;
 using Content.Server.Inventory;
-using Content.Server.Objectives;
 using Content.Server.Objectives.Systems;
 using Content.Server.Pinpointer;
 using Content.Server.Roles;
@@ -13,7 +12,6 @@ using Content.Shared.GameTicking;
 using Content.Shared.GameTicking.Components;
 using Content.Shared.Inventory;
 using Content.Shared.Mind;
-using Content.Server.Objectives.Components;
 using Content.Shared.Mobs;
 using Content.Shared.Mobs.Systems;
 using Content.Shared.Roles;
@@ -39,16 +37,13 @@ public sealed class FugitiveRuleSystem : GameRuleSystem<FugitiveRuleComponent>
     };
 
     private const string FugitiveSurviveObjective = "FugitiveSurviveObjective";
-    private const string FugitiveHunterCaptureObjective = "FugitiveHunterCaptureObjective";
     private const string FugitiveHunterCaptureQuotaObjective = "FugitiveHunterCaptureQuotaObjective";
 
     [Dependency] private readonly InventorySystem _inventory = default!;
     [Dependency] private readonly MobStateSystem _mobState = default!;
     [Dependency] private readonly SharedMindSystem _mind = default!;
-    [Dependency] private readonly ObjectivesSystem _objectives = default!;
     [Dependency] private readonly PinpointerSystem _pinpointer = default!;
     [Dependency] private readonly SharedRoleSystem _role = default!;
-    [Dependency] private readonly TargetObjectiveSystem _targetObjective = default!;
     [Dependency] private readonly TransformSystem _xform = default!;
 
     public override void Initialize()
@@ -140,33 +135,8 @@ public sealed class FugitiveRuleSystem : GameRuleSystem<FugitiveRuleComponent>
         if (!_mind.TryGetMind(hunter, out var hunterMindId, out var hunterMind))
             return;
 
-        var fugitives = GetMindsWithRole<FugitiveRoleComponent>()
-            .Select(m => m.Comp.OwnedEntity)
-            .Where(uid => uid != null)
-            .Select(uid => uid!.Value)
-            .ToList();
-
-        if (fugitives.Count == 0)
-            return;
-
         EnsureHunterCaptureQuotaObjective(hunterMindId, hunterMind);
-
-        foreach (var fugitive in fugitives)
-        {
-            if (!_mind.TryGetMind(fugitive, out var fugitiveMindId, out _))
-                continue;
-
-            if (HasCaptureObjective(hunterMind, fugitiveMindId))
-                continue;
-
-            if (_objectives.TryCreateObjective(hunterMindId, hunterMind, FugitiveHunterCaptureObjective) is not { } objective)
-                continue;
-
-            _targetObjective.SetTarget(objective, fugitiveMindId);
-            _mind.AddObjective(hunterMindId, hunterMind, objective);
-        }
     }
-
 
     private void RegisterFugitive(FugitiveRuleComponent rule, EntityUid fugitive)
     {
@@ -203,21 +173,6 @@ public sealed class FugitiveRuleSystem : GameRuleSystem<FugitiveRuleComponent>
             break;
         }
     }
-    private bool HasCaptureObjective(MindComponent hunterMind, EntityUid fugitiveMindId)
-    {
-        foreach (var objective in hunterMind.Objectives)
-        {
-            if (MetaData(objective).EntityPrototype?.ID != FugitiveHunterCaptureObjective)
-                continue;
-
-            if (!TryComp<TargetObjectiveComponent>(objective, out var target) || target.Target != fugitiveMindId)
-                continue;
-
-            return true;
-        }
-
-        return false;
-    }
 
     private void OnFugitiveBriefing(Entity<FugitiveRoleComponent> ent, ref GetBriefingEvent args)
     {
@@ -227,6 +182,8 @@ public sealed class FugitiveRuleSystem : GameRuleSystem<FugitiveRuleComponent>
 
     private void OnFugitiveHunterBriefing(Entity<FugitiveHunterRoleComponent> ent, ref GetBriefingEvent args)
     {
+        args.Append(Loc.GetString("fugitive-hunter-role-briefing-preference"));
+
         var fugitives = GetMindsWithRole<FugitiveRoleComponent>();
         if (fugitives.Count == 0)
         {
@@ -275,22 +232,23 @@ public sealed class FugitiveRuleSystem : GameRuleSystem<FugitiveRuleComponent>
         }
     }
 
-    private EntityUid? GetRandomFugitiveJumpsuit()
+    private EntityUid? GetRandomFugitiveTrackedClothing()
     {
-        var suits = new List<EntityUid>();
-        foreach (var fugitiveMind in GetMindsWithRole<FugitiveRoleComponent>())
-        {
-            if (fugitiveMind.Comp.OwnedEntity is not { } fugitive)
-                continue;
+        var fugitives = GetMindsWithRole<FugitiveRoleComponent>()
+            .Where(m => m.Comp.OwnedEntity != null)
+            .ToList();
 
-            if (_inventory.TryGetSlotEntity(fugitive, "jumpsuit", out var jumpsuitUid) && jumpsuitUid != null)
-                suits.Add(jumpsuitUid.Value);
-        }
-
-        if (suits.Count == 0)
+        if (fugitives.Count == 0)
             return null;
 
-        return suits[RobustRandom.Next(suits.Count)];
+        var fugitive = fugitives[RobustRandom.Next(fugitives.Count)].Comp.OwnedEntity!.Value;
+        foreach (var slot in new[] { "jumpsuit", "outerClothing", "id" })
+        {
+            if (_inventory.TryGetSlotEntity(fugitive, slot, out var clothing) && clothing != null)
+                return clothing.Value;
+        }
+
+        return null;
     }
 
     private void OnBountyTrackerExamined(Entity<FugitiveBountyPinpointerComponent> ent, ref ExaminedEvent args)
@@ -328,10 +286,10 @@ public sealed class FugitiveRuleSystem : GameRuleSystem<FugitiveRuleComponent>
             bounty.ActiveTracking = true;
             bounty.TimeRemaining = bounty.ActiveSeconds;
 
-            var suitTarget = GetRandomFugitiveJumpsuit();
+            var suitTarget = GetRandomFugitiveTrackedClothing();
             var targetName = suitTarget == null
                 ? Loc.GetString("fugitive-hunter-bounty-pinpointer-no-target")
-                : Loc.GetString("fugitive-hunter-bounty-pinpointer-jumpsuit-target", ("jumpsuit", Name(suitTarget.Value)));
+                : Loc.GetString("fugitive-hunter-bounty-pinpointer-clothing-target", ("clothing", Name(suitTarget.Value)));
 
             _pinpointer.SetTargetWithCustomName(uid, suitTarget, targetName, pinpointer);
             _pinpointer.SetActive(uid, suitTarget != null, pinpointer);

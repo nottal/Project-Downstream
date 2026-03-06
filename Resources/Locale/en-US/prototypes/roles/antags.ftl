@@ -77,4 +77,4 @@ roles-antag-malfunctioning-ai-objective = Sabotage the station as a malfunctioni
 roles-antag-fugitive-name = Fugitive
 roles-antag-fugitive-objective = Avoid capture by the fugitive hunters and survive as your assigned fugitive identity.
 roles-antag-fugitive-hunter-name = Fugitive Hunter
-roles-antag-fugitive-hunter-objective = You are a free-agent bounty hunter. Hunt down and capture all assigned fugitive bounties.
+roles-antag-fugitive-hunter-objective = You are a Bounty Hunter commissioned by the Greyhold Mercenary Company. Hunt down and capture all assigned fugitive bounties.
