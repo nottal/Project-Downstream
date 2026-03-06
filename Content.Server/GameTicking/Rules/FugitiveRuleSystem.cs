@@ -27,6 +27,18 @@ namespace Content.Server.GameTicking.Rules;
 
 public sealed class FugitiveRuleSystem : GameRuleSystem<FugitiveRuleComponent>
 {
+    private readonly record struct FugitiveRoundEndStats(
+        int TotalFugitives,
+        int AliveFugitives,
+        int DeadFugitives,
+        int CapturedFugitives,
+        int CapturedAliveFugitives,
+        int CapturedDeadFugitives,
+        int TotalHunters,
+        int AliveHunters,
+        int DeadHunters,
+        bool AllHuntersDead);
+
     private static readonly HashSet<string> MaintenanceSpawnerPrototypes = new()
     {
         "MaintenanceFluffSpawner",
@@ -242,25 +254,6 @@ public sealed class FugitiveRuleSystem : GameRuleSystem<FugitiveRuleComponent>
         _pinpointer.SetActive(tracker, false, pinpointer);
     }
 
-    private EntityUid? GetRandomFugitiveTrackedClothing()
-    {
-        var fugitives = GetMindsWithRole<FugitiveRoleComponent>()
-            .Where(m => m.Comp.OwnedEntity != null)
-            .ToList();
-
-        if (fugitives.Count == 0)
-            return null;
-
-        var fugitive = fugitives[RobustRandom.Next(fugitives.Count)].Comp.OwnedEntity!.Value;
-        foreach (var slot in FugitiveTrackedSlots)
-        {
-            if (_inventory.TryGetSlotEntity(fugitive, slot, out var clothing) && clothing != null)
-                return clothing.Value;
-        }
-
-        return null;
-    }
-
     private void OnBountyTrackerExamined(Entity<FugitiveBountyPinpointerComponent> ent, ref ExaminedEvent args)
     {
         var seconds = (int) Math.Ceiling(Math.Max(0f, ent.Comp.TimeRemaining));
@@ -276,6 +269,8 @@ public sealed class FugitiveRuleSystem : GameRuleSystem<FugitiveRuleComponent>
     public override void Update(float frameTime)
     {
         base.Update(frameTime);
+
+        var trackedClothingTargets = GetTrackedClothingTargets();
 
         var query = EntityQueryEnumerator<FugitiveBountyPinpointerComponent, PinpointerComponent>();
         while (query.MoveNext(out var uid, out var bounty, out var pinpointer))
@@ -293,7 +288,10 @@ public sealed class FugitiveRuleSystem : GameRuleSystem<FugitiveRuleComponent>
             bounty.ActiveTracking = true;
             bounty.TimeRemaining = bounty.ActiveSeconds;
 
-            var suitTarget = GetRandomFugitiveTrackedClothing();
+            var suitTarget = trackedClothingTargets.Count == 0
+                ? null
+                : trackedClothingTargets[RobustRandom.Next(trackedClothingTargets.Count)];
+
             var targetName = suitTarget == null
                 ? Loc.GetString(FugitiveHunterBountyNoTargetLoc)
                 : Loc.GetString("fugitive-hunter-bounty-pinpointer-clothing-target", ("clothing", Name(suitTarget.Value)));
@@ -310,50 +308,26 @@ public sealed class FugitiveRuleSystem : GameRuleSystem<FugitiveRuleComponent>
     {
         base.AppendRoundEndText(uid, component, gameRule, ref args);
 
-        var fugitives = GetMindsWithRole<FugitiveRoleComponent>();
-        var hunters = GetMindsWithRole<FugitiveHunterRoleComponent>();
+        var (fugitives, hunters) = GetFugitiveAndHunterMinds();
+        var stats = ComputeRoundEndStats(component, fugitives, hunters);
 
-        var totalFugitives = Math.Max(component.TotalFugitives, fugitives.Count);
-        var aliveFugitives = 0;
-
-        foreach (var mind in fugitives)
-        {
-            var entity = mind.Comp.OwnedEntity;
-            if (entity != null && _mobState.IsAlive(entity.Value))
-                aliveFugitives++;
-        }
-
-        var capturedFugitives = Math.Min(component.CapturedFugitives, totalFugitives);
-        var deadFugitives = Math.Max(0, totalFugitives - aliveFugitives);
-        var capturedAliveFugitives = Math.Max(0, capturedFugitives - deadFugitives);
-        capturedAliveFugitives = Math.Min(capturedAliveFugitives, aliveFugitives);
-        var capturedDeadFugitives = Math.Max(0, capturedFugitives - capturedAliveFugitives);
-
-        var totalHunters = hunters.Count;
-        var aliveHunters = 0;
-        foreach (var mind in hunters)
-        {
-            var entity = mind.Comp.OwnedEntity;
-            if (entity != null && _mobState.IsAlive(entity.Value))
-                aliveHunters++;
-        }
-
-        var deadHunters = Math.Max(0, totalHunters - aliveHunters);
-        var allHuntersDead = totalHunters > 0 && aliveHunters == 0;
-
-        var outcome = GetOutcome(totalFugitives, aliveFugitives, capturedFugitives, capturedAliveFugitives, allHuntersDead);
+        var outcome = GetOutcome(stats.TotalFugitives,
+            stats.AliveFugitives,
+            stats.CapturedFugitives,
+            stats.CapturedAliveFugitives,
+            stats.AllHuntersDead);
         args.AddLine(Loc.GetString($"fugitive-round-end-{outcome}"));
 
         args.AddLine(Loc.GetString("fugitive-round-end-counts",
-            ("fugitives", totalFugitives),
-            ("alive", aliveFugitives),
-            ("dead", deadFugitives),
-            ("captured", capturedFugitives),
-            ("capturedAlive", capturedAliveFugitives),
-            ("capturedDead", capturedDeadFugitives),
-            ("hunters", totalHunters),
-            ("huntersAlive", aliveHunters),
-            ("huntersDead", deadHunters)));
+            ("fugitives", stats.TotalFugitives),
+            ("alive", stats.AliveFugitives),
+            ("dead", stats.DeadFugitives),
+            ("captured", stats.CapturedFugitives),
+            ("capturedAlive", stats.CapturedAliveFugitives),
+            ("capturedDead", stats.CapturedDeadFugitives),
+            ("hunters", stats.TotalHunters),
+            ("huntersAlive", stats.AliveHunters),
+            ("huntersDead", stats.DeadHunters)));
 
         args.AddLine(Loc.GetString("fugitive-round-end-fugitives-list"));
         foreach (var mind in fugitives)
@@ -404,6 +378,96 @@ public sealed class FugitiveRuleSystem : GameRuleSystem<FugitiveRuleComponent>
             return "stalemate";
 
         return "minor-fugitive-victory";
+    }
+
+    private FugitiveRoundEndStats ComputeRoundEndStats(FugitiveRuleComponent component,
+        IReadOnlyList<Entity<MindComponent>> fugitives,
+        IReadOnlyList<Entity<MindComponent>> hunters)
+    {
+        var totalFugitives = Math.Max(component.TotalFugitives, fugitives.Count);
+        var aliveFugitives = CountAliveOwnedEntities(fugitives);
+
+        var capturedFugitives = Math.Min(component.CapturedFugitives, totalFugitives);
+        var deadFugitives = Math.Max(0, totalFugitives - aliveFugitives);
+        var capturedAliveFugitives = Math.Max(0, capturedFugitives - deadFugitives);
+        capturedAliveFugitives = Math.Min(capturedAliveFugitives, aliveFugitives);
+        var capturedDeadFugitives = Math.Max(0, capturedFugitives - capturedAliveFugitives);
+
+        var totalHunters = hunters.Count;
+        var aliveHunters = CountAliveOwnedEntities(hunters);
+        var deadHunters = Math.Max(0, totalHunters - aliveHunters);
+        var allHuntersDead = totalHunters > 0 && aliveHunters == 0;
+
+        return new FugitiveRoundEndStats(
+            totalFugitives,
+            aliveFugitives,
+            deadFugitives,
+            capturedFugitives,
+            capturedAliveFugitives,
+            capturedDeadFugitives,
+            totalHunters,
+            aliveHunters,
+            deadHunters,
+            allHuntersDead);
+    }
+
+    private int CountAliveOwnedEntities(IReadOnlyList<Entity<MindComponent>> minds)
+    {
+        var aliveCount = 0;
+
+        foreach (var mind in minds)
+        {
+            if (mind.Comp.OwnedEntity is not { } entity)
+                continue;
+
+            if (_mobState.IsAlive(entity))
+                aliveCount++;
+        }
+
+        return aliveCount;
+    }
+
+    private List<EntityUid> GetTrackedClothingTargets()
+    {
+        var targets = new List<EntityUid>();
+        var fugitives = GetMindsWithRole<FugitiveRoleComponent>();
+
+        foreach (var fugitiveMind in fugitives)
+        {
+            if (fugitiveMind.Comp.OwnedEntity is not { } fugitive)
+                continue;
+
+            foreach (var slot in FugitiveTrackedSlots)
+            {
+                if (!_inventory.TryGetSlotEntity(fugitive, slot, out var clothing) || clothing == null)
+                    continue;
+
+                targets.Add(clothing.Value);
+                break;
+            }
+        }
+
+        return targets;
+    }
+
+    private (List<Entity<MindComponent>> Fugitives, List<Entity<MindComponent>> Hunters) GetFugitiveAndHunterMinds()
+    {
+        var fugitives = new List<Entity<MindComponent>>();
+        var hunters = new List<Entity<MindComponent>>();
+
+        var query = EntityQueryEnumerator<MindComponent>();
+        while (query.MoveNext(out var uid, out var mind))
+        {
+            var mindEnt = (uid, mind);
+
+            if (_role.MindHasRole<FugitiveRoleComponent>(mindEnt, out _))
+                fugitives.Add(mindEnt);
+
+            if (_role.MindHasRole<FugitiveHunterRoleComponent>(mindEnt, out _))
+                hunters.Add(mindEnt);
+        }
+
+        return (fugitives, hunters);
     }
 
     private List<Entity<MindComponent>> GetMindsWithRole<TRole>() where TRole : IComponent
