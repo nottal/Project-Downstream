@@ -19,6 +19,7 @@ using Content.Shared.Pinpointer;
 using System.Linq;
 using Robust.Server.GameObjects;
 using Robust.Shared.GameObjects;
+using Robust.Shared.Map;
 
 namespace Content.Server.GameTicking.Rules;
 
