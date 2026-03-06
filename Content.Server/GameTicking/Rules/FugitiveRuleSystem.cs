@@ -4,7 +4,6 @@
 
 using Content.Server.Antag;
 using Content.Server.GameTicking.Rules.Components;
-using Content.Server.GridPreloader;
 using Content.Server.Inventory;
 using Content.Server.Objectives;
 using Content.Server.Objectives.Systems;
@@ -25,9 +24,6 @@ using System.Linq;
 using Robust.Server.GameObjects;
 using Robust.Shared.GameObjects;
 using Robust.Shared.Map;
-using Robust.Shared.EntitySerialization;
-using Robust.Shared.EntitySerialization.Systems;
-using Robust.Shared.Utility;
 
 namespace Content.Server.GameTicking.Rules;
 
@@ -46,10 +42,7 @@ public sealed class FugitiveRuleSystem : GameRuleSystem<FugitiveRuleComponent>
     private const string FugitiveHunterCaptureObjective = "FugitiveHunterCaptureObjective";
     private const string FugitiveHunterCaptureQuotaObjective = "FugitiveHunterCaptureQuotaObjective";
 
-    [Dependency] private readonly GridPreloaderSystem _gridPreloader = default!;
     [Dependency] private readonly InventorySystem _inventory = default!;
-    [Dependency] private readonly MapSystem _map = default!;
-    [Dependency] private readonly MapLoaderSystem _mapLoader = default!;
     [Dependency] private readonly MobStateSystem _mobState = default!;
     [Dependency] private readonly SharedMindSystem _mind = default!;
     [Dependency] private readonly ObjectivesSystem _objectives = default!;
@@ -67,56 +60,16 @@ public sealed class FugitiveRuleSystem : GameRuleSystem<FugitiveRuleComponent>
         SubscribeLocalEvent<FugitiveHunterRoleComponent, GetBriefingEvent>(OnFugitiveHunterBriefing);
         SubscribeLocalEvent<FugitiveBountyPinpointerComponent, ExaminedEvent>(OnBountyTrackerExamined);
         SubscribeLocalEvent<FugitiveCapturedEvent>(OnFugitiveCaptured);
+        SubscribeLocalEvent<FugitiveRuleComponent, RuleLoadedGridsEvent>(OnRuleLoadedGrids);
     }
 
-    protected override void Added(EntityUid uid, FugitiveRuleComponent component, GameRuleComponent gameRule, GameRuleAddedEvent args)
+    private void OnRuleLoadedGrids(Entity<FugitiveRuleComponent> ent, ref RuleLoadedGridsEvent args)
     {
-        base.Added(uid, component, gameRule, args);
-
-        EntityUid? shuttle = null;
-        if (component.HunterShuttles.Count > 0)
+        ent.Comp.HunterShuttleGrids.Clear();
+        foreach (var grid in args.Grids)
         {
-            var startIndex = RobustRandom.Next(component.HunterShuttles.Count);
-            for (var offset = 0; offset < component.HunterShuttles.Count; offset++)
-            {
-                var index = (startIndex + offset) % component.HunterShuttles.Count;
-                var shuttleProto = component.HunterShuttles[index];
-                if (!_gridPreloader.TryGetPreloadedGrid(shuttleProto, out var loadedShuttle) || loadedShuttle is not { } loaded)
-                    continue;
-
-                shuttle = loaded;
-                break;
-            }
+            ent.Comp.HunterShuttleGrids.Add(grid);
         }
-
-        if (shuttle is not { } hunterShuttle)
-        {
-            // Fallback: always load a small cargo shuttle map so the rule can still function
-            // even if preloaded grids are unavailable.
-            _map.CreateMap(out var mapId);
-            var opts = DeserializationOptions.Default with { InitializeMaps = true };
-            if (!_mapLoader.TryLoadGrid(mapId, new ResPath("/Maps/Shuttles/ShuttleEvent/fugitive_ship.yml"), out var loadedGrid, opts))
-            {
-                Log.Error($"Failed to load any fugitive hunter shuttle for rule {ToPrettyString(uid)}.");
-                ForceEndSelf(uid, gameRule);
-                return;
-            }
-
-            hunterShuttle = loadedGrid.Value.Owner;
-            component.HunterShuttleGrids.Add(hunterShuttle);
-            var fallbackEv = new RuleLoadedGridsEvent(mapId, new List<EntityUid> { hunterShuttle });
-            RaiseLocalEvent(uid, ref fallbackEv);
-            return;
-        }
-
-        var mapUid = _map.CreateMap(out var preloadedMapId, runMapInit: false);
-        _xform.SetParent(hunterShuttle, mapUid);
-        _map.InitializeMap(mapUid);
-
-        component.HunterShuttleGrids.Add(hunterShuttle);
-
-        var loadedEv = new RuleLoadedGridsEvent(preloadedMapId, new List<EntityUid> { hunterShuttle });
-        RaiseLocalEvent(uid, ref loadedEv);
     }
 
     private void OnAfterAntagSelected(Entity<FugitiveRuleComponent> ent, ref AfterAntagEntitySelectedEvent args)

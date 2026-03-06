@@ -874,6 +874,8 @@
       Combat: 80
       Death: 80
   - type: RuleGrids
+  - type: LoadMapRule
+    gridPath: /Maps/Shuttles/ShuttleEvent/fugitive_ship.yml
   - type: FugitiveRule
   - type: AntagLoadProfileRule
     speciesOverride: Human
@@ -885,7 +887,8 @@
       min: 3
       max: 3
       playerRatio: 15
-      pickPlayer: true
+      pickPlayer: false
+      spawnerPrototype: SpawnPointGhostFugitive
       briefing:
         sound: "/Audio/Ambience/Antag/headrev_start.ogg"
       blacklist:
