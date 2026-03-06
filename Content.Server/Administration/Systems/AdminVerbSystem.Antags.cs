@@ -98,7 +98,7 @@ public sealed partial class AdminVerbSystem
         var rule = _antag.ForceGetGameRuleEnt<TRule>(defaultRule);
         var definition = rule.Comp.Definitions.FirstOrDefault(def => def.PrefRoles.Contains(prefRole));
 
-        if (definition.Equals(default(AntagSelectionDefinition)))
+        if (definition.PrefRoles == null || !definition.PrefRoles.Contains(prefRole))
             return;
 
         _antag.MakeAntag(rule, player, definition);
