@@ -8,7 +8,6 @@ using Content.Server.Ghost;
 using Content.Server.Popups;
 using Content.Server.Roles;
 using Content.Server.Storage.Components;
-using Content.Shared.Cuffs.Components;
 using Content.Shared.GameTicking.Components;
 using Content.Shared.Mind;
 using Content.Shared.Roles;
@@ -51,12 +50,10 @@ public sealed class FugitiveCaptureLockerSystem : EntitySystem
     private void ConfirmCapture(EntityUid locker, EntityUid user, EntityStorageComponent storage)
     {
         var occupants = new List<EntityUid>(storage.Contents.ContainedEntities);
+        var capturedAny = false;
         foreach (var occupant in occupants)
         {
-            if (!TryComp<CuffableComponent>(occupant, out var cuffable) || cuffable.CuffedHandCount <= 0)
-                continue;
-
-            if (!_mind.TryGetMind(occupant, out var mindId, out var mind) || !_role.MindHasRole<FugitiveRoleComponent>(mindId, out _))
+            if (!_mind.TryGetMind(occupant, out var mindId, out var mind) || !_role.MindHasRole<FugitiveRoleComponent>((mindId, mind), out _))
                 continue;
 
             // Send target to ghost and round-remove their body.
@@ -65,11 +62,13 @@ public sealed class FugitiveCaptureLockerSystem : EntitySystem
 
             var ev = new FugitiveCapturedEvent(mindId);
             RaiseLocalEvent(ev);
-            _popup.PopupEntity(Loc.GetString("fugitive-capture-locker-success"), locker, user);
-            return;
+            capturedAny = true;
         }
 
-        _popup.PopupEntity(Loc.GetString("fugitive-capture-locker-incorrect-target"), locker, user);
+        if (capturedAny)
+            _popup.PopupEntity(Loc.GetString("fugitive-capture-locker-success"), locker, user);
+        else
+            _popup.PopupEntity(Loc.GetString("fugitive-capture-locker-incorrect-target"), locker, user);
     }
 }
 
