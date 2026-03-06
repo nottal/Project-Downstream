@@ -327,14 +327,14 @@ public sealed class FugitiveRuleSystem : GameRuleSystem<FugitiveRuleComponent>
             if (fugitiveMind.Comp.OwnedEntity is not { } fugitive)
                 continue;
 
-            if (_inventory.TryGetSlotEntity(fugitive, "jumpsuit", out var jumpsuit))
-                suits.Add(jumpsuit);
+            if (_inventory.TryGetSlotEntity(fugitive, "jumpsuit", out var jumpsuitUid) && jumpsuitUid != null)
+                suits.Add(jumpsuitUid.Value);
         }
 
         if (suits.Count == 0)
             return null;
 
-        return RobustRandom.Pick(suits);
+        return suits[RobustRandom.Next(suits.Count)];
     }
 
     private void OnBountyTrackerExamined(Entity<FugitiveBountyPinpointerComponent> ent, ref ExaminedEvent args)

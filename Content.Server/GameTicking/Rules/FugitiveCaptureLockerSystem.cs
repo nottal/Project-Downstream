@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 
+using System.Collections.Generic;
 using Content.Server.GameTicking.Rules.Components;
 using Content.Server.Ghost;
 using Content.Server.Popups;
@@ -38,26 +39,28 @@ public sealed class FugitiveCaptureLockerSystem : EntitySystem
         if (!TryComp<EntityStorageComponent>(ent, out var storage) || storage.Open)
             return;
 
+        var user = args.User;
         args.Verbs.Add(new InteractionVerb
         {
             Text = Loc.GetString("fugitive-capture-locker-confirm"),
             Priority = 5,
-            Act = () => ConfirmCapture(ent.Owner, args.User, storage)
+            Act = () => ConfirmCapture(ent.Owner, user, storage)
         });
     }
 
     private void ConfirmCapture(EntityUid locker, EntityUid user, EntityStorageComponent storage)
     {
-        foreach (var occupant in storage.Contents.ContainedEntities.ToArray())
+        var occupants = new List<EntityUid>(storage.Contents.ContainedEntities);
+        foreach (var occupant in occupants)
         {
             if (!TryComp<CuffableComponent>(occupant, out var cuffable) || cuffable.CuffedHandCount <= 0)
                 continue;
 
-            if (!_mind.TryGetMind(occupant, out var mindId, out var mind) || !_role.MindHasRole<FugitiveRoleComponent>((mindId, mind), out _))
+            if (!_mind.TryGetMind(occupant, out var mindId, out var mind) || !_role.MindHasRole<FugitiveRoleComponent>(mindId, out _))
                 continue;
 
             // Send target to ghost and round-remove their body.
-            _ghost.SpawnGhost((mindId, mind), Transform(locker).Coordinates, canReturn: false);
+            _ghost.SpawnGhost((mindId, (MindComponent?) mind), spawnPosition: Transform(locker).Coordinates, canReturn: false);
             QueueDel(occupant);
 
             var ev = new FugitiveCapturedEvent(mindId);
