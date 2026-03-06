@@ -11,8 +11,8 @@ using Content.Server.Storage.Components;
 using Content.Shared.GameTicking.Components;
 using Content.Shared.Mind;
 using Content.Shared.Roles;
-using Robust.Server.GameObjects;
 using Content.Shared.Verbs;
+using Robust.Server.GameObjects;
 
 namespace Content.Server.GameTicking.Rules;
 
@@ -53,25 +53,18 @@ public sealed class FugitiveCaptureLockerSystem : EntitySystem
         var capturedAny = false;
         foreach (var occupant in occupants)
         {
-            if (!TryComp<FugitiveCaptureTargetComponent>(occupant, out var fugitiveTarget) || fugitiveTarget.Captured)
+            if (!TryComp<FugitiveCaptureTargetComponent>(occupant, out var target) || target.Captured)
                 continue;
 
-            fugitiveTarget.Captured = true;
+            if (!TryGetFugitiveMind(occupant, out var fugitiveMindEnt))
+                continue;
 
-            EntityUid? fugitiveMindId = null;
-            MindComponent? fugitiveMind = null;
-            if (_mind.TryGetMind(occupant, out var mindId, out var mind) && _role.MindHasRole<FugitiveRoleComponent>((mindId, mind), out _))
-            {
-                fugitiveMindId = mindId;
-                fugitiveMind = mind;
-            }
+            target.Captured = true;
 
-            if (fugitiveMindId != null)
-                _ghost.SpawnGhost((fugitiveMindId.Value, fugitiveMind), spawnPosition: Transform(locker).Coordinates, canReturn: false);
-
+            _ghost.SpawnGhost(fugitiveMindEnt.Value, spawnPosition: Transform(locker).Coordinates, canReturn: false);
             QueueDel(occupant);
 
-            var ev = new FugitiveCapturedEvent(occupant, fugitiveMindId);
+            var ev = new FugitiveCapturedEvent(occupant, fugitiveMindEnt.Value.Owner);
             RaiseLocalEvent(ev);
             capturedAny = true;
         }
@@ -80,6 +73,20 @@ public sealed class FugitiveCaptureLockerSystem : EntitySystem
             _popup.PopupEntity(Loc.GetString("fugitive-capture-locker-success"), locker, user);
         else
             _popup.PopupEntity(Loc.GetString("fugitive-capture-locker-incorrect-target"), locker, user);
+    }
+
+    private bool TryGetFugitiveMind(EntityUid occupant, out Entity<MindComponent>? fugitiveMind)
+    {
+        fugitiveMind = null;
+
+        if (!_mind.TryGetMind(occupant, out var mindId, out var mind))
+            return false;
+
+        if (!_role.MindHasRole<FugitiveRoleComponent>((mindId, mind), out _))
+            return false;
+
+        fugitiveMind = (mindId, mind);
+        return true;
     }
 }
 
