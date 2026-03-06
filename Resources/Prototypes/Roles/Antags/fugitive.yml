@@ -65,7 +65,7 @@
     outerClothing: ClothingOuterArmorBasic
     gloves: ClothingHandsGlovesCombat
     back: ClothingBackpackMerc
-    belt: ClothingBeltSecurityFilled
+    belt: ClothingBeltSecurity
     eyes: ClothingEyesGlassesSunglasses
     ears: ClothingHeadsetSecurity
     id: BountyHunterPDA
@@ -79,5 +79,6 @@
     - Handcuffs
     - Handcuffs
     - Stunbaton
+    - MedkitCombatStasiziumFilled
     - PinpointerFugitiveShip
     - PinpointerFugitiveBounty
