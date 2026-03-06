@@ -18,8 +18,8 @@
 - type: entity
   parent: BaseObjective
   id: FugitiveHunterCaptureQuotaObjective
-  name: Captured these Fugitive(s), they are wanted dead or alive.
-  description: Captured these Fugitive(s), they are wanted dead or alive.
+  name: These fugitive(s) are wanted and must be brought dead or alive.
+  description: These fugitive(s) are wanted and must be brought dead or alive.
   components:
   - type: Objective
     difficulty: 1.0
