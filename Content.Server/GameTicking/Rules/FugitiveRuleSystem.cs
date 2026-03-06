@@ -24,6 +24,9 @@ using System.Linq;
 using Robust.Server.GameObjects;
 using Robust.Shared.GameObjects;
 using Robust.Shared.Map;
+using Robust.Shared.EntitySerialization;
+using Robust.Shared.EntitySerialization.Systems;
+using Robust.Shared.Utility;
 
 namespace Content.Server.GameTicking.Rules;
 
@@ -44,6 +47,7 @@ public sealed class FugitiveRuleSystem : GameRuleSystem<FugitiveRuleComponent>
     [Dependency] private readonly GridPreloaderSystem _gridPreloader = default!;
     [Dependency] private readonly InventorySystem _inventory = default!;
     [Dependency] private readonly MapSystem _map = default!;
+    [Dependency] private readonly MapLoaderSystem _mapLoader = default!;
     [Dependency] private readonly MobStateSystem _mobState = default!;
     [Dependency] private readonly SharedMindSystem _mind = default!;
     [Dependency] private readonly ObjectivesSystem _objectives = default!;
@@ -83,18 +87,31 @@ public sealed class FugitiveRuleSystem : GameRuleSystem<FugitiveRuleComponent>
 
         if (shuttle is not { } hunterShuttle)
         {
-            Log.Error($"Failed to load any fugitive hunter shuttle for rule {ToPrettyString(uid)}.");
-            ForceEndSelf(uid, gameRule);
+            // Fallback: always load a small cargo shuttle map so the rule can still function
+            // even if preloaded grids are unavailable.
+            _map.CreateMap(out var mapId);
+            var opts = DeserializationOptions.Default with { InitializeMaps = true };
+            if (!_mapLoader.TryLoadGrid(mapId, new ResPath("/Maps/Shuttles/ShuttleEvent/lost_cargo.yml"), out var loadedGrid, opts))
+            {
+                Log.Error($"Failed to load any fugitive hunter shuttle for rule {ToPrettyString(uid)}.");
+                ForceEndSelf(uid, gameRule);
+                return;
+            }
+
+            hunterShuttle = loadedGrid.Value.Owner;
+            component.HunterShuttleGrids.Add(hunterShuttle);
+            var fallbackEv = new RuleLoadedGridsEvent(mapId, new List<EntityUid> { hunterShuttle });
+            RaiseLocalEvent(uid, ref fallbackEv);
             return;
         }
 
-        var mapUid = _map.CreateMap(out var mapId, runMapInit: false);
+        var mapUid = _map.CreateMap(out var preloadedMapId, runMapInit: false);
         _xform.SetParent(hunterShuttle, mapUid);
         _map.InitializeMap(mapUid);
 
         component.HunterShuttleGrids.Add(hunterShuttle);
 
-        var loadedEv = new RuleLoadedGridsEvent(mapId, new List<EntityUid> { hunterShuttle });
+        var loadedEv = new RuleLoadedGridsEvent(preloadedMapId, new List<EntityUid> { hunterShuttle });
         RaiseLocalEvent(uid, ref loadedEv);
     }
 

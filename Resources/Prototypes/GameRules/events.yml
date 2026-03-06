@@ -865,7 +865,7 @@
   - type: StationEvent
     earliestStart: 30
     minimumPlayers: 25
-    weight: 1.55102
+    weight: 4
     duration: null
     maxOccurrences: 1
     chaos:
@@ -875,7 +875,7 @@
       Death: 80
   - type: RuleGrids
   - type: FugitiveRule
-    hunterShuttles: [ SyndieEvacPod ]
+    hunterShuttles: [ ShuttleCargoLost ]
   - type: AntagLoadProfileRule
     speciesOverride: Human
     speciesOverrideBlacklist:
