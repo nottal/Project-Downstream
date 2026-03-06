@@ -114,7 +114,7 @@ public sealed class FugitiveRuleSystem : GameRuleSystem<FugitiveRuleComponent>
         if (candidates.Count == 0)
             return false;
 
-        coords = RobustRandom.Pick(candidates);
+        coords = candidates[RobustRandom.Next(candidates.Count)];
         return true;
     }
 
