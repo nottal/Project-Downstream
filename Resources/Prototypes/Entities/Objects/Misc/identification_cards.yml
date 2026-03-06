@@ -724,6 +724,11 @@
   components:
   - type: IdCard
     jobTitle: Bounty Hunter
+  - type: Access
+    tags:
+    - Maintenance
+    - External
+    - Cargo
 
 
 - type: entity

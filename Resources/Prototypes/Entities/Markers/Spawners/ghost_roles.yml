@@ -297,7 +297,8 @@
     rules: ghost-role-information-antagonist-rules
     mindRoles:
     - MindRoleGhostRoleTeamAntagonist
-    raffle: null
+    raffle:
+      settings: default
   - type: Sprite
     layers:
     - sprite: Markers/jobs.rsi
@@ -317,7 +318,8 @@
     rules: ghost-role-information-freeagent-rules
     mindRoles:
     - MindRoleGhostRoleFreeAgent
-    raffle: null
+    raffle:
+      settings: default
   - type: Sprite
     layers:
     - sprite: Markers/jobs.rsi

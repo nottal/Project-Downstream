@@ -861,6 +861,11 @@ entities:
     - type: Transform
       pos: -2.5,7.5
       parent: 1
+  - uid: 188
+    components:
+    - type: Transform
+      pos: -1.5,2.5
+      parent: 1
 - proto: PlasticFlapsAirtightClear
   entities:
   - uid: 116
@@ -1390,4 +1395,9 @@ entities:
     components:
     - type: Transform
       pos: -2.5,7.5
+      parent: 1
+  - uid: 3003
+    components:
+    - type: Transform
+      pos: -1.5,2.5
       parent: 1
