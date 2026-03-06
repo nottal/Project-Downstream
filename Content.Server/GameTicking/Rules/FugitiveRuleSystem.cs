@@ -60,17 +60,33 @@ public sealed class FugitiveRuleSystem : GameRuleSystem<FugitiveRuleComponent>
         if (component.HunterShuttles.Count == 0)
             return;
 
-        var shuttleProto = component.HunterShuttles[RobustRandom.Next(component.HunterShuttles.Count)];
-        if (!_gridPreloader.TryGetPreloadedGrid(shuttleProto, out var loadedShuttle) || loadedShuttle is not { } shuttle)
+        EntityUid? shuttle = null;
+        var startIndex = RobustRandom.Next(component.HunterShuttles.Count);
+        for (var offset = 0; offset < component.HunterShuttles.Count; offset++)
+        {
+            var index = (startIndex + offset) % component.HunterShuttles.Count;
+            var shuttleProto = component.HunterShuttles[index];
+            if (!_gridPreloader.TryGetPreloadedGrid(shuttleProto, out var loadedShuttle) || loadedShuttle is not { } loaded)
+                continue;
+
+            shuttle = loaded;
+            break;
+        }
+
+        if (shuttle is not { } hunterShuttle)
+        {
+            Log.Error($"Failed to load any fugitive hunter shuttle for rule {ToPrettyString(uid)}.");
+            ForceEndSelf(uid, gameRule);
             return;
+        }
 
         var mapUid = _map.CreateMap(out var mapId, runMapInit: false);
-        _xform.SetParent(shuttle, mapUid);
+        _xform.SetParent(hunterShuttle, mapUid);
         _map.InitializeMap(mapUid);
 
-        component.HunterShuttleGrids.Add(shuttle);
+        component.HunterShuttleGrids.Add(hunterShuttle);
 
-        var loadedEv = new RuleLoadedGridsEvent(mapId, new List<EntityUid> { shuttle });
+        var loadedEv = new RuleLoadedGridsEvent(mapId, new List<EntityUid> { hunterShuttle });
         RaiseLocalEvent(uid, ref loadedEv);
     }
 
