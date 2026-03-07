@@ -88,3 +88,7 @@ Most media assets are licensed under [CC-BY-SA 3.0](https://creativecommons.org/
 Note that some assets are licensed under the non-commercial [CC-BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/) or similar non-commercial licenses and will need to be removed if you wish to use this project commercially.
 
 If you find that your work is misattributed or someone elses work is misattributed, please create an issue on this repos GitHub page, or contact via the discord.
+
+
+## Disclaimer
+AI was used for coding assistance to makeup for lack of familiarity with the codebase. No assets, textures, soundfiles, or artwork was created or modified by AI. This also includes SOP, guidebooks, writing and other apsects of the fork to further emphasize this point. This will be phased out/halted as proper collaborators and maintainers are acquired. This is mainly due to us wanting to create an experience but not having fully established coders/maintainers to make it happen. We want to be as transparent as possible as that's our motto for our server, so we are putting it on our git and in the server collaborator info as well! :)
