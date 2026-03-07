@@ -866,7 +866,7 @@
   - type: StationEvent
     earliestStart: 30
     minimumPlayers: 25
-    weight: 4
+    weight: 5
     duration: null
     maxOccurrences: 1
     chaos:
@@ -879,9 +879,6 @@
     gridPath: /Maps/Shuttles/ShuttleEvent/fugitive_ship.yml
   - type: FugitiveRule
   - type: AntagLoadProfileRule
-    speciesOverride: Human
-    speciesOverrideBlacklist:
-    - IPC
   - type: AntagSelection
     definitions:
     - prefRoles: [ Fugitive ]
@@ -941,18 +938,14 @@
     fugitivePrefRole: InitialInfected
     fugitiveObjectivePrototype: InitialInfectedFugitiveObjective
     hunterObjectivePrototypes:
-    - CBURNContainOutbreakObjective
     - CBURNReclaimExperimentsObjective
     hunterBriefingPrefLoc: cburn-hunter-role-briefing-preference
     hunterBriefingTargetsLoc: cburn-hunter-role-briefing
     hunterBriefingNoTargetsLoc: cburn-hunter-role-briefing-no-targets
     shipPinpointerTargetLoc: cburn-hunter-ship-pinpointer-target
     fugitivesAreInitialInfected: true
-    initialInfectedGraceSeconds: 180
+    initialInfectedGraceSeconds: 360
   - type: AntagLoadProfileRule
-    speciesOverride: Human
-    speciesOverrideBlacklist:
-    - IPC
   - type: AntagSelection
     definitions:
     - prefRoles: [ InitialInfected ]
@@ -960,7 +953,7 @@
       max: 3
       playerRatio: 15
       pickPlayer: false
-      spawnerPrototype: SpawnPointGhostFugitive
+      spawnerPrototype: SpawnPointGhostEscapedExperiment
       briefing:
         sound: "/Audio/Ambience/Antag/zombie_start.ogg"
       blacklist:
@@ -972,27 +965,33 @@
         - NamesFirst
         - NamesLast
       - type: FugitiveCaptureTarget
+      - type: AutoImplant
+        implants:
+        - FreedomImplant
       - type: PendingZombie
-        minInitialInfectedGrace: 180
-        maxInitialInfectedGrace: 180
+        minInitialInfectedGrace: 360
+        maxInitialInfectedGrace: 360
       - type: ZombifyOnDeath
       - type: IncurableZombie
       - type: InitialInfected
-      startingGear: FugitiveGear
+      startingGear: CBURNEscapedExperimentGear
       mindRoles:
-      - MindRoleFugitive
+      - MindRoleEscapedExperiment
       - MindRoleInitialInfected
     - prefRoles: [ FugitiveHunter ]
       min: 3
       max: 3
       playerRatio: 15
       pickPlayer: false
-      spawnerPrototype: SpawnPointGhostFugitiveHunter
+      spawnerPrototype: SpawnPointGhostCBURNAgent
       components:
       - type: RandomMetadata
         nameSegments:
         - NamesMilitaryFirst
         - NamesMilitaryLast
+      - type: AutoImplant
+        implants:
+        - MindShieldImplant
       startingGear: CBURNFugitiveHunterGear
       mindRoles:
-      - MindRoleFugitiveHunter
+      - MindRoleCBURNFugitiveHunter

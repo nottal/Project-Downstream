@@ -74,10 +74,7 @@ public sealed class FugitiveRuleSystem : GameRuleSystem<FugitiveRuleComponent>
     private void OnRuleLoadedGrids(Entity<FugitiveRuleComponent> ent, ref RuleLoadedGridsEvent args)
     {
         ent.Comp.HunterShuttleGrids.Clear();
-        foreach (var grid in args.Grids)
-        {
-            ent.Comp.HunterShuttleGrids.Add(grid);
-        }
+        ent.Comp.HunterShuttleGrids.UnionWith(args.Grids);
     }
 
     private void OnAfterAntagSelected(Entity<FugitiveRuleComponent> ent, ref AfterAntagEntitySelectedEvent args)

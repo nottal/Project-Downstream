@@ -355,3 +355,44 @@
       state: green
     - sprite: Objects/Misc/handcuffs.rsi
       state: handcuff
+
+- type: entity
+  categories: [ HideSpawnMenu, Spawner ]
+  parent: BaseAntagSpawner
+  id: SpawnPointGhostEscapedExperiment
+  components:
+  - type: GhostRole
+    name: roles-antag-escaped-experiment-name
+    description: roles-antag-escaped-experiment-objective
+    rules: ghost-role-information-antagonist-rules
+    mindRoles:
+    - MindRoleGhostRoleTeamAntagonist
+    raffle:
+      settings: default
+  - type: Sprite
+    layers:
+    - sprite: Markers/jobs.rsi
+      state: green
+    - sprite: _Funkystation/Clothing/Uniforms/Jumpsuit/color.rsi
+      state: icon
+      color: "#8be6ff"
+
+- type: entity
+  categories: [ HideSpawnMenu, Spawner ]
+  parent: BaseAntagSpawner
+  id: SpawnPointGhostCBURNAgent
+  components:
+  - type: GhostRole
+    name: roles-antag-cburn-agent-name
+    description: roles-antag-cburn-agent-ghost-description
+    rules: ghost-role-information-freeagent-rules
+    mindRoles:
+    - MindRoleGhostRoleFreeAgent
+    raffle:
+      settings: default
+  - type: Sprite
+    layers:
+    - sprite: Markers/jobs.rsi
+      state: green
+    - sprite: _Funkystation/Interface/Misc/job_icons.rsi
+      state: CBURN

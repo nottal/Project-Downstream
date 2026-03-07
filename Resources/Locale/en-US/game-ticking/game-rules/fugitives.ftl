@@ -32,11 +32,11 @@ objective-issuer-greyhold = [color=silver]Greyhold Mercenary Company[/color]
 
 cburn-hunter-role-briefing = Escaped initial infected subjects: {$fugitives}
 cburn-hunter-role-briefing-no-targets = Escaped initial infected subjects: pending assignment.
-cburn-hunter-role-briefing-preference = Nanotrasen directive: stop the outbreak from spreading and reclaim every lab experiment.
+cburn-hunter-role-briefing-preference = Your primary objective is to collect the samples from the Initial Infected. The crew is secondary, ensure the bodies are retrieved before you begin assisting or helping crew members. You may use the Initial Infected bodies to develop a cure within the onboard Chemistry Laboratory.
 cburn-hunter-ship-pinpointer-target = CBURN response shuttle
 cburn-hunter-capture-contain-title = Stop the outbreak from spreading ({$captured}/{$total})
 cburn-hunter-capture-reclaim-title = Reclaim each of the lab experiments ({$captured}/{$total})
-objective-issuer-nanotrasen = [color=deepskyblue]Nanotrasen[/color]
+objective-issuer-nanotrasen-research-division = [color=deepskyblue]Nanotrasen Research Division[/color]
 
 
 cburn-round-end-major-cburn-victory = CBURN Has achieved complete victory! The crew doesn't need to know why or how these infected ended up on their ship, that is for us.. not them to know.

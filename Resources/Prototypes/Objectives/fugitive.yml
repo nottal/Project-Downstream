@@ -33,8 +33,8 @@
 - type: entity
   parent: BaseObjective
   id: InitialInfectedFugitiveObjective
-  name: Make Nanotrasen pay for what they did to you.
-  description: Wreak havoc on station operations and make your escape impossible to ignore.
+  name: Nanotrasen needs to pay for what they did to you. You know they may recover your body, so make them pay for it.
+  description: Nanotrasen needs to pay for what they did to you. You know they may recover your body, so make them pay for it.
   components:
   - type: Objective
     difficulty: 1.0
@@ -51,7 +51,7 @@
   components:
   - type: Objective
     difficulty: 1.0
-    issuer: objective-issuer-nanotrasen
+    issuer: objective-issuer-nanotrasen-research-division
     unique: true
     icon:
       sprite: Structures/Storage/closet.rsi
@@ -67,7 +67,7 @@
   components:
   - type: Objective
     difficulty: 1.0
-    issuer: objective-issuer-nanotrasen
+    issuer: objective-issuer-nanotrasen-research-division
     unique: true
     icon:
       sprite: Structures/Storage/closet.rsi

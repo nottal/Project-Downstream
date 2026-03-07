@@ -182,7 +182,7 @@
 - type: entity
   parent: BaseMindRoleAntag
   id: MindRoleFugitive
-  name: Fugitive Role
+  name: Escaped Convict
   components:
   - type: MindRole
     antagPrototype: Fugitive
@@ -197,6 +197,28 @@
   - type: MindRole
     antag: false
     antagPrototype: FugitiveHunter
+    roleType: FreeAgent
+    sortWeight: 30
+  - type: FugitiveHunterRole
+
+- type: entity
+  parent: BaseMindRoleAntag
+  id: MindRoleEscapedExperiment
+  name: Test Subject
+  components:
+  - type: MindRole
+    antagPrototype: EscapedExperiment
+    roleType: TeamAntagonist
+  - type: FugitiveRole
+
+- type: entity
+  parent: BaseMindRole
+  id: MindRoleCBURNFugitiveHunter
+  name: CBURN Operative
+  components:
+  - type: MindRole
+    antag: false
+    antagPrototype: CBURNAgent
     roleType: FreeAgent
     sortWeight: 30
   - type: FugitiveHunterRole

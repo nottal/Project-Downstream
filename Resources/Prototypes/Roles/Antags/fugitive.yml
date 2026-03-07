@@ -16,6 +16,20 @@
   setPreference: true
   objective: roles-antag-fugitive-hunter-objective
 
+- type: antag
+  id: EscapedExperiment
+  name: roles-antag-escaped-experiment-name
+  antagonist: true
+  setPreference: true
+  objective: roles-antag-escaped-experiment-objective
+
+- type: antag
+  id: CBURNAgent
+  name: roles-antag-cburn-agent-name
+  antagonist: false
+  setPreference: true
+  objective: roles-antag-cburn-agent-objective
+
 - type: entity
   parent: ClothingUniformJumpsuitColorGrey
   id: ClothingUniformJumpsuitPassengerUnremoveable
@@ -117,3 +131,24 @@
     - PillAmbuzol
     - PinpointerFugitiveShip
     - PinpointerFugitiveBounty
+
+- type: startingGear
+  id: CBURNEscapedExperimentGear
+  equipment:
+    jumpsuit: ClothingUniformJumpsuitPassenger
+    shoes: ClothingShoesColorBlack
+    gloves: ClothingHandsGlovesArcGloves
+    back: ToolboxMechanicalFilled
+    belt: ClothingBeltUtility
+    id: PassengerIDCard
+    pocket1: KitchenKnife
+    outerClothing: ClothingOuterWinterCoat
+    ears: ClothingHeadsetGrey
+  storage:
+    belt:
+    - CrowbarYellow
+    - Wrench
+    - Screwdriver
+    - Wirecutter
+    - Welder
+    - Multitool
