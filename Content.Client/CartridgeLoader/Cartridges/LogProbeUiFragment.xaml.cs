@@ -1,3 +1,9 @@
+// SPDX-FileCopyrightText: 2023 Chief-Engineer <119664036+Chief-Engineer@users.noreply.github.com>
+// SPDX-FileCopyrightText: 2024 Skubman <ba.fallaria@gmail.com>
+// SPDX-FileCopyrightText: 2024 Tadeo <td12233a@gmail.com>
+// SPDX-FileCopyrightText: 2025 corresp0nd <46357632+corresp0nd@users.noreply.github.com>
+// SPDX-FileCopyrightText: 2025 taydeo <td12233a@gmail.com>
+//
 // SPDX-License-Identifier: MIT
 
 using Content.Shared.CartridgeLoader.Cartridges;
@@ -18,22 +24,17 @@ public sealed partial class LogProbeUiFragment : BoxContainer
     public void UpdateState(LogProbeUiState state)
     {
         ProbedDeviceContainer.RemoveAllChildren();
-        TitleLabel.Text = Loc.GetString("log-probe-header-access");
-        ContentLabel.Text = Loc.GetString("log-probe-label-accessor");
-        CardNumberLabel.Visible = false;
 
-        if (state.PulledLogs.Count > 0)
-            DisplayAccessLogs(state.PulledLogs);
-    }
+        // Reverse so oldest entries appear at the bottom.
+        state.PulledLogs.Reverse();
 
-    private void DisplayAccessLogs(List<PulledAccessLog> logs)
-    {
-        logs.Reverse();
         var count = 1;
-        foreach (var log in logs)
+        foreach (var log in state.PulledLogs)
         {
             var timeLabelText = TimeSpan.FromSeconds(Math.Truncate(log.Time.TotalSeconds)).ToString();
-            var entry = new LogProbeUiEntry(count, timeLabelText, log.Accessor);
+            var accessorLabelText = log.Accessor;
+            var entry = new LogProbeUiEntry(count, timeLabelText, accessorLabelText);
+
             ProbedDeviceContainer.AddChild(entry);
             count++;
         }
