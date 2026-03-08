@@ -77,7 +77,6 @@
     - NanoTaskCartridge
     - NewsReaderCartridge
     - WantedListCartridge
-    - NanoChatCartridge
     - SOSCartridge
     - WordleCartridge
 
@@ -107,7 +106,6 @@
     - NewsReaderCartridge
     - WantedListCartridge
     - LogProbeCartridge
-    - NanoChatCartridge # DeltaV
     - SOSCartridge
 
 - type: entity
@@ -147,7 +145,6 @@
       - WantedListCartridge
       - LogProbeCartridge
       - AstroNavCartridge
-      - NanoChatCartridge # DeltaV
       - SOSCartridge
 
 - type: entity

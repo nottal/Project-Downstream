@@ -197,7 +197,6 @@
       - NotekeeperCartridge
       - NanoTaskCartridge
       - NewsReaderCartridge
-      - NanoChatCartridge # DeltaV
       - SOSCartridge # Imp
       - WordleCartridge
     cartridgeSlot:
@@ -272,7 +271,6 @@
     - NanoTaskCartridge
     - NewsReaderCartridge
     - WantedListCartridge
-    - NanoChatCartridge # DeltaV
     - SOSCartridge # Imp
     - WordleCartridge
 
@@ -289,7 +287,6 @@
       - NanoTaskCartridge
       - NewsReaderCartridge
       - MedTekCartridge
-      - NanoChatCartridge # DeltaV
       - SOSCartridge # Imp
       - WordleCartridge
 
@@ -606,7 +603,6 @@
       - NotekeeperCartridge
       - NewsReaderCartridge
       - MailMetricsCartridge
-      - NanoChatCartridge # DeltaV
       - SOSCartridge # Imp
       - WordleCartridge
 
@@ -632,7 +628,6 @@
     - CrewManifestCartridge
     - NotekeeperCartridge
     - NewsReaderCartridge
-    - NanoChatCartridge # DeltaV
     - SOSCartridge # Imp
     - WordleCartridge
 
@@ -662,7 +657,6 @@
       - NanoTaskCartridge
       - NewsReaderCartridge
       - AstroNavCartridge
-      - NanoChatCartridge # DeltaV
       - SOSCartridge # Imp
       - WordleCartridge
 
@@ -974,7 +968,6 @@
       - CrewManifestCartridge
       - NotekeeperCartridge
       - NewsReaderCartridge
-      - NanoChatCartridge # DeltaV
       - SOSCartridge # Imp
       - WordleCartridge
 
@@ -1016,7 +1009,6 @@
       - NotekeeperCartridge
       - NanoTaskCartridge
       - NewsReaderCartridge
-      - NanoChatCartridge # DeltaV
       - SOSCartridge # Imp
       - WordleCartridge
 
@@ -1046,7 +1038,6 @@
     - NewsReaderCartridge
     - WantedListCartridge
     - LogProbeCartridge
-    - NanoChatCartridge # DeltaV
     - SOSCartridge # Imp
     - WordleCartridge
 
@@ -1151,7 +1142,6 @@
       - WantedListCartridge
       - LogProbeCartridge
       - AstroNavCartridge
-      - NanoChatCartridge # DeltaV
       - SOSCartridge # Imp
       - WordleCartridge
 
@@ -1188,7 +1178,6 @@
       - WantedListCartridge
       - LogProbeCartridge
       - AstroNavCartridge
-      # - NanoChatCartridge | Commented out so they can't communicate with the station directly
       # - SOSCartridge | CCIs won't just die, right?
       - WordleCartridge
 
@@ -1218,7 +1207,6 @@
       - WantedListCartridge
       - MedTekCartridge
       - AstroNavCartridge
-      - NanoChatCartridge # DeltaV
       - SOSCartridge # Imp
       - WordleCartridge
   - type: Tag #  Ignore Chameleon tags
@@ -1348,7 +1336,6 @@
     uiKey: enum.PdaUiKey.Key
     preinstalled:
       - NotekeeperCartridge
-      - NanoChatCartridge # DeltaV
       - NanoTaskCartridge
 
 - type: entity
@@ -1382,7 +1369,6 @@
       - WantedListCartridge
       - LogProbeCartridge
       - AstroNavCartridge
-      - NanoChatCartridge # DeltaV
       - SOSCartridge # Imp
 
 - type: entity
@@ -1495,7 +1481,6 @@
     - CrewManifestCartridge
     - NotekeeperCartridge
     - NewsReaderCartridge
-    - NanoChatCartridge # DeltaV
     - SOSCartridge # Imp
     - WordleCartridge
 
@@ -1561,7 +1546,6 @@
     - NewsReaderCartridge
     - WantedListCartridge
     - LogProbeCartridge
-    - NanoChatCartridge # DeltaV
     - SOSCartridge # Imp
     - WordleCartridge
 
@@ -1592,7 +1576,6 @@
     - NewsReaderCartridge
     - WantedListCartridge
     - MedTekCartridge
-    - NanoChatCartridge # DeltaV
     - SOSCartridge # Imp
     - WordleCartridge
 
@@ -1665,7 +1648,6 @@
       - CrewManifestCartridge
       - NotekeeperCartridge
       - NewsReaderCartridge
-      - NanoChatCartridge # DeltaV
       - SOSCartridge # Imp
       - WordleCartridge
       - AstroNavCartridge #because there's no salv senior PDA YET, giving the cargonians astronav
@@ -1768,7 +1750,6 @@
       - NotekeeperCartridge
       - NanoTaskCartridge
       - MedTekCartridge
-      - NanoChatCartridge # DeltaV
 
 # event-restricted jobs
 - type: entity
