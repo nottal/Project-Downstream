@@ -679,7 +679,7 @@
       borg_module:
       - BorgModuleTool
       - BorgModuleOperative
-      - BorgModuleSyndicateWeapon
+      - BorgModuleL6C
   - type: ItemSlots
     slots:
       cell_slot:
