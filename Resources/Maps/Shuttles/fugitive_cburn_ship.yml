@@ -459,7 +459,7 @@ entities:
       parent: 1
     - type: AccessReader
       access: [["CentralCommand"], ["FugitiveHunter"]]
-- proto: AirlockGlassShuttle
+- proto: AirlockCentralCommandLocked
   entities:
   - uid: 10
     components:
