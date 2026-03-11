@@ -6,11 +6,9 @@ using System.Collections.Generic;
 using Content.Server.GameTicking.Rules.Components;
 using Content.Server.Ghost;
 using Content.Server.Popups;
-using Content.Server.Roles;
 using Content.Server.Storage.Components;
 using Content.Shared.GameTicking.Components;
 using Content.Shared.Mind;
-using Content.Shared.Roles;
 using Content.Shared.Verbs;
 using Robust.Server.GameObjects;
 
@@ -21,7 +19,6 @@ public sealed class FugitiveCaptureLockerSystem : EntitySystem
     [Dependency] private readonly GhostSystem _ghost = default!;
     [Dependency] private readonly PopupSystem _popup = default!;
     [Dependency] private readonly SharedMindSystem _mind = default!;
-    [Dependency] private readonly SharedRoleSystem _role = default!;
 
     public override void Initialize()
     {
@@ -56,15 +53,15 @@ public sealed class FugitiveCaptureLockerSystem : EntitySystem
             if (!TryComp<FugitiveCaptureTargetComponent>(occupant, out var target) || target.Captured)
                 continue;
 
-            if (!TryGetFugitiveMind(occupant, out var fugitiveMind))
-                continue;
+            var hasMind = TryGetCaptureTargetMind(occupant, out var fugitiveMind);
 
             target.Captured = true;
 
-            _ghost.SpawnGhost(fugitiveMind, spawnPosition: Transform(locker).Coordinates, canReturn: false);
+            if (hasMind)
+                _ghost.SpawnGhost(fugitiveMind, spawnPosition: Transform(locker).Coordinates, canReturn: false);
             QueueDel(occupant);
 
-            var ev = new FugitiveCapturedEvent(occupant, fugitiveMind.Owner);
+            var ev = new FugitiveCapturedEvent(occupant, hasMind ? fugitiveMind.Owner : null);
             RaiseLocalEvent(ev);
             capturedAny = true;
         }
@@ -75,16 +72,13 @@ public sealed class FugitiveCaptureLockerSystem : EntitySystem
             _popup.PopupEntity(Loc.GetString("fugitive-capture-locker-incorrect-target"), locker, user);
     }
 
-    private bool TryGetFugitiveMind(EntityUid occupant, out Entity<MindComponent?> fugitiveMind)
+    private bool TryGetCaptureTargetMind(EntityUid occupant, out Entity<MindComponent?> fugitiveMind)
     {
         fugitiveMind = default;
 
         if (!_mind.TryGetMind(occupant, out var mindId, out var mind))
             return false;
-
-        if (!_role.MindHasRole<FugitiveRoleComponent>((mindId, mind), out _))
-            return false;
-
+		
         fugitiveMind = (mindId, mind);
         return true;
     }

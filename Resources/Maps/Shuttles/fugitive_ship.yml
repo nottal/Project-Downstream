@@ -150,7 +150,7 @@ entities:
       parent: 1
     - type: Physics
       bodyType: Static
-- proto: AirlockExternal
+- proto: AirlockGlassShuttle
   entities:
   - uid: 75
     components:
