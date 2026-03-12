@@ -248,7 +248,6 @@ public sealed class BloodCultRuleSystem : GameRuleSystem<BloodCultRuleComponent>
 	/// <summary>
 	/// Calculates blood requirements for each phase based on current player count.
 	/// Starts based on readyup count. Later on it calculates based on how many players could ever count.
-	/// todo: Make it not count people in the ghost bar. No idea how to do that.
 	/// </summary>
 	private void CalculateBloodRequirements(BloodCultRuleComponent component)
 	{
