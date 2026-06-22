@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2026 OpenAI
+// SPDX-FileCopyrightText: 2026 OpenAI (slop)
 //
 // SPDX-License-Identifier: MIT
 
