@@ -8,9 +8,9 @@ SPDX-License-Identifier: MIT
   # Fugitives
 
 
-    <GuideEntityEmbed Entity="ClothingUniformJumpsuitColorOrange" Caption=""/>
-    <GuideEntityEmbed Entity="Shiv" Caption=""/>
-    <GuideEntityEmbed Entity="ToolboxMechanicalFilled" Caption=""/>
+    <GuideEntityEmbed Entity="ClothingUniformJumpsuitColorOrange" Caption="Nice Jumpsuit"/>
+    <GuideEntityEmbed Entity="Shiv" Caption="Trusty Shank"/>
+    <GuideEntityEmbed Entity="ToolboxMechanicalFilled" Caption="Good O'l Toolbox"/>
 
   Fugitives are antagonists and enemies of Nanotrasen.
   Your goal is to survive and avoid capture by incoming bounty hunters.

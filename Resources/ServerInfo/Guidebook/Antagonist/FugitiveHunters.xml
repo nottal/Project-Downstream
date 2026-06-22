@@ -9,7 +9,7 @@ SPDX-License-Identifier: MIT
 
     <GuideEntityEmbed Entity="PinpointerFugitiveShip" Caption="Ship Tracker"/>
     <GuideEntityEmbed Entity="PinpointerFugitiveBounty" Caption="Bounty Tracker"/>
-    <GuideEntityEmbed Entity="Zipties" Caption=""/>
+    <GuideEntityEmbed Entity="Zipties" Caption="General Restraints"/>
 
   Fugitive Hunters are Free Agents.
   You are not general station antagonists, however if they mess with you, you may have to deal with them.
