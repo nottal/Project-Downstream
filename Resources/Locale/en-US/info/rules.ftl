@@ -9,8 +9,8 @@
 
 # Rules
 
-ui-rules-header = Funky Station Official Server Rules
-ui-rules-header-rp = Funky Station Roleplay Official Server Rules
+ui-rules-header = Project Downstream Official Server Rules
+ui-rules-header-rp = Project Downstream Official Server Rules
 ui-rules-accept = I have read and agree to follow the rules.
 ui-rules-wait = The accept button will be enabled after {$time} seconds.
 
