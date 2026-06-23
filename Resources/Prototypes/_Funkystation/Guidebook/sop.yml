@@ -19,10 +19,7 @@
   text: "/ServerInfo/Funkystation/Guidebook/SOP/SOP101.xml"
   children:
   - CommandSOP
-  - LegalSOP
-  - ServiceSOP
   - SecuritySOP
-  - ScienceSOP
   - MedicalSOP
   - EngineeringSOP
   - CargoSOP
@@ -122,66 +119,6 @@
 
 # SERVICE
 
-- type: guideEntry
-  id: ServiceSOP
-  name: guide-entry-service-sop
-  text: "/ServerInfo/Funkystation/Guidebook/Service/ServiceSOP.xml"
-  children:
-  - HoPSOP
-  - BartenderSOP
-  - BotanistSOP
-  - ChaplainSOP
-  - ChefSOP
-  - ClownSOP
-  - JanitorSOP
-  - MimeSOP
-  - ReporterSOP
-
-- type: guideEntry
-  id: HoPSOP
-  name: guide-entry-hop-sop
-  text: "/ServerInfo/Funkystation/Guidebook/Service/HoPSOP.xml"
-
-- type: guideEntry
-  id: BartenderSOP
-  name: guide-entry-bartender-sop
-  text: "/ServerInfo/Funkystation/Guidebook/Service/BartenderSOP.xml"
-
-- type: guideEntry
-  id: BotanistSOP
-  name: guide-entry-botanist-sop
-  text: "/ServerInfo/Funkystation/Guidebook/Service/BotanistSOP.xml"
-
-- type: guideEntry
-  id: ChaplainSOP
-  name: guide-entry-chaplain-sop
-  text: "/ServerInfo/Funkystation/Guidebook/Service/ChaplainSOP.xml"
-
-- type: guideEntry
-  id: ChefSOP
-  name: guide-entry-chef-sop
-  text: "/ServerInfo/Funkystation/Guidebook/Service/ChefSOP.xml"
-
-- type: guideEntry
-  id: ClownSOP
-  name: guide-entry-clown-sop
-  text: "/ServerInfo/Funkystation/Guidebook/Service/ClownSOP.xml"
-
-- type: guideEntry
-  id: JanitorSOP
-  name: guide-entry-janitor-sop
-  text: "/ServerInfo/Funkystation/Guidebook/Service/JanitorSOP.xml"
-
-- type: guideEntry
-  id: MimeSOP
-  name: guide-entry-mime-sop
-  text: "/ServerInfo/Funkystation/Guidebook/Service/MimeSOP.xml"
-
-- type: guideEntry
-  id: ReporterSOP
-  name: guide-entry-reporter-sop
-  text: "/ServerInfo/Funkystation/Guidebook/Service/ReporterSOP.xml"
-
 # SEC
 
 - type: guideEntry
@@ -217,24 +154,6 @@
 
 # SCI
 
-- type: guideEntry
-  id: ScienceSOP
-  name: guide-entry-science-sop
-  text: "/ServerInfo/Funkystation/Guidebook/Science/ScienceSOP.xml"
-  children:
-  - RDSOP
-  - ScientistSOP
-
-
-- type: guideEntry
-  id: RDSOP
-  name: guide-entry-rd-sop
-  text: "/ServerInfo/Funkystation/Guidebook/Science/RDSOP.xml"
-
-- type: guideEntry
-  id: ScientistSOP
-  name: guide-entry-scientist-sop
-  text: "/ServerInfo/Funkystation/Guidebook/Science/ScientistSOP.xml"
 
 
 # MED
@@ -248,7 +167,7 @@
   - DoctorSOP
   - ChemistSOP
   - ParamedicSOP
-  - PsychologistSOP
+
 
 - type: guideEntry
   id: CMOSOP
@@ -270,10 +189,6 @@
   name: guide-entry-paramedic-sop
   text: "/ServerInfo/Funkystation/Guidebook/Medical/ParamedicSOP.xml"
 
-- type: guideEntry
-  id: PsychologistSOP
-  name: guide-entry-psychologist-sop
-  text: "/ServerInfo/Funkystation/Guidebook/Medical/PsychologistSOP.xml"
 
 # ENGI
 
