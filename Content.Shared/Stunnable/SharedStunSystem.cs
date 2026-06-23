@@ -544,6 +544,7 @@ public abstract partial class SharedStunSystem : EntitySystem
 
         var ev = new StunnedEvent();
         RaiseLocalEvent(uid, ref ev);
+        RaiseLocalEvent(uid, new DropHandItemsEvent(), false);
 
         _adminLogger.Add(LogType.Stamina, LogImpact.Medium, $"{ToPrettyString(uid):user} stunned for {time.Seconds} seconds");
         return true;
