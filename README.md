@@ -89,4 +89,4 @@ If you find that your work is misattributed or someone elses work is misattribut
 
 
 ## AI Disclaimer
-AI was used in early stages of server development to assist with porting and minor feature adjustments. All of the changes implemented by AI were reviewed and fixed to ensure proper integration into the codebase. We place this disclaimer here to ensure transparency, and to give a proper notice on how some of the early changes were made. For the most part we will be sticking to pulling content from Upstream (GOOB/Funky).
+AI was used in early stages of server development to assist with porting and minor feature adjustments. All of the changes implemented by AI were reviewed and fixed to ensure proper integration into the codebase. We place this disclaimer here to ensure transparency, and to give a proper notice on how some of the early changes were made. For the most part we will be sticking to pulling content from Upstream (GOOB/Funky). No Real or current live content was made with the use of AI.
