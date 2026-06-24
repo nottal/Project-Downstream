@@ -259,7 +259,7 @@ public abstract partial class SharedStunSystem : EntitySystem
         component.FrictionModifier = 1f;
         component.SpeedModifier = 1f;
         component.DoAfterId = null;
-        _standingState.Stand(uid);
+        _standingState.Stand(uid, force: true);
     }
 
     private void ScheduleAutoStandRetry(EntityUid uid, KnockedDownComponent component)
