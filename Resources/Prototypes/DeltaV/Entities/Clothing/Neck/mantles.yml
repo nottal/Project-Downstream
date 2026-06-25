@@ -1,0 +1,12 @@
+# SPDX-FileCopyrightText: 2026 StrangerOfParadiseOG <atnion93@gmail.com>
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later AND MIT
+
+- type: entity
+  parent: [ClothingNeckBase, BaseCommandContraband]
+  id: ClothingNeckMagistrateMantle
+  name: magistrate's mantle
+  description: A fancy velvet mantle with fur trim, fitting for a judge.
+  components:
+  - type: Sprite
+    sprite: DeltaV/Clothing/Neck/mantles/cjmantle.rsi

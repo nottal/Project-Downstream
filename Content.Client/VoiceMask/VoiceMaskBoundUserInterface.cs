@@ -14,6 +14,7 @@ using Content.Shared.VoiceMask;
 using Robust.Client.GameObjects;
 using Robust.Client.UserInterface;
 using Robust.Shared.Prototypes;
+using Content.Shared.StatusIcon;
 
 namespace Content.Client.VoiceMask;
 
@@ -35,14 +36,22 @@ public sealed class VoiceMaskBoundUserInterface : BoundUserInterface
         _window = this.CreateWindow<VoiceMaskNameChangeWindow>();
         _window.ReloadVerbs(_protomanager);
         _window.AddVerbs();
+        _window.ReloadJobIcons(_protomanager);
+        _window.AddJobIcons();
 
         _window.OnNameChange += OnNameSelected;
         _window.OnVerbChange += verb => SendMessage(new VoiceMaskChangeVerbMessage(verb));
+        _window.OnJobIconChanged += OnJobIconChanged;
     }
 
     private void OnNameSelected(string name)
     {
         SendMessage(new VoiceMaskChangeNameMessage(name));
+    }
+
+    private void OnJobIconChanged(ProtoId<JobIconPrototype> jobIcon)
+    {
+        SendMessage(new VoiceMaskChangeJobIconMessage(jobIcon));
     }
 
     protected override void UpdateState(BoundUserInterfaceState state)
@@ -52,7 +61,7 @@ public sealed class VoiceMaskBoundUserInterface : BoundUserInterface
             return;
         }
 
-        _window.UpdateState(cast.Name, cast.Verb);
+        _window.UpdateState(cast.Name, cast.Verb, cast.JobIcon);
     }
 
     protected override void Dispose(bool disposing)

@@ -138,7 +138,7 @@ public sealed class SubdermalBionicSyrinxImplantSystem : EntitySystem
         }
 
         if (_uiSystem.HasUi(owner, VoiceMaskUIKey.Key))
-            _uiSystem.SetUiState(owner, VoiceMaskUIKey.Key, new VoiceMaskBuiState(component.VoiceName, component.SpeechVerb));
+            _uiSystem.SetUiState(owner, VoiceMaskUIKey.Key, new VoiceMaskBuiState(component.VoiceName, component.SpeechVerb, null));
     }
 
     /// <summary>

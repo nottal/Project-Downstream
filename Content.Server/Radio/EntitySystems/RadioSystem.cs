@@ -32,13 +32,20 @@
 using Content.Server.Administration.Logs;
 using Content.Server.Chat.Systems;
 using Content.Server.Power.Components;
+using Content.Shared.Access.Components;
+using Content.Shared.Access.Systems;
 using Content.Server.Radio.Components;
 using Content.Shared.Chat;
+using Content.Shared.Chat.RadioIconsEvents;
 using Content.Shared.Database;
+using Content.Shared.PDA;
 using Content.Shared.Radio;
 using Content.Shared.Radio.Components;
+using Content.Shared.Silicons.Borgs.Components;
+using Content.Shared.Silicons.StationAi;
 using Content.Shared.Speech;
 using Content.Shared.Silicons.Laws.Components;
+using Content.Shared.StatusIcon;
 using Robust.Shared.Map;
 using Robust.Shared.Network;
 using Robust.Shared.Player;
@@ -60,6 +67,7 @@ public sealed class RadioSystem : EntitySystem
     [Dependency] private readonly IPrototypeManager _prototype = default!;
     [Dependency] private readonly IRobustRandom _random = default!;
     [Dependency] private readonly ChatSystem _chat = default!;
+    [Dependency] private readonly AccessReaderSystem _accessReader = default!;
 
     // set used to prevent radio feedback loops.
     private readonly HashSet<string> _messages = new();
@@ -112,8 +120,16 @@ public sealed class RadioSystem : EntitySystem
         var evt = new TransformSpeakerNameEvent(messageSource, MetaData(messageSource).EntityName);
         RaiseLocalEvent(messageSource, evt);
 
+        var (jobIcon, jobName) = GetJobIcon(messageSource);
+        var iconEvent = new TransformSpeakerJobIconEvent(messageSource, jobIcon, jobName);
+        RaiseLocalEvent(messageSource, iconEvent);
+        jobIcon = iconEvent.JobIcon;
+        jobName = iconEvent.JobName;
+
         var name = evt.VoiceName;
         name = FormattedMessage.EscapeText(name);
+        var iconTooltip = FormattedMessage.EscapeText(jobName ?? string.Empty);
+        var radioName = $"[icon src=\"{jobIcon}\" tooltip=\"{iconTooltip}\" /] {name}";
 
         SpeechVerbPrototype speech;
         if (evt.SpeechVerb != null && _prototype.TryIndex(evt.SpeechVerb, out var evntProto))
@@ -131,7 +147,7 @@ public sealed class RadioSystem : EntitySystem
             ("fontSize", speech.FontSize),
             ("verb", Loc.GetString(_random.Pick(speech.SpeechVerbStrings))),
             ("channel", $"\\[{channel.LocalizedName}\\]"),
-            ("name", name),
+            ("name", radioName),
             ("message", content));
 
         // most radios are relayed to chat, so lets parse the chat message beforehand
@@ -193,6 +209,31 @@ public sealed class RadioSystem : EntitySystem
 
         _replay.RecordServerMessage(chat);
         _messages.Remove(message);
+    }
+
+    private (ProtoId<JobIconPrototype>, string?) GetJobIcon(EntityUid uid)
+    {
+        if (_accessReader.FindAccessItemsInventory(uid, out var items))
+        {
+            foreach (var item in items)
+            {
+                if (TryComp<IdCardComponent>(item, out var id))
+                    return (id.JobIcon, id.LocalizedJobTitle);
+
+                if (TryComp<PdaComponent>(item, out var pda)
+                    && pda.ContainedId != null
+                    && TryComp(pda.ContainedId, out id))
+                    return (id.JobIcon, id.LocalizedJobTitle);
+            }
+        }
+
+        if (HasComp<StationAiHeldComponent>(uid))
+            return ("JobIconStationAi", Loc.GetString("job-name-station-ai"));
+
+        if (HasComp<BorgChassisComponent>(uid) || HasComp<BorgBrainComponent>(uid))
+            return ("JobIconBorg", Loc.GetString("job-name-borg"));
+
+        return ("JobIconNoId", null);
     }
 
     /// <inheritdoc cref="TelecomServerComponent"/>

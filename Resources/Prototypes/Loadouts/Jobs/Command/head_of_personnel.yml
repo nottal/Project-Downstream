@@ -90,6 +90,17 @@
     neck: ClothingNeckCloakHop
 
 - type: loadout
+  id: HopCloakFormal
+  equipment:
+    neck: ClothingNeckCloakHopFormal
+  effects:
+  - !type:JobRequirementLoadoutEffect
+    requirement:
+      !type:RoleTimeRequirement
+      role: JobHeadOfPersonnel
+      time: 72000 # 20 hrs
+
+- type: loadout
   id: HoPMantle
   equipment:
     neck: ClothingNeckMantleHOP

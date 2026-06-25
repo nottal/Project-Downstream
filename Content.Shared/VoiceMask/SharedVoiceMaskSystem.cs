@@ -4,6 +4,8 @@
 //
 // SPDX-License-Identifier: MIT
 
+using Content.Shared.StatusIcon;
+using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization;
 
 namespace Content.Shared.VoiceMask;
@@ -19,11 +21,13 @@ public sealed class VoiceMaskBuiState : BoundUserInterfaceState
 {
     public readonly string Name;
     public readonly string? Verb;
+    public readonly ProtoId<JobIconPrototype>? JobIcon;
 
-    public VoiceMaskBuiState(string name, string? verb)
+    public VoiceMaskBuiState(string name, string? verb, ProtoId<JobIconPrototype>? jobIcon)
     {
         Name = name;
         Verb = verb;
+        JobIcon = jobIcon;
     }
 }
 
@@ -49,5 +53,16 @@ public sealed class VoiceMaskChangeVerbMessage : BoundUserInterfaceMessage
     public VoiceMaskChangeVerbMessage(string? verb)
     {
         Verb = verb;
+    }
+}
+
+[Serializable, NetSerializable]
+public sealed class VoiceMaskChangeJobIconMessage : BoundUserInterfaceMessage
+{
+    public readonly ProtoId<JobIconPrototype> JobIcon;
+
+    public VoiceMaskChangeJobIconMessage(ProtoId<JobIconPrototype> jobIcon)
+    {
+        JobIcon = jobIcon;
     }
 }

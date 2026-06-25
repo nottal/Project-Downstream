@@ -22,6 +22,18 @@
   equipment:
     jumpsuit: ClothingUniformJumpsuitMagistrateTurtleneck
 
+# Neck
+- type: loadout
+  id: MagistrateMantle
+  equipment:
+    neck: ClothingNeckMagistrateMantle
+  effects:
+  - !type:JobRequirementLoadoutEffect
+    requirement:
+      !type:RoleTimeRequirement
+      role: JobMagistrate
+      time: 72000 # 20 hrs
+
 # Coats
 - type: loadout
   id: MagistrateWinterCoat

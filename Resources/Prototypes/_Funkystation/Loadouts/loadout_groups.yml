@@ -119,6 +119,13 @@
   - LawyerJumpskirtPurple
 
 - type: loadoutGroup
+  id: MagistrateNeck
+  name: loadout-group-magistrate-neck
+  minLimit: 0
+  loadouts:
+  - MagistrateMantle
+
+- type: loadoutGroup
   id: MagistrateOuterClothing
   name: loadout-group-magistrate-outer
   minLimit: 0

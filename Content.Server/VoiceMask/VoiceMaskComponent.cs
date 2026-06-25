@@ -9,6 +9,7 @@
 // SPDX-License-Identifier: MIT
 
 using Content.Shared.Speech;
+using Content.Shared.StatusIcon;
 using Robust.Shared.Prototypes;
 
 namespace Content.Server.VoiceMask;
@@ -47,4 +48,16 @@ public sealed partial class VoiceMaskComponent : Component
     /// </summary>
     [DataField]
     public EntityUid? ActionEntity;
+
+    /// <summary>
+    ///     The job icon displayed next to the user's name when speaking over radio.
+    /// </summary>
+    [DataField]
+    public ProtoId<JobIconPrototype>? JobIconProtoId;
+
+    /// <summary>
+    ///     Tooltip text displayed when hovering the radio job icon.
+    /// </summary>
+    [DataField]
+    public string? JobName;
 }

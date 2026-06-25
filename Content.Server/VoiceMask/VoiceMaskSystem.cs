@@ -18,11 +18,13 @@
 using Content.Shared.Actions;
 using Content.Shared.Administration.Logs;
 using Content.Shared.Chat;
+using Content.Shared.Chat.RadioIconsEvents;
 using Content.Shared.Clothing;
 using Content.Shared.Database;
 using Content.Shared.Inventory;
 using Content.Shared.Popups;
 using Content.Shared.Preferences;
+using Content.Shared.Roles.Jobs;
 using Content.Shared.Speech;
 using Content.Shared.VoiceMask;
 using Robust.Shared.Prototypes;
@@ -36,13 +38,16 @@ public sealed partial class VoiceMaskSystem : EntitySystem
     [Dependency] private readonly ISharedAdminLogManager _adminLogger = default!;
     [Dependency] private readonly IPrototypeManager _proto = default!;
     [Dependency] private readonly SharedActionsSystem _actions = default!;
+    [Dependency] private readonly SharedJobSystem _jobs = default!;
 
     public override void Initialize()
     {
         base.Initialize();
         SubscribeLocalEvent<VoiceMaskComponent, InventoryRelayedEvent<TransformSpeakerNameEvent>>(OnTransformSpeakerName);
+        SubscribeLocalEvent<VoiceMaskComponent, InventoryRelayedEvent<TransformSpeakerJobIconEvent>>(OnTransformSpeakerJobIcon);
         SubscribeLocalEvent<VoiceMaskComponent, VoiceMaskChangeNameMessage>(OnChangeName);
         SubscribeLocalEvent<VoiceMaskComponent, VoiceMaskChangeVerbMessage>(OnChangeVerb);
+        SubscribeLocalEvent<VoiceMaskComponent, VoiceMaskChangeJobIconMessage>(OnChangeJobIcon);
         SubscribeLocalEvent<VoiceMaskComponent, ClothingGotEquippedEvent>(OnEquip);
         SubscribeLocalEvent<VoiceMaskSetNameEvent>(OpenUI);
     }
@@ -51,6 +56,15 @@ public sealed partial class VoiceMaskSystem : EntitySystem
     {
         args.Args.VoiceName = GetCurrentVoiceName(entity);
         args.Args.SpeechVerb = entity.Comp.VoiceMaskSpeechVerb ?? args.Args.SpeechVerb;
+    }
+
+    private void OnTransformSpeakerJobIcon(Entity<VoiceMaskComponent> entity, ref InventoryRelayedEvent<TransformSpeakerJobIconEvent> args)
+    {
+        if (entity.Comp.JobIconProtoId is { } jobIcon)
+            args.Args.JobIcon = jobIcon;
+
+        if (!string.IsNullOrWhiteSpace(entity.Comp.JobName))
+            args.Args.JobName = entity.Comp.JobName;
     }
 
     #region User inputs from UI
@@ -82,6 +96,20 @@ public sealed partial class VoiceMaskSystem : EntitySystem
 
         UpdateUI(entity);
     }
+
+    private void OnChangeJobIcon(Entity<VoiceMaskComponent> entity, ref VoiceMaskChangeJobIconMessage message)
+    {
+        if (!_proto.TryIndex(message.JobIcon, out var proto) || !proto.AllowSelection)
+            return;
+
+        entity.Comp.JobIconProtoId = proto.ID;
+        entity.Comp.JobName = _jobs.TryFindJobFromIcon(proto, out var job)
+            ? job.LocalizedName
+            : proto.LocalizedJobName;
+
+        _popupSystem.PopupEntity(Loc.GetString("voice-mask-popup-success"), entity, message.Actor);
+        UpdateUI(entity);
+    }
     #endregion
 
     #region UI
@@ -107,7 +135,9 @@ public sealed partial class VoiceMaskSystem : EntitySystem
     private void UpdateUI(Entity<VoiceMaskComponent> entity)
     {
         if (_uiSystem.HasUi(entity, VoiceMaskUIKey.Key))
-            _uiSystem.SetUiState(entity.Owner, VoiceMaskUIKey.Key, new VoiceMaskBuiState(GetCurrentVoiceName(entity), entity.Comp.VoiceMaskSpeechVerb));
+            _uiSystem.SetUiState(entity.Owner,
+                VoiceMaskUIKey.Key,
+                new VoiceMaskBuiState(GetCurrentVoiceName(entity), entity.Comp.VoiceMaskSpeechVerb, entity.Comp.JobIconProtoId));
     }
     #endregion
 

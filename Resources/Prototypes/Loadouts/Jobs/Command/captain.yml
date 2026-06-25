@@ -66,6 +66,17 @@
     neck: ClothingNeckCloakCapFormal
 
 - type: loadout
+  id: CaptainBoatCloak
+  equipment:
+    neck: ClothingNeckCloakBoat
+  effects:
+  - !type:JobRequirementLoadoutEffect
+    requirement:
+      !type:RoleTimeRequirement
+      role: JobCaptain
+      time: 108000 # 30 hrs
+
+- type: loadout
   id: CaptainMantle
   equipment:
     neck: ClothingNeckMantleCap

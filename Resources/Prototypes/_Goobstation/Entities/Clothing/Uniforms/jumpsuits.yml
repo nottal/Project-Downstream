@@ -95,3 +95,15 @@
   - type: Clothing
     sprite: _Goobstation/Clothing/Uniforms/Jumpsuit/hecu.rsi
 
+# Senior Security
+- type: entity
+  parent: ClothingUniformBase
+  id: ClothingUniformJumpsuitVeteranSecurity
+  name: airy security jumpsuit
+  description: An airy version of the standard security jumpsuit, normally given on shifts with a lacking atmos department.
+  components:
+  - type: Sprite
+    sprite: _Goobstation/Clothing/Uniforms/Jumpsuit/Security/security_black.rsi
+  - type: Clothing
+    sprite: _Goobstation/Clothing/Uniforms/Jumpsuit/Security/security_black.rsi
+

@@ -74,6 +74,28 @@
     neck: ClothingNeckCloakHos
 
 - type: loadout
+  id: HeadofSecurityBoatCloak
+  equipment:
+    neck: ClothingNeckCloakBoatHos
+  effects:
+  - !type:JobRequirementLoadoutEffect
+    requirement:
+      !type:RoleTimeRequirement
+      role: JobHeadOfSecurity
+      time: 108000 # 30 hrs
+
+- type: loadout
+  id: HeadofSecurityRobe
+  equipment:
+    neck: ClothingNeckHosRobe
+  effects:
+  - !type:JobRequirementLoadoutEffect
+    requirement:
+      !type:RoleTimeRequirement
+      role: JobHeadOfSecurity
+      time: 360000 # 100 hrs
+
+- type: loadout
   id: HeadofSecurityMantle
   equipment:
     neck: ClothingNeckMantleHOS

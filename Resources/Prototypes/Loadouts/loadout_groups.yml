@@ -231,6 +231,7 @@
   loadouts:
   - CaptainCloak
   - CaptainCloakFormal
+  - CaptainBoatCloak
   - CaptainMantle
 
 - type: loadoutGroup
@@ -290,6 +291,7 @@
   minLimit: 0
   loadouts:
   - HoPCloak
+  - HopCloakFormal
   - HoPMantle
 
 - type: loadoutGroup
@@ -1757,6 +1759,8 @@
   minLimit: 0
   loadouts:
   - HeadofSecurityCloak
+  - HeadofSecurityBoatCloak
+  - HeadofSecurityRobe
   - HeadofSecurityMantle
   - Bodycam # Goobstation - Body cameras
 
@@ -1846,6 +1850,7 @@
   - SeniorOfficerJumpsuit
   - SeniorOfficerJumpskirt
   - TrooperUniform
+  - VeteranOfficerBlackJumpsuit # Goobstation
 
 - type: loadoutGroup
   id: SecurityBackpack
@@ -1868,6 +1873,7 @@
   minLimit: 0
   loadouts:
   - Bodycam # Goobstation - Body cameras
+  - ClothingNeckMantleVeteranSecurity
 
 - type: loadoutGroup
   id: SecurityOuterClothing
@@ -1876,6 +1882,7 @@
   - ArmorVest
   - ArmorVestSlim
   - SecurityOfficerWintercoat
+  - VeteranOfficerArmor # Goobstation
 
 #Funky
 - type: loadoutGroup
@@ -2033,6 +2040,8 @@
   loadouts:
   - MedicalStethoscope
   - ChiefMedicalOfficerCloak
+  - ChiefMedicalOfficerShawl
+  - ChiefMedicalOfficerOverShoulder
   - ChiefMedicalOfficerMantle
 
 - type: loadoutGroup
