@@ -13,10 +13,10 @@ namespace Content.Shared.CCVar;
 public sealed partial class CCVars
 {
     /// <summary>
-    ///     Whether gas differences will move entities.
+    ///     Legacy no-op. Space wind movement is disabled in the atmos simulation.
     /// </summary>
     public static readonly CVarDef<bool> SpaceWind =
-        CVarDef.Create("atmos.space_wind", true, CVar.SERVERONLY);
+        CVarDef.Create("atmos.space_wind", false, CVar.SERVERONLY);
 
     /// <summary>
     ///     Divisor from maxForce (pressureDifference * 2.25f) to force applied on objects.
@@ -185,11 +185,11 @@ public sealed partial class CCVars
         CVarDef.Create("atmos.space_wind_minimum_calculated_mass", 10f, CVar.SERVERONLY);
 
     /// <summary>
-    /// Increases default airflow calculations to O(n^2) complexity, for use with heavy space wind optimizations. Potato servers BEWARE
-    /// This solves the problem of objects being trapped in an infinite loop of slamming into a wall repeatedly.
+    /// Increases default airflow calculations to O(n^2) complexity.
+    /// Legacy space-wind tuning; disabled now that pressure no longer moves entities.
     /// </summary>
     public static readonly CVarDef<bool> MonstermosUseExpensiveAirflow =
-        CVarDef.Create("atmos.mmos_expensive_airflow", true, CVar.SERVERONLY);
+        CVarDef.Create("atmos.mmos_expensive_airflow", false, CVar.SERVERONLY);
 
     /// <summary>
     /// 	Calculated as 1/Mass, where Mass is the physics.Mass of the desired threshold.

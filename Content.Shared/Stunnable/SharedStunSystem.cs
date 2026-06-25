@@ -48,6 +48,7 @@ using Content.Shared.Damage.Systems;
 using Content.Shared.Hands;
 using Content.Shared.Mobs;
 using Content.Shared.Mobs.Components;
+using Content.Shared.Mobs.Systems;
 using Content.Shared.Movement.Events;
 using Content.Shared.Movement.Systems;
 using Content.Shared.Standing;
@@ -99,6 +100,7 @@ public abstract partial class SharedStunSystem : EntitySystem
     [Dependency] private readonly EntityLookupSystem _entityLookup = default!;
     [Dependency] private readonly IGameTiming _timing = default!;
     [Dependency] private readonly SharedPopupSystem _popup = default!;
+    [Dependency] private readonly MobStateSystem _mobState = default!;
 
     public override void Initialize()
     {
@@ -259,7 +261,14 @@ public abstract partial class SharedStunSystem : EntitySystem
         component.FrictionModifier = 1f;
         component.SpeedModifier = 1f;
         component.DoAfterId = null;
-        _standingState.Stand(uid, force: true);
+
+        if (_mobState.IsIncapacitated(uid))
+        {
+            _standingState.Down(uid, playSound: false, dropHeldItems: false);
+            return;
+        }
+
+        _standingState.Stand(uid);
     }
 
     private void ScheduleAutoStandRetry(EntityUid uid, KnockedDownComponent component)
@@ -353,6 +362,9 @@ public abstract partial class SharedStunSystem : EntitySystem
         if (!HasComp<CrawlerComponent>(uid))
             return;
 
+        if (_mobState.IsIncapacitated(uid))
+            return;
+
         if (TryComp(uid, out KnockedDownComponent? activeKnocked) && activeKnocked.DoAfterId.HasValue)
             return;
 
@@ -442,7 +454,7 @@ public abstract partial class SharedStunSystem : EntitySystem
         if (!Resolve(uid, ref knocked, false))
             return true;
 
-        if (knocked.NextUpdate > _timing.CurTime || !_blocker.CanMove(uid))
+        if (knocked.NextUpdate > _timing.CurTime || _mobState.IsIncapacitated(uid) || !_blocker.CanMove(uid))
             return false;
 
         if (IntersectingStandingColliders(uid))
@@ -484,7 +496,7 @@ public abstract partial class SharedStunSystem : EntitySystem
     {
         knocked.DoAfterId = null;
 
-        if (args.Cancelled || !_blocker.CanMove(uid))
+        if (args.Cancelled || _mobState.IsIncapacitated(uid) || !_blocker.CanMove(uid))
         {
             Dirty(uid, knocked);
             return;

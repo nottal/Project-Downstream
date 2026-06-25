@@ -56,17 +56,17 @@ namespace Content.Server.Atmos.EntitySystems
 
         private void InitializeCVars()
         {
-            Subs.CVar(_cfg, CCVars.SpaceWind, value => SpaceWind = value, true);
+            Subs.CVar(_cfg, CCVars.SpaceWind, _ => SpaceWind = false, true);
             Subs.CVar(_cfg, CCVars.SpaceWindPressureForceDivisorThrow, value => SpaceWindPressureForceDivisorThrow = value, true);
             Subs.CVar(_cfg, CCVars.SpaceWindPressureForceDivisorPush, value => SpaceWindPressureForceDivisorPush = value, true);
             Subs.CVar(_cfg, CCVars.SpaceWindMaxVelocity, value => SpaceWindMaxVelocity = value, true);
             Subs.CVar(_cfg, CCVars.SpaceWindMaxPushForce, value => SpaceWindMaxPushForce = value, true);
             Subs.CVar(_cfg, CCVars.SpaceWindMinimumCalculatedMass, value => SpaceWindMinimumCalculatedMass = value, true); // Goobstation - Spacewind Cvars
             Subs.CVar(_cfg, CCVars.SpaceWindMaximumCalculatedInverseMass, value => SpaceWindMaximumCalculatedInverseMass = value, true); // Goobstation - Spacewind Cvars
-            Subs.CVar(_cfg, CCVars.MonstermosUseExpensiveAirflow, value => MonstermosUseExpensiveAirflow = value, true); // Goobstation - Spacewind Cvars
+            Subs.CVar(_cfg, CCVars.MonstermosUseExpensiveAirflow, _ => MonstermosUseExpensiveAirflow = false, true); // Goobstation - Spacewind Cvars
             Subs.CVar(_cfg, CCVars.MonstermosEqualization, value => MonstermosEqualization = value, true);
             Subs.CVar(_cfg, CCVars.MonstermosDepressurization, value => MonstermosDepressurization = value, true);
-            Subs.CVar(_cfg, CCVars.MonstermosRipTiles, value => MonstermosRipTiles = value, true);
+            Subs.CVar(_cfg, CCVars.MonstermosRipTiles, _ => MonstermosRipTiles = false, true);
             Subs.CVar(_cfg, CCVars.MonstermosRipTilesMinimumPressure, value => MonstermosRipTilesMinimumPressure = value, true);
             Subs.CVar(_cfg, CCVars.MonstermosRipTilesPressureOffset, value => MonstermosRipTilesPressureOffset = value, true);
             Subs.CVar(_cfg, CCVars.AtmosGridImpulse, value => GridImpulse = value, true);

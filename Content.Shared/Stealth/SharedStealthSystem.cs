@@ -115,11 +115,14 @@ public abstract class SharedStealthSystem : EntitySystem
         if (_timing.ApplyingState)
             return;
 
+        if (!TryComp<StealthComponent>(uid, out var stealth))
+            return;
+
         if (args.NewPosition.EntityId != args.OldPosition.EntityId)
             return;
 
         var delta = component.MovementVisibilityRate * (args.NewPosition.Position - args.OldPosition.Position).Length();
-        ModifyVisibility(uid, delta);
+        ModifyVisibility(uid, delta, stealth);
     }
 
     // Goobstation - Proper invisibility

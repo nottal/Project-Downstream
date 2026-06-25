@@ -134,7 +134,6 @@ public sealed partial class AtmosphereSystem : SharedAtmosphereSystem
         base.Update(frameTime);
 
         UpdateProcessing(frameTime);
-        UpdateHighPressure(frameTime);
 
         _exposedTimer += frameTime;
 
