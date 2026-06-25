@@ -491,6 +491,7 @@
     - id: SecurityTechFabCircuitboard
     - id: CargoRequestSecurityComputerCircuitboard
 #    - id: WeaponDisabler # Funky
+    - id: ClothingBeltSheathHeadOfSecurityFilled # Goobstation
     - id: WantedListCartridge
     - id: DrinkHosFlask
     - id: RadioHandheldCommand #funkystation, no sec radio since they start with one

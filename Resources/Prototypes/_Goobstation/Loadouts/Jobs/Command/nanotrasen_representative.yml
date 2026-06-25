@@ -31,6 +31,16 @@
       department: CentralCommand
       time: 72000 #20 hrs
 
+# Goobstation - For Ensembles
+- type: loadoutEffectGroup
+  id: GrandMasterNTR
+  effects:
+  - !type:JobRequirementLoadoutEffect
+    requirement:
+      !type:RoleTimeRequirement
+      role: JobNanotrasenRepresentative
+      time: 360000 # 100 hrs
+
 #eyes
 
 - type: loadout
@@ -85,6 +95,14 @@
   effects:
   - !type:GroupLoadoutEffect
     proto: SeniorNanotrasenRepresentative
+
+- type: loadout
+  id: NanotrasenRepresentativeEnsemble
+  equipment:
+    neck: ClothingNeckEnsembleNanotrasenRepresentative
+  effects:
+  - !type:GroupLoadoutEffect
+    proto: GrandMasterNTR
 
 # Backpacks
 - type: loadout

@@ -5,6 +5,15 @@
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later AND MIT
 
+- type: loadoutEffectGroup
+  id: GrandMasterSalvageSpecialist
+  effects:
+  - !type:JobRequirementLoadoutEffect
+    requirement:
+      !type:RoleTimeRequirement
+      role: JobSalvageSpecialist
+      time: 360000 # 100 hrs
+
 #Lost Frontier Prospector
 - type: startingGear
   id: LostFrontierProspectorSuit
@@ -14,3 +23,16 @@
     id: SalvagePDA
     back: ClothingBackpackSalvage
     ears: ClothingHeadsetCargo
+
+- type: loadout # Goobstation - Ensembles
+  id: SalvageEspecialistEnsemble
+  equipment:
+    neck: ClothingNeckEnsembleSalvager
+  effects:
+  - !type:GroupLoadoutEffect
+    proto: GrandMasterSalvageSpecialist
+
+- type: startingGear # Goobstation - Ensembles
+  id: SalvageEspecialistEnsemble
+  equipment:
+    neck: ClothingNeckEnsembleSalvager

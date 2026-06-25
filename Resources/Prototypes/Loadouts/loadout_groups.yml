@@ -214,6 +214,7 @@
   loadouts:
   - CaptainHead
   - CaptainCap
+  - CaptainCapcapSenior # Goobstation
 
 - type: loadoutGroup
   id: CaptainJumpsuit
@@ -233,6 +234,7 @@
   - CaptainCloakFormal
   - CaptainBoatCloak
   - CaptainMantle
+  - CaptainEnsemble # Goobstation
 
 - type: loadoutGroup
   id: CaptainBackpack
@@ -293,6 +295,7 @@
   - HoPCloak
   - HopCloakFormal
   - HoPMantle
+  - HeadOfPersonnelEnsemble # Goobstation
 
 - type: loadoutGroup
   id: HoPBackpack
@@ -1125,6 +1128,7 @@
   loadouts:
   - QuartermasterCloak
   - QuartermasterMantle
+  - QuartermasterEnsemble # Goobstation
 
 - type: loadoutGroup
   id: QuartermasterOuterClothing
@@ -1277,6 +1281,13 @@
   - SalvageSpecialistDuffel
 
 - type: loadoutGroup
+  id: SalvageSpecialistNeck
+  name: loadout-group-salvage-specialist-neck
+  minLimit: 0
+  loadouts:
+  - SalvageEspecialistEnsemble # Goobstation
+
+- type: loadoutGroup
   id: SalvageSpecialistOuterClothing
   name: loadout-group-salvage-specialist-outerclothing
   minLimit: 0
@@ -1337,6 +1348,7 @@
   loadouts:
   - ChiefEngineerCloak
   - ChiefEngineerMantle
+  - ChiefEngineerEnsemble # Goobstation
 
 - type: loadoutGroup
   id: ChiefEngineerOuterClothing
@@ -1553,6 +1565,7 @@
   loadouts:
   - ResearchDirectorMantle
   - ResearchDirectorCloak
+  - ResearchDirectorEnsemble # Goobstation
 
 - type: loadoutGroup
   id: ResearchDirectorJumpsuit
@@ -1763,6 +1776,7 @@
   - HeadofSecurityRobe
   - HeadofSecurityMantle
   - Bodycam # Goobstation - Body cameras
+  - HeadOfSecurityEnsemble # Goobstation
 
 - type: loadoutGroup
   id: HeadofSecurityOuterClothing
@@ -1770,6 +1784,7 @@
   loadouts:
   - HeadofSecurityCoat
   - HeadofSecurityWinterCoat
+  - HeadofSecurityVestWeb # Goobstation
   - HeadofSecurityArmorVest
   - HeadofSecurityArmorVestSlim
 
@@ -2043,6 +2058,7 @@
   - ChiefMedicalOfficerShawl
   - ChiefMedicalOfficerOverShoulder
   - ChiefMedicalOfficerMantle
+  - ChiefMedicalOfficerEnsemble # Goobstation
 
 - type: loadoutGroup
   id: ChiefMedicalOfficerShoes

@@ -109,6 +109,13 @@
     - ClothMade
     - HamsterWearable
     - WhitelistChameleon
+  - type: Armor # Goobstation
+    modifiers:
+      coefficients:
+        Blunt: 0.7
+        Slash: 0.7
+        Piercing: 0.7
+        Heat: 0.8
 
 - type: entity
   parent: ClothingHeadBase
@@ -218,7 +225,7 @@
     - WhitelistChameleon
 
 - type: entity
-  parent: ClothingHeadBase
+  parent: [ClothingHeadHatBeretRND, BaseSecurityCommandContraband] # Goobstation
   id: ClothingHeadHatBeretHoS
   name: head of security's beret
   description: A black beret with a commander's rank emblem. For officers that are more inclined towards style than safety.

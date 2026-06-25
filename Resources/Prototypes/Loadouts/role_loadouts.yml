@@ -325,6 +325,7 @@
   groups:
   - SalvageSpecialistHead
   - SalvageSpecialistJumpsuit
+  - SalvageSpecialistNeck
   - SalvageSpecialistBackpack
   - SalvageSpecialistOuterClothing
   - SalvageSpecialistShoes

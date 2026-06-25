@@ -18,6 +18,16 @@
       role: JobHeadOfPersonnel
       time: 72000 #20 hrs
 
+# Goobstation - For Ensembles
+- type: loadoutEffectGroup
+  id: GrandMasterHoP
+  effects:
+  - !type:JobRequirementLoadoutEffect
+    requirement:
+      !type:RoleTimeRequirement
+      role: JobHeadOfPersonnel
+      time: 360000 # 100 hrs
+
 # Professional HoP Time
 - type: loadoutEffectGroup
   id: ProfessionalHoP
@@ -107,6 +117,14 @@
   effects:
   - !type:GroupLoadoutEffect
     proto: MasterHoP
+
+- type: loadout # Goobstation - Ensembles
+  id: HeadOfPersonnelEnsemble
+  equipment:
+    neck: ClothingNeckEnsembleHeadOfPersonnel
+  effects:
+  - !type:GroupLoadoutEffect
+    proto: GrandMasterHoP
 
 - type: startingGear
   id: HoPMantle

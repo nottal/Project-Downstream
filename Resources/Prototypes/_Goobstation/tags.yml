@@ -149,6 +149,9 @@
   id: Jetpack
 
 - type: Tag
+  id: Justice
+
+- type: Tag
   id: Hacking
 
 - type: Tag

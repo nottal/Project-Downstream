@@ -22,6 +22,16 @@
       role: JobChiefEngineer
       time: 72000 #20 hrs
 
+# Goobstation - For Ensembles
+- type: loadoutEffectGroup
+  id: GrandMasterCE
+  effects:
+  - !type:JobRequirementLoadoutEffect
+    requirement:
+      !type:RoleTimeRequirement
+      role: JobChiefEngineer
+      time: 360000 # 100 hrs
+
 # Jumpsuit
 - type: loadout
   id: ChiefEngineerJumpsuit
@@ -75,6 +85,14 @@
   effects:
   - !type:GroupLoadoutEffect
     proto: MasterCE
+
+- type: loadout # Goobstation - Ensembles
+  id: ChiefEngineerEnsemble
+  equipment:
+    neck: ClothingNeckEnsembleChiefEngineer
+  effects:
+  - !type:GroupLoadoutEffect
+    proto: GrandMasterCE
 
 - type: startingGear
   id: ChiefEngineerMantle

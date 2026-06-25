@@ -1,0 +1,36 @@
+# SPDX-FileCopyrightText: 2025 GoobBot <uristmchands@proton.me>
+# SPDX-FileCopyrightText: 2025 Solstice <solsticeofthewinter@gmail.com>
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+- type: entity
+  parent: ClothingBeltSheath
+  id: ClothingBeltSheathHeadOfSecurity
+  name: head of security's sheath
+  description: A rugged sheath, designed to hold the Head of Security's custom energy sword.
+  components:
+  - type: Sprite
+    sprite: _Goobstation/Clothing/Belt/hossheath.rsi
+    state: sheath
+  - type: Clothing
+    sprite: _Goobstation/Clothing/Belt/hossheath.rsi
+  - type: Item
+    size: Ginormous
+  - type: ItemSlots
+    slots:
+      item:
+        name: Sabre
+        insertVerbText: sheath-insert-verb
+        ejectVerbText: sheath-eject-verb
+        insertSound: /Audio/Items/sheath.ogg
+        ejectSound: /Audio/Items/unsheath.ogg
+        whitelist:
+          tags:
+          - Justice
+  - type: ItemMapper
+    mapLayers:
+      sheath-sabre:
+        whitelist:
+          tags:
+          - Justice
+  - type: Appearance
