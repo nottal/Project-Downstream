@@ -362,6 +362,7 @@
     butcheringType: Knife
     spawned:
     - id: ClothingHandsGlovesFingerlessInsulated
+  - maxSiemensThreshold: 4
   - type: Insulated
   - type: Fiber
     fiberMaterial: fibers-insulative
