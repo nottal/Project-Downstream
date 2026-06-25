@@ -54,13 +54,13 @@ public sealed class MindcontrolSystem : EntitySystem
         _popup.PopupEntity(Loc.GetString("mindcontrol-popup-stop"), uid, PopupType.Large);
         _adminLogManager.Add(LogType.Mind, LogImpact.Medium, $"{ToPrettyString(uid)} is no longer Mindcontrolled.");
     }
-    public void Start(EntityUid uid, MindcontrolledComponent component)
+    public void Start(EntityUid uid, MindcontrolledComponent component, bool allowSelf = false)
     {
         if (component.Master == null)
             return;
         if (HasComp<MindShieldComponent>(uid))  //you somhow managed to implant somone whit a mindshield.
             return;
-        if (uid == component.Master.Value)  //good jobb, you implanted yourself
+        if (!allowSelf && uid == component.Master.Value)  //good jobb, you implanted yourself
             return;
         if (!_mindSystem.TryGetMind(uid, out var mindId, out var mind))   //no mind, how can you mindcontrol whit no mind?
             return;

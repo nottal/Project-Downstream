@@ -6,18 +6,12 @@
 
 using Robust.Shared.Timing;
 using Robust.Server.GameObjects;
-using Content.Server.GameTicking.Rules.Components;
 using Content.Server.Antag;
+using Content.Server.GameTicking.Rules.Components;
+using Content.Server.Mindcontrol;
 using Content.Shared.Changeling;
-using Robust.Shared.Player;
-using Robust.Shared.Prototypes;
-using Robust.Shared.Utility;
-using Content.Shared.Roles;
-using Content.Shared.Verbs;
-using Content.Shared.Mind;
 using Content.Shared.Mind.Components;
 using Content.Server.Body.Systems;
-using Content.Shared.Store.Components;
 using Robust.Shared.Random;
 using Content.Shared.Bed.Sleep;
 using Content.Shared.Popups;
@@ -27,6 +21,9 @@ using Content.Server.Medical;
 using Content.Shared.Tag;
 using Content.Shared.Implants;
 using Content.Shared.Implants.Components;
+using Content.Shared.Mindcontrol;
+using Robust.Shared.Player;
+using Robust.Shared.Containers;
 
 namespace Content.Server.Changeling;
 
@@ -36,9 +33,9 @@ public sealed partial class ChangelingInfectionSystem : EntitySystem
     [Dependency] private readonly IGameTiming _timing = default!;
     [Dependency] private readonly SharedJitteringSystem _jitterSystem = default!;
     [Dependency] private readonly SharedPopupSystem _popupSystem = default!;
-    [Dependency] private readonly SharedMindSystem _mind = default!;
-    [Dependency] private readonly AntagSelectionSystem _antag = default!;
     [Dependency] private readonly TagSystem _tag = default!;
+    [Dependency] private readonly AntagSelectionSystem _antag = default!;
+    [Dependency] private readonly MindcontrolSystem _mindcontrol = default!;
 
     [Dependency] private readonly VomitSystem _vomit = default!;
     [Dependency] private readonly SharedStunSystem _stun = default!;
@@ -48,6 +45,8 @@ public sealed partial class ChangelingInfectionSystem : EntitySystem
         base.Initialize();
 
         SubscribeLocalEvent<ChangelingInfectionImplantComponent, ImplantImplantedEvent>(OnImplanterInjected);
+        SubscribeLocalEvent<ChangelingInfectionImplantComponent, EntGotInsertedIntoContainerMessage>(OnInsert);
+        SubscribeLocalEvent<ChangelingInfectionImplantComponent, EntGotRemovedFromContainerMessage>(OnRemove);
     }
 
     private void OnImplanterInjected(EntityUid uid, ChangelingInfectionImplantComponent comp, ImplantImplantedEvent ev)
@@ -55,15 +54,45 @@ public sealed partial class ChangelingInfectionSystem : EntitySystem
         if (!_tag.HasTag(ev.Implant, "ChangelingInfectionImplant") || ev.Implanted == null)
             return;
 
-        if (!EntityManager.TryGetComponent(ev.Implanted.Value, out AbsorbableComponent? absorbable))
+        if (comp.ImplanterUid != null)
         {
-            _popupSystem.PopupEntity(Loc.GetString("changeling-convert-implant-fail"), ev.Implanted.Value, ev.Implanted.Value, PopupType.MediumCaution);
-            return;
+            comp.HolderUid = Transform(comp.ImplanterUid.Value).ParentUid;
         }
 
-        EnsureComp<ChangelingInfectionComponent>(ev.Implanted.Value);
+        if (comp.HolderUid != null)
+        {
+            var mindcontrolled = EnsureComp<MindcontrolledComponent>(ev.Implanted.Value);
+            mindcontrolled.Master = comp.HolderUid;
+            _mindcontrol.Start(ev.Implanted.Value, mindcontrolled, allowSelf: true);
+        }
+
+        if (TryComp<ActorComponent>(ev.Implanted.Value, out var targetActor))
+        {
+            _antag.ForceMakeAntag<ChangelingRuleComponent>(targetActor.PlayerSession, "Changeling");
+        }
+
+        comp.ImplanterUid = null;
+        RemComp<ChangelingInfectionComponent>(ev.Implanted.Value);
 
         _popupSystem.PopupEntity(Loc.GetString("changeling-convert-implant"), ev.Implanted.Value, ev.Implanted.Value, PopupType.LargeCaution);
+    }
+
+    private void OnInsert(EntityUid uid, ChangelingInfectionImplantComponent comp, EntGotInsertedIntoContainerMessage args)
+    {
+        if (args.Container.ID != "implanter_slot")
+            return;
+
+        comp.ImplanterUid = args.Container.Owner;
+        comp.HolderUid = null;
+    }
+
+    private void OnRemove(EntityUid uid, ChangelingInfectionImplantComponent comp, EntGotRemovedFromContainerMessage args)
+    {
+        if (args.Container.ID != "implant")
+            return;
+
+        if (HasComp<MindcontrolledComponent>(args.Container.Owner))
+            RemComp<MindcontrolledComponent>(args.Container.Owner);
     }
 
     public override void Update(float frameTime)
@@ -170,7 +199,10 @@ public sealed partial class ChangelingInfectionSystem : EntitySystem
                 break;
             case ChangelingInfectionComponent.InfectionState.FullyInfected:
                 // This will totally have no adverse effects whatsoever!
-                if (!HasComp<MindContainerComponent>(uid) || !TryComp<ActorComponent>(uid, out var targetActor))
+                if (!HasComp<MindContainerComponent>(uid))
+                    return;
+
+                if (!TryComp<ActorComponent>(uid, out var targetActor))
                     return;
                 _antag.ForceMakeAntag<ChangelingRuleComponent>(targetActor.PlayerSession, "Changeling");
 

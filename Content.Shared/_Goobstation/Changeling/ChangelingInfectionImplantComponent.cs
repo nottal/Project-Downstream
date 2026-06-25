@@ -3,14 +3,16 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later AND MIT
 
-using Content.Shared.Mind;
-using Content.Shared.Store.Components;
 using Robust.Shared.GameStates;
 
 namespace Content.Shared.Changeling;
 
-
 [RegisterComponent, NetworkedComponent]
+public sealed partial class ChangelingInfectionImplantComponent : Component
+{
+    [DataField]
+    public EntityUid? HolderUid;
 
-// the shitfuck 19, also known as a dummy component for annoying reasons.
-public sealed partial class ChangelingInfectionImplantComponent : Component {}
+    [DataField]
+    public EntityUid? ImplanterUid;
+}
