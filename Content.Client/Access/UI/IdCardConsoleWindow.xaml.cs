@@ -106,6 +106,7 @@ namespace Content.Client.Access.UI
             // end Funkystation
 
             JobPresetOptionButton.OnItemSelected += SelectJobPreset;
+            GiveAllAccessButton.OnPressed += _ => GiveAllAccess();
             _accessButtons.Populate(accessLevels, prototypeManager);
             AccessLevelControlContainer.AddChild(_accessButtons);
 
@@ -124,6 +125,19 @@ namespace Content.Client.Access.UI
                     button.Pressed = false;
                 }
             }
+        }
+
+        private void GiveAllAccess()
+        {
+            foreach (var button in _accessButtons.ButtonsList.Values)
+            {
+                if (!button.Disabled)
+                {
+                    button.Pressed = true;
+                }
+            }
+
+            SubmitData();
         }
 
         private void SelectJobPreset(OptionButton.ItemSelectedEventArgs args)
@@ -207,6 +221,7 @@ namespace Content.Client.Access.UI
             JobTitleSaveButton.Disabled = !interfaceEnabled || !jobTitleDirty;
 
             JobPresetOptionButton.Disabled = !interfaceEnabled;
+            GiveAllAccessButton.Disabled = !interfaceEnabled;
 
             // begin Funkystation - ID card console job icon selection
             JobIconLabel.Modulate = interfaceEnabled ? Color.White : Color.Gray;

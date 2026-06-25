@@ -54,6 +54,10 @@ SPDX-License-Identifier: MIT
             <OptionButton Name="JobPresetOptionButton" />
         </GridContainer>
         <Control MinSize="0 8" />
+        <BoxContainer Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Name="GiveAllAccessButton" Text="{Loc 'id-card-console-window-give-all-button'}" Disabled="True" />
+        </BoxContainer>
+        <Control MinSize="0 4" />
         <Control Name="AccessLevelControlContainer" />
     </BoxContainer>
 </DefaultWindow>
