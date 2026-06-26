@@ -16,6 +16,8 @@ namespace Content.Shared.Stains;
 [RegisterComponent, NetworkedComponent]
 public sealed partial class StainableComponent : Component
 {
+    public const float DefaultCleanseDelay = 15f;
+
     [DataField]
     public string SolutionId = "stain";
 
@@ -38,10 +40,20 @@ public sealed partial class StainableComponent : Component
     public HashSet<int> RevealedIconVisuals = new();
 
     [DataField]
-    public float CleanseDelay = 15f;
+    public float CleanseDelay = DefaultCleanseDelay;
 }
 
 [Serializable, NetSerializable]
 public sealed partial class WringStainDoAfterEvent : SimpleDoAfterEvent
+{
+}
+
+[Serializable, NetSerializable]
+public sealed partial class BucketWashStainsDoAfterEvent : SimpleDoAfterEvent
+{
+}
+
+[Serializable, NetSerializable]
+public sealed partial class SoapWashStainDoAfterEvent : SimpleDoAfterEvent
 {
 }

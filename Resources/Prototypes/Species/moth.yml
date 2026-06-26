@@ -89,19 +89,19 @@
   id: MobMothHead
   baseSprite:
     sprite: Mobs/Species/Moth/parts.rsi
-    state: head_m
+    state: head
 
 - type: humanoidBaseSprite
   id: MobMothHeadMale
   baseSprite:
     sprite: Mobs/Species/Moth/parts.rsi
-    state: head_m
+    state: head
 
 - type: humanoidBaseSprite
   id: MobMothHeadFemale
   baseSprite:
     sprite: Mobs/Species/Moth/parts.rsi
-    state: head_f
+    state: head
 
 - type: humanoidBaseSprite
   id: MobMothTorso

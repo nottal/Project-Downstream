@@ -8,9 +8,11 @@
 using Content.Shared.Chemistry.Components;
 using Content.Shared.Chemistry.EntitySystems;
 using Content.Shared.Fluids;
+using Content.Shared.Interaction;
 using Content.Shared.Inventory;
 using Content.Shared.Item;
 using Content.Shared.Slippery;
+using Content.Shared.Tag;
 using Content.Shared.WashingMachine.Events;
 using Robust.Shared.Containers; // Gaby
 using Content.Shared.Stains.Components; // Gaby
@@ -32,6 +34,14 @@ public abstract partial class SharedStainableSystem : EntitySystem
     [Dependency] private readonly SharedDoAfterSystem _doAfter = default!; // Gaby
     [Dependency] private readonly SharedPuddleSystem _puddle = default!; // Gaby
     [Dependency] private readonly SharedPopupSystem _popup = default!; // Gaby
+    [Dependency] private readonly TagSystem _tag = default!;
+
+    private const string BucketTag = "Bucket";
+    private const string SoapTag = "Soap";
+    private const string WaterReagent = "Water";
+    private const string SoapSolution = "soap";
+    private static readonly FixedPoint2 SoapWashCost = FixedPoint2.New(10);
+    private const float SoapWashDelay = 7f;
 
     public override void Initialize()
     {
@@ -45,7 +55,13 @@ public abstract partial class SharedStainableSystem : EntitySystem
         SubscribeLocalEvent<StainableComponent, WashingMachineIsBeingWashed>(OnWashed);
 
         SubscribeLocalEvent<StainableComponent, GetVerbsEvent<Verb>>(AddWringVerb); // Gaby
+        SubscribeLocalEvent<StainableComponent, GetVerbsEvent<UtilityVerb>>(AddSoapWashVerb);
+        SubscribeLocalEvent<StainableComponent, AfterInteractUsingEvent>(OnSoapAfterInteractUsing);
         SubscribeLocalEvent<StainableComponent, WringStainDoAfterEvent>(OnWringDoAfter); // Gaby
+        SubscribeLocalEvent<StainableComponent, SoapWashStainDoAfterEvent>(OnSoapWashDoAfter);
+
+        SubscribeLocalEvent<TagComponent, GetVerbsEvent<Verb>>(AddBucketWashAllVerb);
+        SubscribeLocalEvent<BucketWashStainsDoAfterEvent>(OnBucketWashDoAfter);
     }
 
     private void OnMapInit(Entity<StainableComponent> ent, ref MapInitEvent args)
@@ -160,8 +176,7 @@ public abstract partial class SharedStainableSystem : EntitySystem
             return;
 
         WashingForensics(ent, solution.Value, args.WashingMachine);
-        Solution.RemoveAllSolution(solution.Value);
-        UpdateVisuals(ent);
+        CleanStains(ent, solution.Value);
     }
 
     protected virtual void StainForensics(Entity<StainableComponent> ent, Entity<SolutionComponent> solution)
@@ -197,7 +212,7 @@ public abstract partial class SharedStainableSystem : EntitySystem
             return;
         if (!args.CanAccess || !args.CanInteract)
             return;
-        if (!Solution.TryGetSolution(ent.Owner, ent.Comp.SolutionId, out _, out var stainSolution) || stainSolution.Volume <= 0)
+        if (!HasStains(ent))
             return;
 
         var user = args.User;
@@ -236,8 +251,165 @@ public abstract partial class SharedStainableSystem : EntitySystem
         var puddleSolution = Solution.SplitSolution(stainSoln.Value, stainSolution.Volume);
 
         UpdateVisuals(ent);
+        DirtyOwnerAppearance(ent.Owner);
 
         if (_puddle.TrySpillAt(args.User, puddleSolution, out _))
             _popup.PopupEntity(Loc.GetString("stain-verb-wring-success", ("item", ent.Owner)), args.User, args.User);
+    }
+
+    private void AddSoapWashVerb(Entity<StainableComponent> ent, ref GetVerbsEvent<UtilityVerb> args)
+    {
+        if (!args.CanAccess || !args.CanInteract || args.Using is not { } soap)
+            return;
+
+        if (!CanSoapWash(soap, ent))
+            return;
+
+        var user = args.User;
+        args.Verbs.Add(new UtilityVerb
+        {
+            Text = Loc.GetString("stain-verb-wash-clothing"),
+            Icon = new SpriteSpecifier.Texture(new("/Textures/Interface/VerbIcons/bubbles.svg.192dpi.png")),
+            Act = () => StartSoapWash(user, ent, soap),
+        });
+    }
+
+    private void OnSoapAfterInteractUsing(Entity<StainableComponent> ent, ref AfterInteractUsingEvent args)
+    {
+        if (args.Handled || !args.CanReach || !CanSoapWash(args.Used, ent))
+            return;
+
+        args.Handled = true;
+        StartSoapWash(args.User, ent, args.Used);
+    }
+
+    private void AddBucketWashAllVerb(Entity<TagComponent> ent, ref GetVerbsEvent<Verb> args)
+    {
+        if (!args.CanAccess || !args.CanInteract || args.Using != null)
+            return;
+
+        if (!_tag.HasTag(ent.Owner, BucketTag) || !HasWater(ent.Owner))
+            return;
+
+        var stained = GetStainedInventoryItems(args.User);
+        if (stained.Count == 0)
+            return;
+
+        var user = args.User;
+        args.Verbs.Add(new Verb
+        {
+            Text = Loc.GetString("stain-verb-wash-all"),
+            Icon = new SpriteSpecifier.Texture(new("/Textures/Interface/VerbIcons/bubbles.svg.192dpi.png")),
+            Act = () =>
+            {
+                var doAfterArgs = new DoAfterArgs(EntityManager, user, StainableComponent.DefaultCleanseDelay, new BucketWashStainsDoAfterEvent(), ent.Owner, target: ent.Owner)
+                {
+                    BreakOnMove = true,
+                    BreakOnDamage = true,
+                    NeedHand = true,
+                    DuplicateCondition = DuplicateConditions.SameTarget,
+                };
+                _doAfter.TryStartDoAfter(doAfterArgs);
+            },
+        });
+    }
+
+    private void OnBucketWashDoAfter(BucketWashStainsDoAfterEvent args)
+    {
+        if (args.Handled || args.Cancelled || args.Target is not { } bucket)
+            return;
+
+        args.Handled = true;
+
+        if (!HasWater(bucket))
+            return;
+
+        foreach (var item in GetStainedInventoryItems(args.User))
+        {
+            if (TryComp<StainableComponent>(item, out var stainable))
+                CleanStains((item, stainable));
+        }
+    }
+
+    private void OnSoapWashDoAfter(Entity<StainableComponent> ent, ref SoapWashStainDoAfterEvent args)
+    {
+        if (args.Handled || args.Cancelled || args.Used is not { } soap)
+            return;
+
+        args.Handled = true;
+
+        if (!CanSoapWash(soap, ent))
+            return;
+
+        if (!Solution.TryGetSolution(soap, SoapSolution, out var soapSoln, out var soapSolution))
+            return;
+
+        var soapUsed = soapSolution.Volume < SoapWashCost ? soapSolution.Volume : SoapWashCost;
+        Solution.SplitSolution(soapSoln.Value, soapUsed);
+        CleanStains(ent);
+    }
+
+    private void StartSoapWash(EntityUid user, Entity<StainableComponent> target, EntityUid soap)
+    {
+        var doAfterArgs = new DoAfterArgs(EntityManager, user, SoapWashDelay, new SoapWashStainDoAfterEvent(), target.Owner, target: target.Owner, used: soap)
+        {
+            BreakOnMove = true,
+            BreakOnDamage = true,
+            NeedHand = true,
+            DuplicateCondition = DuplicateConditions.SameTool | DuplicateConditions.SameTarget,
+        };
+        _doAfter.TryStartDoAfter(doAfterArgs);
+    }
+
+    private bool CanSoapWash(EntityUid soap, Entity<StainableComponent> target)
+    {
+        return _tag.HasTag(soap, SoapTag)
+            && HasStains(target)
+            && Solution.TryGetSolution(soap, SoapSolution, out _, out var soapSolution)
+            && soapSolution.Volume > 0;
+    }
+
+    private bool HasWater(EntityUid bucket)
+    {
+        if (!_tag.HasTag(bucket, BucketTag))
+            return false;
+
+        return Solution.GetTotalPrototypeQuantity(bucket, WaterReagent) > 0;
+    }
+
+    private bool HasStains(Entity<StainableComponent> ent)
+    {
+        return Solution.TryGetSolution(ent.Owner, ent.Comp.SolutionId, out _, out var stainSolution)
+            && stainSolution.Volume > 0;
+    }
+
+    private List<EntityUid> GetStainedInventoryItems(EntityUid user)
+    {
+        var stained = new List<EntityUid>();
+        foreach (var item in _inventory.GetHandOrInventoryEntities((user, null, null)))
+        {
+            if (TryComp<StainableComponent>(item, out var stainable) && HasStains((item, stainable)))
+                stained.Add(item);
+        }
+
+        return stained;
+    }
+
+    private void CleanStains(Entity<StainableComponent> ent)
+    {
+        if (!Solution.TryGetSolution(ent.Owner, ent.Comp.SolutionId, out var solution))
+            return;
+
+        CleanStains(ent, solution.Value);
+    }
+
+    private void CleanStains(Entity<StainableComponent> ent, Entity<SolutionComponent> solution)
+    {
+        if (solution.Comp.Solution.Volume <= 0)
+            return;
+
+        Solution.RemoveAllSolution(solution);
+        UpdateVisuals(ent);
+        DirtyOwnerAppearance(ent.Owner);
     }
 }

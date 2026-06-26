@@ -28,8 +28,14 @@ namespace Content.Shared.Humanoid.Markings
         [DataField("bodyPart", required: true)]
         public HumanoidVisualLayers BodyPart { get; private set; } = default!;
 
-        [DataField("markingCategory", required: true)]
-        public MarkingCategories MarkingCategory { get; private set; } = default!;
+        [DataField("markingCategory")]
+        private MarkingCategories? _markingCategory;
+
+        public MarkingCategories MarkingCategory =>
+            _markingCategory ?? MarkingCategoriesConversion.FromHumanoidVisualLayers(BodyPart);
+
+        [DataField("groupWhitelist")]
+        public List<string>? GroupWhitelist { get; private set; }
 
         [DataField("speciesRestriction")]
         public List<string>? SpeciesRestrictions { get; private set; }

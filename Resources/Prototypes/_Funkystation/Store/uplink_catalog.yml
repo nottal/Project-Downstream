@@ -12,9 +12,10 @@
   icon: { sprite: /Textures/Objects/Specific/Medical/syndi_implanter.rsi, state: implanter0 }
   productEntity: ChangelingInfectionImplanter
   cost:
-    Telecrystal: 75 # Over half the budget
+    Telecrystal: 200 # Over half the budget
   categories:
     - UplinkImplants
+  saleBlacklist: true
     
 #  Funkystation. Big gun with uranium rounds, don't forget chem can make Siever!
 - type: listing
