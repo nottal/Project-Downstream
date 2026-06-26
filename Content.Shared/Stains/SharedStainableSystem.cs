@@ -8,7 +8,6 @@
 using Content.Shared.Chemistry.Components;
 using Content.Shared.Chemistry.EntitySystems;
 using Content.Shared.Fluids;
-using Content.Shared.Interaction;
 using Content.Shared.Inventory;
 using Content.Shared.Item;
 using Content.Shared.Slippery;
@@ -41,6 +40,8 @@ public abstract partial class SharedStainableSystem : EntitySystem
     private const string WaterReagent = "Water";
     private const string SoapSolution = "soap";
     private static readonly FixedPoint2 SoapWashCost = FixedPoint2.New(10);
+    private static readonly FixedPoint2 BucketWaterRequired = FixedPoint2.New(100);
+    private static readonly FixedPoint2 BucketWaterCost = FixedPoint2.New(25);
     private const float SoapWashDelay = 7f;
 
     public override void Initialize()
@@ -55,13 +56,12 @@ public abstract partial class SharedStainableSystem : EntitySystem
         SubscribeLocalEvent<StainableComponent, WashingMachineIsBeingWashed>(OnWashed);
 
         SubscribeLocalEvent<StainableComponent, GetVerbsEvent<Verb>>(AddWringVerb); // Gaby
-        SubscribeLocalEvent<StainableComponent, GetVerbsEvent<UtilityVerb>>(AddSoapWashVerb);
-        SubscribeLocalEvent<StainableComponent, AfterInteractUsingEvent>(OnSoapAfterInteractUsing);
+        SubscribeLocalEvent<TagComponent, GetVerbsEvent<UtilityVerb>>(AddSoapWashVerb);
         SubscribeLocalEvent<StainableComponent, WringStainDoAfterEvent>(OnWringDoAfter); // Gaby
         SubscribeLocalEvent<StainableComponent, SoapWashStainDoAfterEvent>(OnSoapWashDoAfter);
 
         SubscribeLocalEvent<TagComponent, GetVerbsEvent<Verb>>(AddBucketWashAllVerb);
-        SubscribeLocalEvent<BucketWashStainsDoAfterEvent>(OnBucketWashDoAfter);
+        SubscribeLocalEvent<TagComponent, BucketWashStainsDoAfterEvent>(OnBucketWashDoAfter);
     }
 
     private void OnMapInit(Entity<StainableComponent> ent, ref MapInitEvent args)
@@ -257,12 +257,16 @@ public abstract partial class SharedStainableSystem : EntitySystem
             _popup.PopupEntity(Loc.GetString("stain-verb-wring-success", ("item", ent.Owner)), args.User, args.User);
     }
 
-    private void AddSoapWashVerb(Entity<StainableComponent> ent, ref GetVerbsEvent<UtilityVerb> args)
+    private void AddSoapWashVerb(Entity<TagComponent> ent, ref GetVerbsEvent<UtilityVerb> args)
     {
-        if (!args.CanAccess || !args.CanInteract || args.Using is not { } soap)
+        if (!args.CanAccess || !args.CanInteract || args.Using != ent.Owner)
             return;
 
-        if (!CanSoapWash(soap, ent))
+        if (!_tag.HasTag(ent.Owner, SoapTag) || !TryComp<StainableComponent>(args.Target, out var stainable))
+            return;
+
+        var target = (args.Target, stainable);
+        if (!CanSoapWash(ent.Owner, target))
             return;
 
         var user = args.User;
@@ -270,17 +274,8 @@ public abstract partial class SharedStainableSystem : EntitySystem
         {
             Text = Loc.GetString("stain-verb-wash-clothing"),
             Icon = new SpriteSpecifier.Texture(new("/Textures/Interface/VerbIcons/bubbles.svg.192dpi.png")),
-            Act = () => StartSoapWash(user, ent, soap),
+            Act = () => StartSoapWash(user, target, ent.Owner),
         });
-    }
-
-    private void OnSoapAfterInteractUsing(Entity<StainableComponent> ent, ref AfterInteractUsingEvent args)
-    {
-        if (args.Handled || !args.CanReach || !CanSoapWash(args.Used, ent))
-            return;
-
-        args.Handled = true;
-        StartSoapWash(args.User, ent, args.Used);
     }
 
     private void AddBucketWashAllVerb(Entity<TagComponent> ent, ref GetVerbsEvent<Verb> args)
@@ -288,7 +283,7 @@ public abstract partial class SharedStainableSystem : EntitySystem
         if (!args.CanAccess || !args.CanInteract || args.Using != null)
             return;
 
-        if (!_tag.HasTag(ent.Owner, BucketTag) || !HasWater(ent.Owner))
+        if (!_tag.HasTag(ent.Owner, BucketTag) || !HasEnoughWater(ent.Owner))
             return;
 
         var stained = GetStainedInventoryItems(args.User);
@@ -314,21 +309,24 @@ public abstract partial class SharedStainableSystem : EntitySystem
         });
     }
 
-    private void OnBucketWashDoAfter(BucketWashStainsDoAfterEvent args)
+    private void OnBucketWashDoAfter(Entity<TagComponent> ent, ref BucketWashStainsDoAfterEvent args)
     {
-        if (args.Handled || args.Cancelled || args.Target is not { } bucket)
+        if (args.Handled || args.Cancelled)
             return;
 
         args.Handled = true;
 
-        if (!HasWater(bucket))
+        var stained = GetStainedInventoryItems(args.User);
+        if (stained.Count == 0 || !TrySpendBucketWater(ent.Owner))
             return;
 
-        foreach (var item in GetStainedInventoryItems(args.User))
+        foreach (var item in stained)
         {
             if (TryComp<StainableComponent>(item, out var stainable))
                 CleanStains((item, stainable));
         }
+
+        AfterBucketWash(args.User);
     }
 
     private void OnSoapWashDoAfter(Entity<StainableComponent> ent, ref SoapWashStainDoAfterEvent args)
@@ -369,12 +367,35 @@ public abstract partial class SharedStainableSystem : EntitySystem
             && soapSolution.Volume > 0;
     }
 
-    private bool HasWater(EntityUid bucket)
+    private bool HasEnoughWater(EntityUid bucket)
     {
         if (!_tag.HasTag(bucket, BucketTag))
             return false;
 
-        return Solution.GetTotalPrototypeQuantity(bucket, WaterReagent) > 0;
+        return Solution.GetTotalPrototypeQuantity(bucket, WaterReagent) >= BucketWaterRequired;
+    }
+
+    private bool TrySpendBucketWater(EntityUid bucket)
+    {
+        if (!HasEnoughWater(bucket))
+            return false;
+
+        var remaining = BucketWaterCost;
+        foreach (var (_, solution) in Solution.EnumerateSolutions((bucket, null)))
+        {
+            var water = solution.Comp.Solution.GetTotalPrototypeQuantity(WaterReagent);
+            if (water <= 0)
+                continue;
+
+            var remove = water < remaining ? water : remaining;
+            Solution.RemoveReagent(solution, WaterReagent, remove);
+            remaining -= remove;
+
+            if (remaining <= 0)
+                return true;
+        }
+
+        return false;
     }
 
     private bool HasStains(Entity<StainableComponent> ent)
@@ -411,5 +432,9 @@ public abstract partial class SharedStainableSystem : EntitySystem
         Solution.RemoveAllSolution(solution);
         UpdateVisuals(ent);
         DirtyOwnerAppearance(ent.Owner);
+    }
+
+    protected virtual void AfterBucketWash(EntityUid user)
+    {
     }
 }

@@ -14,12 +14,17 @@
 
 using Content.Shared.Interaction;
 using Content.Shared.Interaction.Events;
+using Content.Shared.Hands.Components;
+using Content.Shared.Hands.EntitySystems;
 using Content.Shared.Item.ItemToggle.Components;
+using Content.Shared.Mobs;
 using Content.Shared.Popups;
+using Content.Shared.Stunnable;
 using Content.Shared.Temperature;
 using Content.Shared.Toggleable;
 using Content.Shared.Verbs;
 using Content.Shared.Wieldable;
+using Content.Shared.Wieldable.Components;
 using Robust.Shared.Audio;
 using Robust.Shared.Audio.Systems;
 using Robust.Shared.Network;
@@ -36,7 +41,9 @@ public sealed class ItemToggleSystem : EntitySystem
     [Dependency] private readonly INetManager _netManager = default!;
     [Dependency] private readonly SharedAppearanceSystem _appearance = default!;
     [Dependency] private readonly SharedAudioSystem _audio = default!;
+    [Dependency] private readonly SharedHandsSystem _hands = default!;
     [Dependency] private readonly SharedPopupSystem _popup = default!;
+    [Dependency] private readonly SharedWieldableSystem _wieldable = default!;
 
     private EntityQuery<ItemToggleComponent> _query;
 
@@ -53,6 +60,9 @@ public sealed class ItemToggleSystem : EntitySystem
         SubscribeLocalEvent<ItemToggleComponent, UseInHandEvent>(OnUseInHand);
         SubscribeLocalEvent<ItemToggleComponent, GetVerbsEvent<ActivationVerb>>(OnActivateVerb);
         SubscribeLocalEvent<ItemToggleComponent, ActivateInWorldEvent>(OnActivate);
+
+        SubscribeLocalEvent<HandsComponent, KnockedDownEvent>(OnHolderKnockedDown);
+        SubscribeLocalEvent<HandsComponent, MobStateChangedEvent>(OnHolderMobStateChanged);
 
         SubscribeLocalEvent<ItemToggleHotComponent, IsHotEvent>(OnIsHotEvent);
 
@@ -270,6 +280,35 @@ public sealed class ItemToggleSystem : EntitySystem
 
         // FIXME: for some reason both client and server play sound
         TryActivate((ent, ent.Comp));
+    }
+
+    private void OnHolderKnockedDown(Entity<HandsComponent> ent, ref KnockedDownEvent args)
+    {
+        UnwieldHeldWieldToggles(ent);
+    }
+
+    private void OnHolderMobStateChanged(Entity<HandsComponent> ent, ref MobStateChangedEvent args)
+    {
+        if (args.NewMobState is not (MobState.Critical or MobState.SoftCritical or MobState.HardCritical or MobState.Dead))
+            return;
+
+        UnwieldHeldWieldToggles(ent);
+    }
+
+    private void UnwieldHeldWieldToggles(Entity<HandsComponent> ent)
+    {
+        foreach (var held in _hands.EnumerateHeld(ent, ent.Comp))
+        {
+            if (!TryComp<ItemToggleComponent>(held, out var toggle)
+                || !toggle.WieldToggle
+                || !TryComp<WieldableComponent>(held, out var wieldable)
+                || !wieldable.Wielded)
+            {
+                continue;
+            }
+
+            _wieldable.TryUnwield(held, wieldable, ent.Owner, force: true);
+        }
     }
 
     public bool IsActivated(Entity<ItemToggleComponent?> ent)

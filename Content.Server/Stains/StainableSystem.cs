@@ -5,7 +5,11 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 using Content.Server.Forensics;
+using Content.Server.Footprint;
 using Content.Shared.Chemistry.Components;
+using Content.Shared.Chemistry.EntitySystems;
+using Content.Shared.FixedPoint;
+using Content.Shared.Footprint;
 using Content.Shared.Forensics.Components;
 using Content.Shared.Stains;
 using Content.Shared.Tag;
@@ -17,6 +21,7 @@ public sealed partial class StainableSystem : SharedStainableSystem
 {
     [Dependency] private readonly ForensicsSystem _forensics = default!;
     [Dependency] private readonly TagSystem _tag = default!;
+    [Dependency] private readonly SharedSolutionContainerSystem _solution = default!;
     [Dependency] private readonly SharedContainerSystem _container = default!; // Gaby
 
     protected override void DirtyOwnerAppearance(EntityUid item) // Gaby
@@ -38,5 +43,18 @@ public sealed partial class StainableSystem : SharedStainableSystem
             return;
 
         forensics.DNAs.UnionWith(_forensics.GetSolutionsDNA(solution.Comp.Solution));
+    }
+
+    protected override void AfterBucketWash(EntityUid user)
+    {
+        if (!TryComp<FootprintOwnerComponent>(user, out var footprint))
+            return;
+
+        var maxVolume = FixedPoint2.Max(footprint.MaxFootVolume, footprint.MaxBodyVolume);
+        if (!_solution.EnsureSolutionEntity(user, FootprintSystem.FootprintOwnerSolution, out _, out var footprintSolution, maxVolume))
+            return;
+
+        _solution.RemoveAllSolution(footprintSolution.Value);
+        _solution.TryAddSolution(footprintSolution.Value, new Solution("Water", footprint.MaxFootVolume));
     }
 }
