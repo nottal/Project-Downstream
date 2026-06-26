@@ -18,7 +18,6 @@
     size: Ginormous
   - type: ItemSlots
     slots:
-    - Belt
       item:
         name: Sabre
         insertVerbText: sheath-insert-verb
