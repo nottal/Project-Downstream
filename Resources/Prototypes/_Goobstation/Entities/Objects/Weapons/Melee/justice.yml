@@ -19,8 +19,7 @@
     sprite: _Goobstation/Objects/Weapons/Melee/justice.rsi
     quickEquip: false
     slots:
-    - Belt
-    - suitStorage
+    - BELT
   - type: Sprite
     sprite: _Goobstation/Objects/Weapons/Melee/justice.rsi
     state: icon
