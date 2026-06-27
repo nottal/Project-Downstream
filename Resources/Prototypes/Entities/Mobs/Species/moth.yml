@@ -45,6 +45,46 @@
     species: Moth
     hideLayersOnEquip:
     - HeadTop
+  - type: Inventory
+    speciesId: moth
+    displacements:
+      jumpsuit:
+        sizeMaps:
+          32:
+            sprite: Mobs/Species/Moth/displacement.rsi
+            state: jumpsuit-male
+      back:
+        sizeMaps:
+          32:
+            sprite: Mobs/Species/Moth/displacement.rsi
+            state: back
+      gloves:
+        sizeMaps:
+          32:
+            sprite: Mobs/Species/Moth/displacement.rsi
+            state: hand
+      outerClothing:
+        sizeMaps:
+          32:
+            sprite: Mobs/Species/Moth/displacement.rsi
+            state: outerclothing
+      shoes:
+        sizeMaps:
+          32:
+            sprite: Mobs/Species/Moth/displacement.rsi
+            state: shoes
+    femaleDisplacements:
+      jumpsuit:
+        sizeMaps:
+          32:
+            sprite: Mobs/Species/Moth/displacement.rsi
+            state: jumpsuit-female
+  - type: Hands
+    handDisplacement:
+      sizeMaps:
+        32:
+          sprite: Mobs/Species/Moth/displacement.rsi
+          state: hand
   - type: Hunger
   - type: Thirst
   - type: Icon
@@ -169,4 +209,43 @@
   components:
   - type: HumanoidAppearance
     species: Moth
-
+  - type: Inventory
+    speciesId: moth
+    displacements:
+      jumpsuit:
+        sizeMaps:
+          32:
+            sprite: Mobs/Species/Moth/displacement.rsi
+            state: jumpsuit-male
+      back:
+        sizeMaps:
+          32:
+            sprite: Mobs/Species/Moth/displacement.rsi
+            state: back
+      gloves:
+        sizeMaps:
+          32:
+            sprite: Mobs/Species/Moth/displacement.rsi
+            state: hand
+      outerClothing:
+        sizeMaps:
+          32:
+            sprite: Mobs/Species/Moth/displacement.rsi
+            state: outerclothing
+      shoes:
+        sizeMaps:
+          32:
+            sprite: Mobs/Species/Moth/displacement.rsi
+            state: shoes
+    femaleDisplacements:
+      jumpsuit:
+        sizeMaps:
+          32:
+            sprite: Mobs/Species/Moth/displacement.rsi
+            state: jumpsuit-female
+  - type: Hands
+    handDisplacement:
+      sizeMaps:
+        32:
+          sprite: Mobs/Species/Moth/displacement.rsi
+          state: hand
