@@ -9,7 +9,7 @@
   description: uplink-mixed-rejects-desc
   productEntity: CigPackMixedRejects
   cost:
-    Telecrystal: 15
+    Telecrystal: 10
   categories:
   - UplinkChemicals
   conditions:
@@ -24,7 +24,7 @@
   description: uplink-mixed-rejects-carton-desc
   productEntity: CigCartonMixedRejects
   cost:
-    Telecrystal: 150
+    Telecrystal: 145
   categories:
   - UplinkChemicals
   conditions:

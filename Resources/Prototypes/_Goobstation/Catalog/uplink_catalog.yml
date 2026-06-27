@@ -141,7 +141,7 @@
   icon: { sprite: /Textures/_Goobstation/Clothing/OuterClothing/Hardsuits/cybersunstealth.rsi, state: icon }
   productEntity: ClothingBackpackDuffelSyndicateStealthHardsuitBundle
   cost:
-    Telecrystal: 75 # might be op? needs testing to see. increase price to 90 TC when we merge the upstream fix that hides HUD stuff for stealthed entities.
+    Telecrystal: 40
   categories:
   - UplinkWearables
   saleLimit: 1
@@ -232,7 +232,7 @@
   description: uplink-advanced-combat-medipen-desc
   productEntity: AdvancedCombatMedipen
   cost:
-    Telecrystal: 28
+    Telecrystal: 23
   categories:
   - UplinkChemicals
   saleLimit: 1
@@ -246,7 +246,7 @@
   icon: { sprite: /Textures/Objects/Specific/Medical/syndi_implanter.rsi, state: implanter0 }
   productEntity: MindcontrolImplanter
   cost:
-    Telecrystal: 30
+    Telecrystal: 40
   categories:
     - UplinkImplants
   conditions:

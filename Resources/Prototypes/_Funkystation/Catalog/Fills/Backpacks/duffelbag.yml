@@ -27,7 +27,7 @@
   components:
   - type: StorageFill
     contents:
-      - id: SyndieChainsaw            # Very strong 38dps when wielded
+      - id: SyndieChainsaw
       - id: ClothingOuterApronArmored
       - id: ClothingHeadHatWeldingMaskPainted
       - id: ClothingShoesChameleonNoSlips

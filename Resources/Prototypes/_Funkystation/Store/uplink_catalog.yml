@@ -39,6 +39,17 @@
   categories:
   - UplinkWeaponry
 
+- type: listing
+  id: UplinkSyndicateChainsaw
+  name: uplink-syndicate-chainsaw-name
+  description: uplink-syndicate-chainsaw-desc
+  productEntity: SyndieChainsaw
+  cost:
+    Telecrystal: 40
+  categories:
+  - UplinkWeaponry
+  saleLimit: 1
+
 # For the wyvern
 - type: listing
   id: UplinkPistolLargeMagazineUranium
