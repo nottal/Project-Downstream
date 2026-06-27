@@ -47,7 +47,7 @@ public sealed class GeneticistsConsoleSystem : EntitySystem
     private const int MaxActiveResearchSlots = 5;
     private const int ResearchDurationSeconds = 180;
     private const float JokerCooldownSeconds = 600f;
-    private const float InjectorPrintCooldownSeconds = 180f;
+    private const float InjectorPrintCooldownSeconds = 120f;
     private static readonly TimeSpan UpdateTickInterval = TimeSpan.FromSeconds(1);
 
     public override void Initialize()

@@ -41,6 +41,8 @@
     active: true
   - type: ResearchClient
   - type: GeneticistsConsole
+  - type: AccessReader
+    access: [["Research"]]
   - type: GuideHelp
     guides:
     - Genetics
