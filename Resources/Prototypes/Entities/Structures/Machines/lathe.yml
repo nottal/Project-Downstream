@@ -190,10 +190,7 @@
 # SPDX-FileCopyrightText: 2025 delorphin <delorphin@gmail.com>
 # SPDX-FileCopyrightText: 2025 deltanedas <39013340+deltanedas@users.noreply.github.com>
 # SPDX-FileCopyrightText: 2025 ferynn <117872973+ferynn@users.noreply.github.com>
-# SPDX-FileCopyrightText: 2025 jhrushbe <capnmerry@gmail.com>
-# SPDX-FileCopyrightText: 2025 marc-pelletier <113944176+marc-pelletier@users.noreply.github.com>
 # SPDX-FileCopyrightText: 2025 mkanke-real <mikekanke@gmail.com>
-# SPDX-FileCopyrightText: 2025 rottenheadphones <juaelwe@outlook.com>
 # SPDX-FileCopyrightText: 2025 salpphie <53307242+salpphie@users.noreply.github.com>
 # SPDX-FileCopyrightText: 2025 salpphie <alyssa.thomas51@gmail.com>
 # SPDX-FileCopyrightText: 2025 slarticodefast <161409025+slarticodefast@users.noreply.github.com>
@@ -858,6 +855,7 @@
     - OperatingTableCircuitboard # Shitmed Change
     - BorgChargerCircuitboard
     - ThermomachineFreezerMachineCircuitBoard # Assmos - Moved to staticRecipes from dynamicRecipes
+    - GeneticistsConsoleComputerCircuitboard # Funkystation - Genetics
     dynamicRecipes:
     - HellfireFreezerMachineCircuitBoard
     - PortableScrubberMachineCircuitBoard
@@ -1495,6 +1493,8 @@
     - ScalpelLaser #funk
     - Tourniquet #funk
     - AACTablet # Delta-V
+    - HandheldGeneticAnalyzer # Funkystation - Genetics
+    - DNAInjector # Funkystation - Genetics
     dynamicRecipes:
     - ChemicalPayload
     - CryostasisBeaker

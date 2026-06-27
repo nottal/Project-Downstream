@@ -1,6 +1,6 @@
 # UI
 dna-scanner-total-damage = Total Damage:
-dna-scanner-genetic-damage = Genetic Damage:
+dna-scanner-genetic-damage = Radiation Damage:
 dna-scanner-genetic-instability = Genetic Instability:
 dna-scanner-scramble-dna = Scramble DNA
 dna-scanner-scramble-cooldown = Scramble DNA ({ $seconds }s)
@@ -14,6 +14,7 @@ dna-scanner-info-instability = Instability:
 dna-scanner-info-research = Research:
 dna-scanner-print-activator = Print Activator
 dna-scanner-print-mutator = Print Mutator
+dna-scanner-print-cooldown = Printing ({ $seconds }s)
 dna-scanner-save-mutation = Save To Storage
 dna-scanner-delete-mutation = Delete
 dna-scanner-sequencer-title = Genome Sequencer
@@ -39,6 +40,7 @@ dna-scanner-mutation-saved = Mutation saved to storage.
 dna-scanner-no-injectors = No injectors available.
 dna-scanner-scramble-complete = Subject DNA scrambled!
 dna-scanner-print-corrupted = The genetic sequence for { $mutation } cannot be printed!
+dna-scanner-print-cooldown-popup = Injector fabricator cooling down. Try again in { $seconds } seconds.
 
 # Health string
 dna-scanner-health-dead = Dead

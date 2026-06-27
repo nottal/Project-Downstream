@@ -64,3 +64,15 @@
   - Trinkets
   - MagistrateJobTrinkets
   - GroupSpeciesBreathTool
+
+- type: roleLoadout
+  id: JobGeneticist
+  groups:
+    - GeneticistJumpsuit
+    - GeneticistOuterClothing
+    - GeneticistBackpack
+    - GeneticistGloves
+    - GeneticistShoes
+    - Survival
+    - Trinkets
+    - GroupSpeciesBreathTool
