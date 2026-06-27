@@ -1,7 +1,7 @@
 {
   "version": 1,
   "license": "CC-BY-SA-3.0",
-  "copyright": "Created by discord:IAmRasputin#5242. Vox state by Flareguy for SS14 | vulpkanin state sprited by LizArmchair",
+  "copyright": "Taken from tgstation at commit https://github.com/tgstation/tgstation/commit/4f6190e2895e09116663ef282d3ce1d8b35c032e, edited by Emisse for SS14. Vox state by Flareguy for SS14. Vulpkanin states by TiniestShark (Github)",
   "size": {
     "x": 32,
     "y": 32
@@ -10,7 +10,6 @@
     {
       "name": "icon"
     },
-
     {
       "name": "equipped-HELMET",
       "directions": 4
@@ -19,9 +18,9 @@
       "name": "equipped-HELMET-vox",
       "directions": 4
     },
-	{
+    {
       "name": "equipped-HELMET-vulpkanin",
       "directions": 4
     }
-  ]  
+  ]
 }

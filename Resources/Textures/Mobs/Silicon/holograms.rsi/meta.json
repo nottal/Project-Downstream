@@ -1,7 +1,7 @@
 {
     "version": 1,
     "license": "CC-BY-SA-3.0",
-    "copyright": "Taken from vgstation at https://github.com/vgstation-coders/vgstation13/blob/e2923df112df8aa025846d0764697bad6506586a/icons/mob/AI.dmi - modified by chromiumboy. Ai default sprites by meijunkie on Discord - https://funkystation.org",
+    "copyright": "Taken from vgstation at https://github.com/vgstation-coders/vgstation13/blob/e2923df112df8aa025846d0764697bad6506586a/icons/mob/AI.dmi - modified by chromiumboy.",
     "size": {
         "x": 32,
         "y": 32
@@ -17,8 +17,8 @@
             "name": "ai_face",
             "delays": [
                 [
-                    2.3,
-                    0.2
+                    0.2,
+                    2.3
                 ]
             ]
         },

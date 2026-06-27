@@ -1,222 +1,281 @@
 {
   "version": 1,
   "license": "CC-BY-SA-3.0",
-  "copyright": "ID Cards for Funky Station - Design by @Catazeus (GitHub) and Polishing + QA by @vectorassembly (GitHub).",
+  "copyright": "Taken and modified from /tg/station 13 at commit https://github.com/tgstation/tgstation/commit/d917f4c, edited by AJCM-git, CrudeWax, and DinnerCalzone (github) | inhands taken and modified from /vg/station13 at https://github.com/vgstation-coders/vgstation13/blob/2c2b9966ea0d03b10e6e9c59626f72bbe8475d9d/icons/mob/in-hand/left/items_lefthand.dmi | pirate made by brainfood1183 (github) | wizard by ScarkKy0 (github) | stripe_cluwne by brainfood1183 (github) | black-inhands by DinnerCalzone (github), ninja made by ThatGuyUSA (github)",
   "size": {
     "x": 32,
     "y": 32
   },
-    "states": [
-        {
-            "name": "default"
-        },
-        {
-            "name": "silver"
-        },
-        {
-            "name": "gold"
-        },
-        {
-            "name": "cc"
-        },
-        {
-            "name": "nt"
-        },
-        {
-            "name": "prison"
-        },
-        {
-            "name": "pirate"
-        },
-        {
-            "name": "syndicate"
-        },
-        {
-            "name": "wizard"
-        },
-        {
-            "name": "future"
-        },
-        {
-            "name": "helldiver"
-        },
-        {
-            "name": "decal-admin"
-        },
-        {
-            "name": "decal-stripe-command"
-        },
-        {
-            "name": "decal-stripe-cargo"
-        },
-        {
-            "name": "decal-stripe-cc"
-        },
-        {
-            "name": "decal-stripe-civillian"
-        },
-        {
-            "name": "decal-discriminator-command"
-        },
-        {
-            "name": "decal-stripe-criminal"
-        },
-        {
-            "name": "decal-stripe-engineering"
-        },
-        {
-            "name": "decal-discriminator-cc"
-        },
-        {
-            "name": "decal-discriminator-ert"
-        },
-        {
-            "name": "decal-discriminator-deathsquad"
-        },
-        {
-            "name": "decal-stripe-medical"
-        },
-        {
-            "name": "decal-stripe-science"
-        },
-        {
-            "name": "decal-stripe-security"
-        },
-        {
-            "name": "decal-stripe-service"
-        },
-        {
-            "name": "decal-stripe-syndicate"
-        },
-        {
-            "name": "decal-stripe-rainbow"
-        },
-        {
-            "name": "decal-stripe-stripes"
-        },
-        {
-            "name": "decal-discriminator-security"
-        },
-        {
-            "name": "decal-stripe-party"
-        },
-        {
-            "name": "decal-stripe-cluwne"
-        },
-        {
-            "name": "decal-stripe-pirate"
-        },
-        {
-            "name": "decal-stripe-wizard"
-        },
-        {
-            "name": "retro"
-        },
-        {
-            "name": "retro_security"
-        },
-        {
-            "name": "retro_research"
-        },
-        {
-            "name": "retro_medical"
-        },
-        {
-            "name": "retro_engineering"
-        },
-        {
-            "name": "retro_nanotrasen"
-        },
-        {
-            "name": "cowboy"
-        },
-        {
-            "name": "default-inhand-left",
-            "directions": 4
-        },
-        {
-            "name": "default-inhand-right",
-            "directions": 4
-        },
-        {
-            "name": "silver-inhand-left",
-            "directions": 4
-        },
-        {
-            "name": "silver-inhand-right",
-            "directions": 4
-        },
-        {
-            "name": "gold-inhand-left",
-            "directions": 4
-        },
-        {
-            "name": "gold-inhand-right",
-            "directions": 4
-        },
-        {
-            "name": "prison-inhand-left",
-            "directions": 4
-        },
-        {
-            "name": "prison-inhand-right",
-            "directions": 4
-        },
-        {
-            "name": "cc-inhand-left",
-            "directions": 4
-        },
-        {
-            "name": "cc-inhand-right",
-            "directions": 4
-        },
-        {
-            "name": "nt-inhand-left",
-            "directions": 4
-        },
-        {
-            "name": "nt-inhand-right",
-            "directions": 4
-        },
-        {
-            "name": "syndicate-inhand-left",
-            "directions": 4
-        },
-        {
-            "name": "syndicate-inhand-right",
-            "directions": 4
-        },
-        {
-            "name": "wizard-inhand-left",
-            "directions": 4
-        },
-        {
-            "name": "wizard-inhand-right",
-            "directions": 4
-        },
-        {
-            "name": "pirate-inhand-left",
-            "directions": 4
-        },
-        {
-            "name": "pirate-inhand-right",
-            "directions": 4
-        },
-        {
-            "name": "future-inhand-left",
-            "directions": 4
-        },
-        {
-            "name": "future-inhand-right",
-            "directions": 4
-        },
-        {
-            "name": "helldiver-inhand-left",
-            "directions": 4
-        },
-        {
-            "name": "helldiver-inhand-right",
-            "directions": 4
-        }
-    ]
+  "states": [
+    {
+      "name": "admin"
+    },
+    {
+      "name": "black"
+    },
+    {
+      "name": "black-inhand-left",
+      "directions": 4
+    },
+    {
+      "name": "black-inhand-right",
+      "directions": 4
+    },
+    {
+      "name": "blue-inhand-left",
+      "directions": 4
+    },
+    {
+      "name": "blue-inhand-right",
+      "directions": 4
+    },
+    {
+      "name": "centcom"
+    },
+    {
+      "name": "default"
+    },
+    {
+      "name": "default-inhand-left",
+      "directions": 4
+    },
+    {
+      "name": "default-inhand-right",
+      "directions": 4
+    },
+    {
+      "name": "gold"
+    },
+    {
+      "name": "gold-inhand-left",
+      "directions": 4
+    },
+    {
+      "name": "gold-inhand-right",
+      "directions": 4
+    },
+    {
+      "name": "green-inhand-left",
+      "directions": 4
+    },
+    {
+      "name": "green-inhand-right",
+      "directions": 4
+    },
+    {
+      "name": "icon-captain"
+    },
+    {
+      "name": "ninja"
+    },
+    {
+      "name": "orange"
+    },
+    {
+      "name": "orange-inhand-left",
+      "directions": 4
+    },
+    {
+      "name": "orange-inhand-right",
+      "directions": 4
+    },
+    {
+      "name": "pirate"
+    },
+    {
+      "name": "silver"
+    },
+    {
+      "name": "silver-inhand-left",
+      "directions": 4
+    },
+    {
+      "name": "silver-inhand-right",
+      "directions": 4
+    },
+    {
+      "name": "stripe_bottom"
+    },
+    {
+      "name": "stripe_clown"
+    },
+    {
+      "name": "stripe_top"
+    },
+    {
+      "name": "wizard"
+    },
+    {
+      "name": "cc"
+    },
+    {
+      "name": "nt"
+    },
+    {
+      "name": "prison"
+    },
+    {
+      "name": "syndicate"
+    },
+    {
+      "name": "future"
+    },
+    {
+      "name": "helldiver"
+    },
+    {
+      "name": "decal-admin"
+    },
+    {
+      "name": "decal-stripe-command"
+    },
+    {
+      "name": "decal-stripe-cargo"
+    },
+    {
+      "name": "decal-stripe-cc"
+    },
+    {
+      "name": "decal-stripe-civillian"
+    },
+    {
+      "name": "decal-discriminator-command"
+    },
+    {
+      "name": "decal-stripe-criminal"
+    },
+    {
+      "name": "decal-stripe-engineering"
+    },
+    {
+      "name": "decal-discriminator-cc"
+    },
+    {
+      "name": "decal-discriminator-ert"
+    },
+    {
+      "name": "decal-discriminator-deathsquad"
+    },
+    {
+      "name": "decal-stripe-medical"
+    },
+    {
+      "name": "decal-stripe-science"
+    },
+    {
+      "name": "decal-stripe-security"
+    },
+    {
+      "name": "decal-stripe-service"
+    },
+    {
+      "name": "decal-stripe-syndicate"
+    },
+    {
+      "name": "decal-stripe-rainbow"
+    },
+    {
+      "name": "decal-stripe-stripes"
+    },
+    {
+      "name": "decal-discriminator-security"
+    },
+    {
+      "name": "decal-stripe-party"
+    },
+    {
+      "name": "decal-stripe-cluwne"
+    },
+    {
+      "name": "decal-stripe-pirate"
+    },
+    {
+      "name": "decal-stripe-wizard"
+    },
+    {
+      "name": "retro"
+    },
+    {
+      "name": "retro_security"
+    },
+    {
+      "name": "retro_research"
+    },
+    {
+      "name": "retro_medical"
+    },
+    {
+      "name": "retro_engineering"
+    },
+    {
+      "name": "retro_nanotrasen"
+    },
+    {
+      "name": "cowboy"
+    },
+    {
+      "name": "prison-inhand-left",
+      "directions": 4
+    },
+    {
+      "name": "prison-inhand-right",
+      "directions": 4
+    },
+    {
+      "name": "cc-inhand-left",
+      "directions": 4
+    },
+    {
+      "name": "cc-inhand-right",
+      "directions": 4
+    },
+    {
+      "name": "nt-inhand-left",
+      "directions": 4
+    },
+    {
+      "name": "nt-inhand-right",
+      "directions": 4
+    },
+    {
+      "name": "syndicate-inhand-left",
+      "directions": 4
+    },
+    {
+      "name": "syndicate-inhand-right",
+      "directions": 4
+    },
+    {
+      "name": "wizard-inhand-left",
+      "directions": 4
+    },
+    {
+      "name": "wizard-inhand-right",
+      "directions": 4
+    },
+    {
+      "name": "pirate-inhand-left",
+      "directions": 4
+    },
+    {
+      "name": "pirate-inhand-right",
+      "directions": 4
+    },
+    {
+      "name": "future-inhand-left",
+      "directions": 4
+    },
+    {
+      "name": "future-inhand-right",
+      "directions": 4
+    },
+    {
+      "name": "helldiver-inhand-left",
+      "directions": 4
+    },
+    {
+      "name": "helldiver-inhand-right",
+      "directions": 4
+    }
+  ]
 }

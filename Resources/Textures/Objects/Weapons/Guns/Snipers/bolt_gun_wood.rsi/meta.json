@@ -53,6 +53,18 @@
             "directions": 4
         },
         {
+            "name": "equipped-back-fill-1",
+            "directions": 4
+        },
+        {
+            "name": "equipped-SUITSTORAGE",
+            "directions": 4
+        },
+        {
+            "name": "equipped-suitstorage-fill-1",
+            "directions": 4
+        },
+        {
             "name": "equipped-backpack-fill-1",
             "directions": 4
         },

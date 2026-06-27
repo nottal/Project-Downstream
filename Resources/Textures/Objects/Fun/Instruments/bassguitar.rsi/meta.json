@@ -1,11 +1,11 @@
 {
-  "version": 1,
-  "size": {
-    "x": 32,
-    "y": 32
-  },
-  "license": "CC-BY-SA-3.0",
-  "copyright": "Created by EmoGarbage404. Back equip sprite created by RiceMar.",
+    "version": 1,
+    "size": {
+        "x": 32,
+        "y": 32
+    },
+    "license": "CC-BY-SA-3.0",
+    "copyright": "Created by EmoGarbage404. Back equip sprite created by RiceMar.",
     "states": [
         {
             "name": "icon"
@@ -15,7 +15,7 @@
             "directions": 4
         },
         {
-            "name": "equipped-BACKSTORAGE",
+            "name": "equipped-SUITSTORAGE",
             "directions": 4
         },
         {
@@ -24,6 +24,10 @@
         },
         {
             "name": "inhand-right",
+            "directions": 4
+        },
+        {
+            "name": "equipped-BACKSTORAGE",
             "directions": 4
         }
     ]

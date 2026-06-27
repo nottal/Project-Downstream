@@ -15,7 +15,7 @@
             "directions": 4
         },
         {
-            "name": "equipped-BACKSTORAGE",
+            "name": "equipped-SUITSTORAGE",
             "directions": 4
         },
         {
@@ -24,6 +24,10 @@
         },
         {
             "name": "inhand-right",
+            "directions": 4
+        },
+        {
+            "name": "equipped-BACKSTORAGE",
             "directions": 4
         }
     ]
