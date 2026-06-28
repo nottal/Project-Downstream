@@ -159,7 +159,7 @@ public sealed class GunPredictionSystem : SharedGunPredictionSystem
     var ev = new PredictedProjectileHitEvent(ent.Owner.Id, hit);
     RaiseNetworkEvent(ev);
 
-    _projectile.ProjectileCollide((ent, projectile, physics), args.OtherEntity, predicted: true);
+    _projectile.ProjectileCollide((ent, projectile, physics), args.OtherEntity);
 }
 
     private void OnServerProjectileStartup(Entity<PredictedProjectileServerComponent> ent, ref ComponentStartup args)
