@@ -32,7 +32,7 @@
   description: uplink-omnipatch-kit-desc
   productEntity: OmniPatch
   cost:
-    Telecrystal: 10
+    Telecrystal: 5
   categories:
   - UplinkChemicals
   conditions:

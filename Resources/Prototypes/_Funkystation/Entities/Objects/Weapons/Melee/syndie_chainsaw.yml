@@ -14,14 +14,15 @@
     attackRate: 4
     damage:
       types:
-        Slash: 3
-        Blunt: 2
-        Structural: 8   # 38 DPS when wielded, basic chainsaw is 32 DPS, DEsword is 45. Hopefully this is fair.
+        Slash: 8
+        Blunt: 8
+        Structural: 30
   - type: IncreaseDamageOnWield
     damage:
       types:
-        Slash: 4.5
-        Structural: 8
+        Slash: 0
+        Blunt: 0
+        Structural: 0
   - type: Item
     size: Normal
     sprite: _Funkystation/Objects/Weapons/Melee/syndie_chainsaw.rsi

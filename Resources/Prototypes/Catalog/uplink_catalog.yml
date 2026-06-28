@@ -802,7 +802,7 @@
   icon: { sprite: /Textures/Objects/Misc/pens.rsi, state: pen }
   productEntity: HypopenBox
   cost:
-    Telecrystal: 30 # goob
+    Telecrystal: 25 # goob
   categories:
   - UplinkChemicals
   saleLimit: 1 # WD EDIT
@@ -814,7 +814,7 @@
   icon: { sprite: /Textures/Objects/Fun/Darts/dart_red.rsi, state: icon }
   productEntity: HypoDartBox
   cost:
-    Telecrystal: 10 # goob
+    Telecrystal: 5 # goob
   categories:
   - UplinkChemicals
   saleLimit: 1 # WD EDIT
@@ -826,7 +826,7 @@
   icon: { sprite: /Textures/Objects/Storage/boxicons.rsi, state: vials }
   productEntity: ChemicalSynthesisKit
   cost:
-    Telecrystal: 20 # goob
+    Telecrystal: 15 # goob
   categories:
   - UplinkChemicals
   saleLimit: 1 # WD EDIT
@@ -838,7 +838,7 @@
   icon: { sprite: /Textures/Structures/Wallmounts/signs.rsi, state: bio }
   productEntity: ClothingBackpackDuffelZombieBundle
   cost:
-    Telecrystal: 150 # goob
+    Telecrystal: 145 # goob
   categories:
   - UplinkChemicals
   conditions:
@@ -857,7 +857,7 @@
   description: uplink-nocturine-chemistry-bottle-desc
   productEntity: NocturineChemistryBottle
   cost:
-    Telecrystal: 30 # goob
+    Telecrystal: 25 # goob
   categories:
   - UplinkChemicals
   saleLimit: 1 # WD EDIT
@@ -868,7 +868,7 @@
   description: uplink-combat-medkit-desc
   productEntity: MedkitCombatFilled
   cost:
-    Telecrystal: 25 # goob
+    Telecrystal: 20 # goob
   categories:
   - UplinkChemicals
   saleLimit: 1 # WD EDIT
@@ -879,7 +879,7 @@
   description: uplink-combat-medipen-desc
   productEntity: CombatMedipen
   cost:
-    Telecrystal: 12 # Goobstation - Combat pen rebalance
+    Telecrystal: 7 # Goobstation - Combat pen rebalance
   categories:
   - UplinkChemicals
   saleLimit: 1 # WD EDIT
@@ -890,7 +890,7 @@
   description: uplink-stimpack-desc
   productEntity: Stimpack
   cost:
-    Telecrystal: 10 # goob - 1 TC per 3 seconds.
+    Telecrystal: 5 # goob
   categories:
   - UplinkChemicals
   saleLimit: 1 # WD EDIT
@@ -901,7 +901,7 @@
   description: uplink-stimkit-desc
   productEntity: StimkitFilled
   cost:
-    Telecrystal: 30 # goob
+    Telecrystal: 25 # goob
   categories:
   - UplinkChemicals
   saleLimit: 1 # WD EDIT
@@ -912,7 +912,7 @@
   description: uplink-cigarettes-desc
   productEntity: CigPackSyndicate
   cost:
-    Telecrystal: 10 # goob
+    Telecrystal: 5 # goob
   categories:
   - UplinkChemicals
   saleLimit: 1 # WD EDIT
@@ -923,7 +923,7 @@
   description: uplink-meds-bundle-desc
   productEntity: ClothingBackpackDuffelSyndicateMedicalBundleFilled
   cost:
-    Telecrystal: 125 # goob
+    Telecrystal: 120 # goob
   categories:
   - UplinkChemicals
   conditions:
@@ -1253,25 +1253,25 @@
       - SurplusBundle
   saleLimit: 1 # goob edit
 
-- type: listing
-  id: UplinkSuperSurplusBundle
-  name: uplink-super-surplus-bundle-name
-  description: uplink-super-surplus-bundle-desc
-  productEntity: CrateSyndicateSuperSurplusBundle
-  cost:
-    Telecrystal: 180 # goob
-  categories:
-  - UplinkDisruption
-  conditions:
-  - !type:StoreWhitelistCondition
-    blacklist:
-      tags:
-      - NukeOpsUplink
-  - !type:BuyerWhitelistCondition
-    blacklist:
-      components:
-      - SurplusBundle
-  saleLimit: 1 # goob edit
+# - type: listing
+#   id: UplinkSuperSurplusBundle
+#   name: uplink-super-surplus-bundle-name
+#   description: uplink-super-surplus-bundle-desc
+#   productEntity: CrateSyndicateSuperSurplusBundle
+#   cost:
+#     Telecrystal: 180 # goob
+#   categories:
+#   - UplinkDisruption
+#   conditions:
+#   - !type:StoreWhitelistCondition
+#     blacklist:
+#       tags:
+#       - NukeOpsUplink
+#   - !type:BuyerWhitelistCondition
+#     blacklist:
+#       components:
+#       - SurplusBundle
+#   saleLimit: 1 # goob edit
 
 - type: listing
   id: UplinkSingarityBeacon
@@ -1465,7 +1465,7 @@
   icon: { sprite: /Textures/Actions/Implants/implants.rsi, state: freedom }
   productEntity: FreedomImplanter
   cost:
-    Telecrystal: 25 # goob
+    Telecrystal: 20 # goob
   categories:
     - UplinkImplants
   saleLimit: 1 # WD EDIT
@@ -1601,7 +1601,7 @@
   description: uplink-deathrattle-implant-desc
   productEntity: BoxDeathRattleImplants
   cost:
-    Telecrystal: 20 # goob
+    Telecrystal: 10 # goob
   categories:
   - UplinkImplants
   conditions:
@@ -1777,7 +1777,7 @@
   icon: { sprite: /Textures/Clothing/OuterClothing/Hardsuits/syndicate.rsi, state: icon }
   productEntity: ClothingBackpackDuffelSyndicateHardsuitBundle
   cost:
-    Telecrystal: 50 # funky
+    Telecrystal: 40 # funky
   categories:
   - UplinkWearables
   saleLimit: 1 # WD EDIT
@@ -1809,6 +1809,11 @@
     Telecrystal: 100 # Funky
   categories:
   - UplinkWearables
+  conditions:
+  - !type:StoreWhitelistCondition
+    whitelist:
+      tags:
+      - NukeOpsUplink
   saleLimit: 1 # WD EDIT
 
 - type: listing
@@ -1819,9 +1824,13 @@
   productEntity: CrateCybersunJuggernautBundle
   cost:
     Telecrystal: 75
-     # Unchanged to allow for traitors to make a funny terrible decision. Funky
   categories:
   - UplinkWearables
+  conditions:
+  - !type:StoreWhitelistCondition
+    whitelist:
+      tags:
+      - NukeOpsUplink
   saleLimit: 1 # WD EDIT
 
 
@@ -1889,42 +1898,36 @@
       tags:
       - NukeOpsUplink
   saleLimit: 1
-# Funky change - No thermal vision in uplink
-#- type: listing # EE
-#  id: UplinkThermalGoggles
-#  name: uplink-thermal-vision-name
-#  description: uplink-thermal-vision-desc
-#  productEntity: ClothingEyesThermalVisionGogglesSyndie
-#  discountCategory: rareDiscounts
-#  discountDownTo:
-#    Telecrystal: 1
-#  cost:
-#    Telecrystal: 3
-#  categories:
-#  - UplinkWearables
-#  conditions:
-#  - !type:StoreWhitelistCondition
-#    blacklist:
-#      tags:
-#      - NukeOpsUplink
 
-#- type: listing # EE
-#  id: UplinkThermalGogglesNukie
-#  name: uplink-thermal-vision-name
-#  description: uplink-thermal-vision-desc
-#  productEntity: ClothingEyesThermalVisionGogglesNukie
-#  discountCategory: rareDiscounts
-#  discountDownTo:
-#    Telecrystal: 1
-#  cost:
-#    Telecrystal: 3
-#  categories:
-#  - UplinkWearables
-#  conditions:
-#  - !type:StoreWhitelistCondition
-#    whitelist:
-#      tags:
-#      - NukeOpsUplink
+- type: listing # EE
+  id: UplinkThermalGoggles
+  name: uplink-thermal-vision-name
+  description: uplink-thermal-vision-desc
+  productEntity: ClothingEyesThermalVisionGogglesSyndie
+  cost:
+    Telecrystal: 3
+  categories:
+  - UplinkWearables
+  conditions:
+  - !type:StoreWhitelistCondition
+    blacklist:
+      tags:
+      - NukeOpsUplink
+
+- type: listing # EE
+  id: UplinkThermalGogglesNukie
+  name: uplink-thermal-vision-name
+  description: uplink-thermal-vision-desc
+  productEntity: ClothingEyesThermalVisionGogglesNukie
+  cost:
+    Telecrystal: 3
+  categories:
+  - UplinkWearables
+  conditions:
+  - !type:StoreWhitelistCondition
+    whitelist:
+      tags:
+      - NukeOpsUplink
 
 - type: listing
   id: UplinkClothingConductingGloves

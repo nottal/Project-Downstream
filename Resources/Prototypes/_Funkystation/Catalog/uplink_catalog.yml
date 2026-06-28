@@ -80,7 +80,7 @@
   description: uplink-syndicate-autoinjector-desc
   productEntity: SyndicateHypo
   cost:
-    Telecrystal: 20
+    Telecrystal: 15
   categories:
   - UplinkChemicals
   conditions:
@@ -95,7 +95,7 @@
   description: uplink-syndicate-autoinjector-softcase-desc
   productEntity: autoInjectorCartridgeCaseSoftFilled
   cost:
-    Telecrystal: 10
+    Telecrystal: 5
   categories:
   - UplinkChemicals
   conditions:
@@ -111,7 +111,7 @@
   description: uplink-autoinjector-cart-sedative-desc
   productEntity: CartridgeSedativeSyndicate
   cost:
-    Telecrystal: 10
+    Telecrystal: 5
   categories:
   - UplinkChemicals
 
@@ -121,7 +121,7 @@
   description: uplink-autoinjector-cart-gunshot-desc
   productEntity: CartridgeGunshotSyndicate
   cost:
-    Telecrystal: 10
+    Telecrystal: 5
   categories:
   - UplinkChemicals
 
@@ -131,7 +131,7 @@
   description: uplink-autoinjector-bundle-desc
   productEntity: ClothingBackpackDuffelSyndicateCartridgeAutoinjectorBundleFilled
   cost:
-    Telecrystal: 100
+    Telecrystal: 95
   categories:
   - UplinkChemicals
   conditions:
@@ -217,4 +217,4 @@
     Telecrystal: 3 # gives a towel with a mean whip, three TC is probably a good cost for it
   categories:
   - UplinkPointless
-  saleBlacklist: true 
+  saleBlacklist: true
