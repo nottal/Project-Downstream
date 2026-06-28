@@ -1,28 +1,79 @@
 {
-    "version": 1,
-    "license": "CC-BY-SA-3.0",
-    "copyright": "Syndicate Surgery Rollerbed for Funky Station - Design by @Catazeus (GitHub) and Polishing + QA by @vectorassembly (GitHub).",
-    "size": {
-        "x": 32,
-        "y": 32
+  "version": 1,
+  "license": "CC-BY-SA-3.0",
+  "copyright": "Taken from cev-eris at https://github.com/discordia-space/CEV-Eris/commit/59fe5dd2841f47a8abce60eecb9fafad34282bd0, Baystation 12 and AuroraStation, in-hand sprites by SeamLesss (github)",
+  "size": {
+    "x": 32,
+    "y": 32
+  },
+  "states": [
+    {
+      "name": "rollerbed"
     },
-    "states": [
-        {
-            "name": "syndicate_surgery_rollerbed"
-        },
-        {
-            "name": "syndicate_surgery_rollerbed-inhand-left",
-            "directions": 4
-        },
-        {
-            "name": "syndicate_surgery_rollerbed-inhand-right",
-            "directions": 4
-        },
-        {
-            "name": "syndicate_surgery_rollerbed_buckled"
-        },
-        {
-            "name": "syndicate_surgery_rollerbed_folded"
-        }
-    ]
+    {
+      "name": "rollerbed-inhand-left",
+      "directions": 4
+    },
+    {
+      "name": "rollerbed-inhand-right",
+      "directions": 4
+    },
+    {
+      "name": "rollerbed_buckled"
+    },
+    {
+      "name": "rollerbed_folded"
+    },
+    {
+      "name": "cheap_rollerbed"
+    },
+    {
+      "name": "cheap_rollerbed-inhand-left",
+      "directions": 4
+    },
+    {
+      "name": "cheap_rollerbed-inhand-right",
+      "directions": 4
+    },
+    {
+      "name": "cheap_rollerbed_buckled"
+    },
+    {
+      "name": "cheap_rollerbed_folded"
+    },
+    {
+      "name": "emergency_rollerbed"
+    },
+    {
+      "name": "emergency_rollerbed-inhand-left",
+      "directions": 4
+    },
+    {
+      "name": "emergency_rollerbed-inhand-right",
+      "directions": 4
+    },
+    {
+      "name": "emergency_rollerbed_buckled"
+    },
+    {
+      "name": "emergency_rollerbed_folded"
+    },
+    {
+      "name": "syndicate_surgery_rollerbed"
+    },
+    {
+      "name": "syndicate_surgery_rollerbed-inhand-left",
+      "directions": 4
+    },
+    {
+      "name": "syndicate_surgery_rollerbed-inhand-right",
+      "directions": 4
+    },
+    {
+      "name": "syndicate_surgery_rollerbed_buckled"
+    },
+    {
+      "name": "syndicate_surgery_rollerbed_folded"
+    }
+  ]
 }

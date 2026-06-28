@@ -139,9 +139,9 @@
   description: An engineering hardsuit helmet designed for working in low-pressure, high radioactive environments.
   components:
   - type: Sprite
-    sprite: _Funkystation/Clothing/Head/Hardsuits/engineering.rsi
+    sprite: Clothing/Head/Hardsuits/engineering.rsi
   - type: Clothing
-    sprite: _Funkystation/Clothing/Head/Hardsuits/engineering.rsi
+    sprite: Clothing/Head/Hardsuits/engineering.rsi
   - type: PointLight
     color: "#ffdbad"
   - type: PressureProtection
@@ -445,9 +445,9 @@
   description: Special hardsuit helmet, made for the chief engineer of the station.
   components:
   - type: Sprite
-    sprite: _Funkystation/Clothing/Head/Hardsuits/engineering-white.rsi
+    sprite: Clothing/Head/Hardsuits/engineering-white.rsi
   - type: Clothing
-    sprite: _Funkystation/Clothing/Head/Hardsuits/engineering-white.rsi
+    sprite: Clothing/Head/Hardsuits/engineering-white.rsi
   - type: PointLight
     color: "#daffad"
   - type: PressureProtection

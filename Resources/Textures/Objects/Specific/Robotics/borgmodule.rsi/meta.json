@@ -1,7 +1,7 @@
 {
     "version": 1,
     "license": "CC0-1.0",
-    "copyright": "Created by EmoGarbage404 (github) for Space Station 14. icon-construction.png created by deltanedas (github). syndicateborgbomb.png created by Mangohydra (github). icon-beer by iaada (github). layered inhands by mubururu_ (github).",
+    "copyright": "Created by EmoGarbage404 (github) for Space Station 14. icon-construction.png created by deltanedas (github). syndicateborgbomb.png created by Mangohydra (github). icon-chem.png & icon-mining-adv.png created by mubururu_ (github) icon-inflatable.png made by FungiFellow (GitHub), Xenoborg modules sprites by Samuka-C (github), icon-artistry by Kittygyat",
     "size": {
         "x": 32,
         "y": 32
@@ -29,6 +29,9 @@
             "name": "icon-cables"
         },
         {
+            "name": "icon-inflatable"
+        },
+        {
             "name": "icon-chemist"
         },
         {
@@ -36,6 +39,9 @@
         },
         {
             "name": "icon-clown"
+        },
+        {
+            "name": "icon-clown-adv"
         },
         {
             "name": "icon-construction"
@@ -50,6 +56,9 @@
             "name": "icon-fire-extinguisher"
         },
         {
+            "name": "icon-artistry"
+        },
+        {
             "name": "icon-gardening"
         },
         {
@@ -60,6 +69,9 @@
         },
         {
             "name": "icon-grappling-gun"
+        },
+        {
+            "name": "icon-harvesting"
         },
         {
             "name": "icon-light-replacer"
@@ -104,16 +116,55 @@
             "name": "icon-treatment"
         },
         {
+            "name": "icon-xenoborg-access-breaker"
+        },
+        {
+            "name": "icon-xenoborg-basic"
+        },
+        {
+            "name": "icon-xenoborg-cloak"
+        },
+        {
+            "name": "icon-xenoborg-jump"
+        },
+        {
+            "name": "icon-xenoborg-cloak2"
+        },
+        {
+            "name": "icon-xenoborg-fire-extinguisher"
+        },
+        {
+            "name": "icon-xenoborg-hypo"
+        },
+        {
+            "name": "icon-xenoborg-jammer"
+        },
+        {
+            "name": "icon-xenoborg-laser"
+        },
+        {
+            "name": "icon-xenoborg-laser2"
+        },
+        {
+            "name": "icon-xenoborg-projector"
+        },
+        {
+            "name": "icon-xenoborg-space-movement"
+        },
+        {
+            "name": "icon-xenoborg-sword"
+        },
+        {
+            "name": "icon-xenoborg-sword2"
+        },
+        {
+            "name": "icon-xenoborg-tile"
+        },
+        {
+            "name": "icon-xenoborg-tools"
+        },
+        {
             "name": "icon-syndicate"
-        },
-        {
-            "name": "icon-advanced-surgery"
-        },
-        {
-            "name": "icon-surgery"
-        },
-        {
-            "name": "icon-atmos"
         },
         {
             "name": "janitor"
@@ -134,13 +185,25 @@
             "name": "service"
         },
         {
-            "name": "icon-cooking"
-        },
-        {
             "name": "syndicateborgbomb"
         },
         {
             "name": "syndicate"
+        },
+        {
+            "name": "xenoborg_engi"
+        },
+        {
+            "name": "xenoborg_generic"
+        },
+        {
+            "name": "xenoborg_heavy"
+        },
+        {
+            "name": "xenoborg_scout"
+        },
+        {
+            "name": "xenoborg_stealth"
         },
         {
             "name": "base-icon-inhand-left",
@@ -173,6 +236,18 @@
         {
             "name": "base-stripes-inhand-right",
             "directions": 4
+        },
+        {
+            "name": "icon-advanced-surgery"
+        },
+        {
+            "name": "icon-surgery"
+        },
+        {
+            "name": "icon-atmos"
+        },
+        {
+            "name": "icon-cooking"
         },
         {
             "name": "icon-beer"

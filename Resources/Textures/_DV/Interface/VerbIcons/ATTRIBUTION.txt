@@ -1,8 +1,18 @@
-bell.svg taken from https://coreui.io/icons/
-Licensed under CC BY 4.0
+All icons are public domain.
 
-hamburger_icon.svg.png
-Released into the public domain
+Pulled mostly from this source https://github.com/apancik/public-domain-icons.
 
-edit.svg.png by H2D2 Design under MIT License
-https://www.svgrepo.com/svg/453928/edit
+lock.svg and lock-red.svg by Lorc under CC BY 3.0
+https://game-icons.net/1x1/lorc/padlock.html
+
+unlock.svg and unlock-green by Delapouite under CC BY 3.0
+https://game-icons.net/1x1/delapouite/padlock-open.html
+
+bubbles.svg by Lorc under CC BY 3.0
+https://game-icons.net/1x1/lorc/bubbles.html
+
+screwdriver.png by Lorc (edited by chromiumboy) under CC BY 3.0
+https://game-icons.net/1x1/lorc/screwdriver.html
+
+scissors.svg by Icons8 under Good Boy License https://github.com/icons8/WPF-UI-Framework/blob/master/LICENSE.md
+https://github.com/icons8/WPF-UI-Framework/blob/master/Windows%20Icons/Cut.svg

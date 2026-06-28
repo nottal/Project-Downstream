@@ -29,7 +29,7 @@
         - id: ClothingMaskBreath
   - type: Sprite
     noRot: true
-    sprite: _Funkystation/Structures/Storage/Lockers/suit_storage_EVA.rsi
+    sprite: Structures/Storage/suit_storage.rsi
     layers:
     - state: base
     - state: door
@@ -56,7 +56,7 @@
         - id: ClothingMaskBreath
   - type: Sprite
     noRot: true
-    sprite: _Funkystation/Structures/Storage/Lockers/suit_storage_EVA.rsi
+    sprite: Structures/Storage/suit_storage.rsi
     layers:
     - state: base
     - state: door
@@ -179,7 +179,7 @@
         - id: ClothingMaskBreath
   - type: Sprite
     noRot: true
-    sprite: _Funkystation/Structures/Storage/Lockers/suit_storage_atmos.rsi
+    sprite: Structures/Storage/suit_storage.rsi
     layers:
     - state: base
     - state: door
@@ -207,7 +207,7 @@
         - id: ClothingMaskBreath
   - type: Sprite
     noRot: true
-    sprite: _Funkystation/Structures/Storage/Lockers/suit_storage_sec.rsi
+    sprite: Structures/Storage/suit_storage.rsi
     layers:
     - state: base
     - state: door
@@ -233,7 +233,7 @@
         tableId: FillChiefEngineerHardsuit
   - type: Sprite
     noRot: true
-    sprite: _Funkystation/Structures/Storage/Lockers/suit_storage_CE.rsi
+    sprite: Structures/Storage/suit_storage.rsi
     layers:
     - state: base
     - state: door
@@ -259,7 +259,7 @@
         tableId: FillChiefMedicalOfficerHardsuit
   - type: Sprite
     noRot: true
-    sprite: _Funkystation/Structures/Storage/Lockers/suit_storage_CMO.rsi
+    sprite: Structures/Storage/suit_storage.rsi
     layers:
     - state: base
     - state: door
@@ -285,7 +285,7 @@
         tableId: FillResearchDirectorHardsuit
   - type: Sprite
     noRot: true
-    sprite: _Funkystation/Structures/Storage/Lockers/suit_storage_RD.rsi
+    sprite: Structures/Storage/suit_storage.rsi
     layers:
     - state: base
     - state: door
@@ -311,7 +311,7 @@
         tableId: FillHeadOfSecurityHardsuit
   - type: Sprite
     noRot: true
-    sprite: _Funkystation/Structures/Storage/Lockers/suit_storage_HOS.rsi
+    sprite: Structures/Storage/suit_storage.rsi
     layers:
     - state: base
     - state: door
@@ -339,7 +339,7 @@
         - id: ClothingMaskBreath
   - type: Sprite
     noRot: true
-    sprite: _Funkystation/Structures/Storage/Lockers/suit_storage_warden.rsi
+    sprite: Structures/Storage/suit_storage.rsi
     layers:
     - state: base
     - state: door
@@ -365,7 +365,7 @@
         tableId: FillCaptainHardsuit
   - type: Sprite
     noRot: true
-    sprite: _Funkystation/Structures/Storage/Lockers/suit_storage_captain.rsi
+    sprite: Structures/Storage/suit_storage.rsi
     layers:
     - state: base
     - state: door
@@ -394,7 +394,7 @@
       - id: ClothingMaskGasExplorer
   - type: Sprite
     noRot: true
-    sprite: _Funkystation/Structures/Storage/Lockers/suit_storage_salvage.rsi
+    sprite: Structures/Storage/suit_storage.rsi
     layers:
     - state: base
     - state: door
@@ -423,7 +423,7 @@
         - id: ClothingMaskGasSyndicate
   - type: Sprite
     noRot: true
-    sprite: _Funkystation/Structures/Storage/Lockers/suit_storage_syndicate.rsi
+    sprite: Structures/Storage/suit_storage.rsi
     layers:
     - state: base
     - state: door

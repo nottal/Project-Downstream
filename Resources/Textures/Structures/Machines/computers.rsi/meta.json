@@ -1,11 +1,11 @@
 {
-  "version": 1,
-  "license": "CC-BY-SA-3.0",
-  "copyright": "Taken from tgstation at commit https://github.com/tgstation/tgstation/commit/bd6873fd4dd6a61d7e46f1d75cd4d90f64c40894. comm_syndie made by Veritius, based on comm. generic_panel_open made by Errant, commit https://github.com/space-wizards/space-station-14/pull/32273, comms_wizard and wizard_key by ScarKy0, request- variants transfer made by EmoGarbage404 (github)",
-  "size": {
-    "x": 32,
-    "y": 32
-  },
+    "version": 1,
+    "license": "CC-BY-SA-3.0",
+    "copyright": "Taken from tgstation at commit https://github.com/tgstation/tgstation/commit/bd6873fd4dd6a61d7e46f1d75cd4d90f64c40894. comm_syndie made by Veritius, based on comm. generic_panel_open made by Errant, commit https://github.com/space-wizards/space-station-14/pull/32273, comms_wizard and wizard_key by ScarKy0, request- variants transfer made by EmoGarbage404 (github), xenorobot by Samuka-C (github), ai-fixer-progress and -purge sprites made by chromiumboy, generic_syndie_keys and request-syndie modified from generic_keys and request by SlamBamActionman",
+    "size": {
+        "x": 32,
+        "y": 32
+    },
     "states": [
         {
             "name": "ai-fixer",
@@ -68,6 +68,246 @@
                 ],
                 [
                     0.1,
+                    0.1,
+                    0.1,
+                    0.1,
+                    0.1
+                ]
+            ]
+        },
+        {
+            "name": "ai-fixer-progress-0",
+            "directions": 4,
+            "delays": [
+                [
+                    0.1,
+                    0.1,
+                    0.1,
+                    0.1
+                ],
+                [
+                    0.1,
+                    0.1,
+                    0.1,
+                    0.1
+                ],
+                [
+                    0.1,
+                    0.1,
+                    0.1,
+                    0.1
+                ],
+                [
+                    0.1,
+                    0.1,
+                    0.1,
+                    0.1
+                ]
+            ]
+        },
+        {
+            "name": "ai-fixer-progress-1",
+            "directions": 4,
+            "delays": [
+                [
+                    0.1,
+                    0.1,
+                    0.1,
+                    0.1
+                ],
+                [
+                    0.1,
+                    0.1,
+                    0.1,
+                    0.1
+                ],
+                [
+                    0.1,
+                    0.1,
+                    0.1,
+                    0.1
+                ],
+                [
+                    0.1,
+                    0.1,
+                    0.1,
+                    0.1
+                ]
+            ]
+        },
+        {
+            "name": "ai-fixer-progress-2",
+            "directions": 4,
+            "delays": [
+                [
+                    0.1,
+                    0.1,
+                    0.1,
+                    0.1
+                ],
+                [
+                    0.1,
+                    0.1,
+                    0.1,
+                    0.1
+                ],
+                [
+                    0.1,
+                    0.1,
+                    0.1,
+                    0.1
+                ],
+                [
+                    0.1,
+                    0.1,
+                    0.1,
+                    0.1
+                ]
+            ]
+        },
+        {
+            "name": "ai-fixer-progress-3",
+            "directions": 4,
+            "delays": [
+                [
+                    0.1,
+                    0.1,
+                    0.1,
+                    0.1
+                ],
+                [
+                    0.1,
+                    0.1,
+                    0.1,
+                    0.1
+                ],
+                [
+                    0.1,
+                    0.1,
+                    0.1,
+                    0.1
+                ],
+                [
+                    0.1,
+                    0.1,
+                    0.1,
+                    0.1
+                ]
+            ]
+        },
+        {
+            "name": "ai-fixer-purge-0",
+            "directions": 4,
+            "delays": [
+                [
+                    0.1,
+                    0.1,
+                    0.1,
+                    0.1
+                ],
+                [
+                    0.1,
+                    0.1,
+                    0.1,
+                    0.1
+                ],
+                [
+                    0.1,
+                    0.1,
+                    0.1,
+                    0.1
+                ],
+                [
+                    0.1,
+                    0.1,
+                    0.1,
+                    0.1
+                ]
+            ]
+        },
+        {
+            "name": "ai-fixer-purge-1",
+            "directions": 4,
+            "delays": [
+                [
+                    0.1,
+                    0.1,
+                    0.1,
+                    0.1
+                ],
+                [
+                    0.1,
+                    0.1,
+                    0.1,
+                    0.1
+                ],
+                [
+                    0.1,
+                    0.1,
+                    0.1,
+                    0.1
+                ],
+                [
+                    0.1,
+                    0.1,
+                    0.1,
+                    0.1
+                ]
+            ]
+        },
+        {
+            "name": "ai-fixer-purge-2",
+            "directions": 4,
+            "delays": [
+                [
+                    0.1,
+                    0.1,
+                    0.1,
+                    0.1
+                ],
+                [
+                    0.1,
+                    0.1,
+                    0.1,
+                    0.1
+                ],
+                [
+                    0.1,
+                    0.1,
+                    0.1,
+                    0.1
+                ],
+                [
+                    0.1,
+                    0.1,
+                    0.1,
+                    0.1
+                ]
+            ]
+        },
+        {
+            "name": "ai-fixer-purge-3",
+            "directions": 4,
+            "delays": [
+                [
+                    0.1,
+                    0.1,
+                    0.1,
+                    0.1
+                ],
+                [
+                    0.1,
+                    0.1,
+                    0.1,
+                    0.1
+                ],
+                [
+                    0.1,
+                    0.1,
+                    0.1,
+                    0.1
+                ],
+                [
                     0.1,
                     0.1,
                     0.1,
@@ -435,138 +675,6 @@
         },
         {
             "name": "comm_wizard",
-            "directions": 4,
-            "delays": [
-                [
-                    0.1,
-                    0.1
-                ],
-                [
-                    0.1,
-                    0.1
-                ],
-                [
-                    0.1,
-                    0.1
-                ],
-                [
-                    0.1,
-                    0.1
-                ]
-            ]
-        },
-        {
-            "name": "comm_science",
-            "directions": 4,
-            "delays": [
-                [
-                    0.1,
-                    0.1
-                ],
-                [
-                    0.1,
-                    0.1
-                ],
-                [
-                    0.1,
-                    0.1
-                ],
-                [
-                    0.1,
-                    0.1
-                ]
-            ]
-        },
-        {
-            "name": "comm_security",
-            "directions": 4,
-            "delays": [
-                [
-                    0.1,
-                    0.1
-                ],
-                [
-                    0.1,
-                    0.1
-                ],
-                [
-                    0.1,
-                    0.1
-                ],
-                [
-                    0.1,
-                    0.1
-                ]
-            ]
-        },
-        {
-            "name": "comm_service",
-            "directions": 4,
-            "delays": [
-                [
-                    0.1,
-                    0.1
-                ],
-                [
-                    0.1,
-                    0.1
-                ],
-                [
-                    0.1,
-                    0.1
-                ],
-                [
-                    0.1,
-                    0.1
-                ]
-            ]
-        },
-        {
-            "name": "comm_cargo",
-            "directions": 4,
-            "delays": [
-                [
-                    0.1,
-                    0.1
-                ],
-                [
-                    0.1,
-                    0.1
-                ],
-                [
-                    0.1,
-                    0.1
-                ],
-                [
-                    0.1,
-                    0.1
-                ]
-            ]
-        },
-        {
-            "name": "comm_engi",
-            "directions": 4,
-            "delays": [
-                [
-                    0.1,
-                    0.1
-                ],
-                [
-                    0.1,
-                    0.1
-                ],
-                [
-                    0.1,
-                    0.1
-                ],
-                [
-                    0.1,
-                    0.1
-                ]
-            ]
-        },
-        {
-            "name": "comm_medical",
             "directions": 4,
             "delays": [
                 [
@@ -1801,8 +1909,84 @@
             ]
         },
         {
+            "name": "request-syndie",
+            "directions": 4,
+            "delays": [
+                [
+                    0.3,
+                    0.3,
+                    0.3,
+                    0.3,
+                    0.3,
+                    0.3
+                ],
+                [
+                    0.3,
+                    0.3,
+                    0.3,
+                    0.3,
+                    0.3,
+                    0.3
+                ],
+                [
+                    0.3,
+                    0.3,
+                    0.3,
+                    0.3,
+                    0.3,
+                    0.3
+                ],
+                [
+                    0.3,
+                    0.3,
+                    0.3,
+                    0.3,
+                    0.3,
+                    0.3
+                ]
+            ]
+        },
+        {
             "name": "robot",
             "directions": 4
+        },
+        {
+            "name": "salvjob",
+            "directions": 4,
+            "delays": [
+                [
+                    1,
+                    0.1,
+                    1,
+                    0.1,
+                    1,
+                    0.1
+                ],
+                [
+                    1,
+                    0.1,
+                    1,
+                    0.1,
+                    1,
+                    0.1
+                ],
+                [
+                    1,
+                    0.1,
+                    1,
+                    0.1,
+                    1,
+                    0.1
+                ],
+                [
+                    1,
+                    0.1,
+                    1,
+                    0.1,
+                    1,
+                    0.1
+                ]
+            ]
         },
         {
             "name": "security",
@@ -1900,6 +2084,10 @@
         },
         {
             "name": "syndie_key",
+            "directions": 4
+        },
+        {
+            "name": "syndie_generic_keys",
             "directions": 4
         },
         {
@@ -2122,8 +2310,144 @@
             "directions": 4
         },
         {
+            "name": "xenorobot",
+            "directions": 4
+        },
+        {
             "name": "wizard_key",
             "directions": 4
+        },
+        {
+            "name": "comm_science",
+            "directions": 4,
+            "delays": [
+                [
+                    0.1,
+                    0.1
+                ],
+                [
+                    0.1,
+                    0.1
+                ],
+                [
+                    0.1,
+                    0.1
+                ],
+                [
+                    0.1,
+                    0.1
+                ]
+            ]
+        },
+        {
+            "name": "comm_security",
+            "directions": 4,
+            "delays": [
+                [
+                    0.1,
+                    0.1
+                ],
+                [
+                    0.1,
+                    0.1
+                ],
+                [
+                    0.1,
+                    0.1
+                ],
+                [
+                    0.1,
+                    0.1
+                ]
+            ]
+        },
+        {
+            "name": "comm_service",
+            "directions": 4,
+            "delays": [
+                [
+                    0.1,
+                    0.1
+                ],
+                [
+                    0.1,
+                    0.1
+                ],
+                [
+                    0.1,
+                    0.1
+                ],
+                [
+                    0.1,
+                    0.1
+                ]
+            ]
+        },
+        {
+            "name": "comm_cargo",
+            "directions": 4,
+            "delays": [
+                [
+                    0.1,
+                    0.1
+                ],
+                [
+                    0.1,
+                    0.1
+                ],
+                [
+                    0.1,
+                    0.1
+                ],
+                [
+                    0.1,
+                    0.1
+                ]
+            ]
+        },
+        {
+            "name": "comm_engi",
+            "directions": 4,
+            "delays": [
+                [
+                    0.1,
+                    0.1
+                ],
+                [
+                    0.1,
+                    0.1
+                ],
+                [
+                    0.1,
+                    0.1
+                ],
+                [
+                    0.1,
+                    0.1
+                ]
+            ]
+        },
+        {
+            "name": "comm_medical",
+            "directions": 4,
+            "delays": [
+                [
+                    0.1,
+                    0.1
+                ],
+                [
+                    0.1,
+                    0.1
+                ],
+                [
+                    0.1,
+                    0.1
+                ],
+                [
+                    0.1,
+                    0.1
+                ]
+            ]
         }
     ]
 }
