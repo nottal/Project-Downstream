@@ -161,6 +161,8 @@
         shader: unshaded
         visible: false
   - type: FootprintOwner
+  - type: Inventory
+    speciesId: moth
 
 - type: entity
   parent: BaseSpeciesDummy
@@ -169,4 +171,5 @@
   components:
   - type: HumanoidAppearance
     species: Moth
-
+  - type: Inventory
+    speciesId: moth
