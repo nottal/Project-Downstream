@@ -161,8 +161,7 @@ public abstract partial class SharedProjectileSystem : EntitySystem
         var deleted = Deleted(target);
 
         var filter = Filter.Pvs(coordinates, entityMan: EntityManager);
-        if (predicted &&
-            _guns.GunPrediction &&
+        if (_guns.GunPrediction &&
             TryComp(projectile, out PredictedProjectileServerComponent? serverProjectile) &&
             serverProjectile.Shooter is { } shooter)
         {

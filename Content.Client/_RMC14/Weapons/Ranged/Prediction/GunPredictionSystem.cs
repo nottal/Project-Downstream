@@ -11,11 +11,9 @@ using System.Numerics;
 using Content.Client.Projectiles;
 using Content.Shared._RMC14.Weapons.Ranged.Prediction;
 using Content.Shared.Damage;
-using Content.Shared.Damage.Components;
 using Content.Shared.Fluids.Components;
 using Content.Shared.Mobs.Components;
 using Content.Shared.Projectiles;
-using Content.Shared.Weapons.Ranged.Components;
 using Content.Shared.Weapons.Ranged.Events;
 using Content.Shared.Weapons.Ranged.Systems;
 using Robust.Client.GameObjects;
@@ -33,7 +31,6 @@ namespace Content.Client._RMC14.Weapons.Ranged.Prediction;
 public sealed class GunPredictionSystem : SharedGunPredictionSystem
 {
     public const string ProjectileFixture = "projectile";
-    private const float MinimumSweepDistance = 0.01f;
     [Dependency] private readonly SharedGunSystem _gun = default!;
     [Dependency] private readonly PhysicsSystem _physics = default!;
     [Dependency] private readonly IPlayerManager _player = default!;
@@ -100,131 +97,6 @@ public sealed class GunPredictionSystem : SharedGunPredictionSystem
         args.IsPredicted = true;
     }
 
-    private void PredictHit(EntityUid projectileUid, ProjectileComponent projectile, PhysicsComponent physics, EntityUid hit)
-    {
-        var netEnt = GetNetEntity(hit);
-        var pos = _transform.GetMapCoordinates(hit);
-        var hits = new HashSet<(NetEntity, MapCoordinates)> { (netEnt, pos) };
-        var ev = new PredictedProjectileHitEvent(projectileUid.Id, hits);
-        RaiseNetworkEvent(ev);
-
-        _projectile.ProjectileCollide((projectileUid, projectile, physics), hit);
-    }
-
-    private bool TryGetProjectileMask(EntityUid uid, out int projectileMask)
-    {
-        projectileMask = 0;
-        if (!TryComp<FixturesComponent>(uid, out var fixtures) ||
-            !fixtures.Fixtures.TryGetValue(ProjectileFixture, out var projectileFixture))
-        {
-            return false;
-        }
-
-        projectileMask = projectileFixture.CollisionMask;
-        return true;
-    }
-
-    private bool IsValidPredictedHit(
-        EntityUid projectileUid,
-        ProjectileComponent projectile,
-        int projectileMask,
-        EntityUid contact)
-    {
-        if (contact == projectileUid)
-            return false;
-
-        if (projectile.IgnoreShooter && (contact == projectile.Shooter || contact == projectile.Weapon))
-            return false;
-
-        if (HasComp<PuddleComponent>(contact))
-            return false;
-
-        if (!TryComp<PhysicsComponent>(contact, out _))
-            return false;
-
-        if (!TryComp<FixturesComponent>(contact, out var contactFixtures))
-            return false;
-
-        if (TryComp<RequireProjectileTargetComponent>(contact, out var requireTarget) &&
-            requireTarget.Active &&
-            CompOrNull<TargetedProjectileComponent>(projectileUid)?.Target != contact)
-        {
-            return false;
-        }
-
-        var isAnchored = false;
-        if (TryComp<TransformComponent>(contact, out var contactXform))
-            isAnchored = contactXform.Anchored;
-
-        if (!isAnchored)
-        {
-            var canBeHit = HasComp<DamageableComponent>(contact) ||
-                           HasComp<MobStateComponent>(contact);
-
-            if (!canBeHit)
-                return false;
-        }
-
-        foreach (var fixture in contactFixtures.Fixtures.Values)
-        {
-            if (!fixture.Hard)
-                continue;
-
-            if ((fixture.CollisionLayer & projectileMask) == 0)
-                continue;
-
-            return true;
-        }
-
-        return false;
-    }
-
-    private bool TryPredictSweptHit(
-        EntityUid uid,
-        PredictedProjectileClientComponent predicted,
-        ProjectileComponent projectile,
-        PhysicsComponent physics,
-        int projectileMask,
-        out EntityUid hit)
-    {
-        hit = default;
-
-        if (predicted.Coordinates is not { } previousCoordinates)
-            return false;
-
-        var previous = _transform.ToMapCoordinates(previousCoordinates);
-        var current = _transform.GetMapCoordinates(uid);
-        if (previous.MapId != current.MapId)
-            return false;
-
-        var delta = current.Position - previous.Position;
-        var distance = delta.Length();
-        if (distance <= MinimumSweepDistance)
-            return false;
-
-        var ray = new CollisionRay(previous.Position, delta / distance, projectileMask);
-        var results = _physics.IntersectRayWithPredicate(
-            previous.MapId,
-            ray,
-            (Projectile: uid, Shooter: projectile.Shooter, Weapon: projectile.Weapon),
-            static (ent, ignored) => ent == ignored.Projectile ||
-                                     ent == ignored.Shooter ||
-                                     ent == ignored.Weapon,
-            distance,
-            false);
-
-        foreach (var result in results)
-        {
-            if (!IsValidPredictedHit(uid, projectile, projectileMask, result.HitEntity))
-                continue;
-
-            hit = result.HitEntity;
-            return true;
-        }
-
-        return false;
-    }
-
     private void OnClientProjectileStartCollide(Entity<PredictedProjectileClientComponent> ent, ref StartCollideEvent args)
 {
     if (ent.Comp.Hit)
@@ -287,7 +159,7 @@ public sealed class GunPredictionSystem : SharedGunPredictionSystem
     var ev = new PredictedProjectileHitEvent(ent.Owner.Id, hit);
     RaiseNetworkEvent(ev);
 
-    _projectile.ProjectileCollide((ent, projectile, physics), args.OtherEntity);
+    _projectile.ProjectileCollide((ent, projectile, physics), args.OtherEntity, predicted: true);
 }
 
     private void OnServerProjectileStartup(Entity<PredictedProjectileServerComponent> ent, ref ComponentStartup args)
@@ -319,18 +191,19 @@ public override void Update(float frameTime)
         if (predicted.Hit)
             continue;
 
-        if (!TryGetProjectileMask(uid, out var projectileMask))
-            continue;
-
-        if (TryPredictSweptHit(uid, predicted, projectile, physics, projectileMask, out var sweptHit))
-        {
-            PredictHit(uid, projectile, physics, sweptHit);
-            continue;
-        }
-
         var contacts = _physics.GetContactingEntities(uid, physics, true);
         if (contacts.Count == 0)
             continue;
+
+        // Get fixtures component
+        if (!TryComp<FixturesComponent>(uid, out var fixtures))
+            continue;
+
+        // Get the projectile fixture specifically
+        if (!fixtures.Fixtures.TryGetValue("projectile", out var projectileFixture))
+            continue;
+
+        var projectileMask = projectileFixture.CollisionMask;
 
         // Get projectile position and velocity for directional checking
         var projectileMapCoords = _transform.GetMapCoordinates(uid);
@@ -342,13 +215,57 @@ public override void Update(float frameTime)
         foreach (var contact in contacts)
         {
             // Skip shooter and weapon to prevent immediate collision at spawn point
-            if (!IsValidPredictedHit(uid, projectile, projectileMask, contact))
+            if (projectile.IgnoreShooter && (contact == projectile.Shooter || contact == projectile.Weapon))
+                continue;
+
+            // Skip puddles - they should never be hit by projectiles
+            if (HasComp<PuddleComponent>(contact))
+                continue;
+
+            // Check if contact has physics - if not, skip it
+            if (!TryComp<PhysicsComponent>(contact, out var contactPhysics))
+                continue;
+
+
+            // Get contact fixtures to check which fixture is actually colliding
+            if (!TryComp<FixturesComponent>(contact, out var contactFixtures))
                 continue;
 
             // Check if contact is anchored
             var isAnchored = false;
             if (TryComp<TransformComponent>(contact, out var contactXform))
                 isAnchored = contactXform.Anchored;
+
+            // Check if any of the contact's fixtures would collide with the projectile fixture
+            var shouldCollide = false;
+
+            foreach (var fixture in contactFixtures.Fixtures.Values)
+            {
+                // Must be a hard fixture (not a trigger/sensor)
+                if (!fixture.Hard)
+                    continue;
+
+                // Must have collision layer overlap with projectile's mask
+                if ((fixture.CollisionLayer & projectileMask) == 0)
+                    continue;
+
+                shouldCollide = true;
+                break;
+            }
+
+            if (!shouldCollide)
+                continue;
+
+            // Additional component-based filtering for non-anchored entities
+            if (!isAnchored)
+            {
+                // Only hit non-anchored entities if they can be damaged or are mobs
+                var canBeHit = HasComp<DamageableComponent>(contact) ||
+                               HasComp<MobStateComponent>(contact);
+
+                if (!canBeHit)
+                    continue;
+            }
 
             // For anchored entities (walls, fixtures), check if they're in the direction of travel
             // This prevents hitting walls behind the shooter
