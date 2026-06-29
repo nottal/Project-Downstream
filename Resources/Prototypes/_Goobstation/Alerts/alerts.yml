@@ -21,3 +21,4 @@
     state: icon
   name: alerts-knocked-down-name
   description: alerts-knocked-down-desc
+  clickEvent: !type:KnockedDownAlertEvent

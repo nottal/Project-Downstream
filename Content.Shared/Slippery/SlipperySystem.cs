@@ -46,6 +46,7 @@
 // SPDX-License-Identifier: MIT
 
 using Content.Shared.Administration.Logs;
+using Content.Shared.Damage.Systems;
 using Content.Shared.Database;
 using Content.Shared.Inventory;
 using Robust.Shared.Network;
@@ -69,10 +70,9 @@ namespace Content.Shared.Slippery;
 [UsedImplicitly]
 public sealed class SlipperySystem : EntitySystem
 {
-    private const float SlipKnockdownFrictionModifier = 0.4f;
-
     [Dependency] private readonly ISharedAdminLogManager _adminLogger = default!;
     [Dependency] private readonly SharedAudioSystem _audio = default!;
+    [Dependency] private readonly SharedStaminaSystem _stamina = default!;
     [Dependency] private readonly SharedStunSystem _stun = default!;
     [Dependency] private readonly StatusEffectsSystem _statusEffects = default!;
     [Dependency] private readonly SharedContainerSystem _container = default!;
@@ -141,7 +141,8 @@ public sealed class SlipperySystem : EntitySystem
 
     public void TrySlip(EntityUid uid, SlipperyComponent component, EntityUid other, bool requiresContact = true, bool force = false)
     {
-        if (HasComp<KnockedDownComponent>(other) && !component.SlipData.SuperSlippery && !force)
+        var wasKnockedDown = HasComp<KnockedDownComponent>(other);
+        if (wasKnockedDown && !component.SlipData.SuperSlippery && !force)
             return;
 
         if (!force)
@@ -181,17 +182,17 @@ public sealed class SlipperySystem : EntitySystem
             }
         }
 
-        var playSound = !_statusEffects.HasStatusEffect(other, "KnockedDown");
-
-        _stun.TryParalyze(other, component.SlipData.ParalyzeTime, true);
-
-        _stun.TrySetKnockedDownFrictionModifier(other, SlipKnockdownFrictionModifier);
-
-        // Preventing from playing the slip sound when you are already knocked down.
-        if (playSound)
+        if (!wasKnockedDown)
         {
+            _stun.TryStun(other, component.SlipData.StunTime, true);
+            _stamina.TakeStaminaDamage(other, component.StaminaDamage);
             _audio.PlayPredicted(component.SlipSound, other, other);
         }
+
+        if (!_stun.TryCrawling(other, component.SlipData.KnockdownTime, true, component.SlipData.AutoStand, drop: false, force: true))
+            _stun.TryKnockdown(other, component.SlipData.KnockdownTime, true, autoStand: component.SlipData.AutoStand, drop: false, force: true);
+
+        _stun.TrySetKnockedDownFrictionModifier(other, component.SlipData.SlipFriction);
 
         _adminLogger.Add(LogType.Slip, LogImpact.Low,
             $"{ToPrettyString(other):mob} slipped on collision with {ToPrettyString(uid):entity}");

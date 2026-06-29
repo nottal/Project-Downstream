@@ -10,7 +10,23 @@ public abstract partial class SharedHandsSystem
 {
     private void InitializeEventListeners()
     {
+        SubscribeLocalEvent<HandsComponent, GetStandUpTimeEvent>(OnStandupArgs);
         SubscribeLocalEvent<HandsComponent, KnockedDownRefreshEvent>(OnKnockedDownRefresh);
+    }
+
+    /// <summary>
+    /// Free hands reduce the time it takes to stand up from crawling.
+    /// </summary>
+    private void OnStandupArgs(Entity<HandsComponent> ent, ref GetStandUpTimeEvent args)
+    {
+        if (!HasComp<KnockedDownComponent>(ent))
+            return;
+
+        var freeHands = ent.Comp.CountFreeHands();
+        if (freeHands == 0)
+            return;
+
+        args.DoAfterTime *= (float) ent.Comp.Count / (freeHands + ent.Comp.Count);
     }
 
     /// <summary>

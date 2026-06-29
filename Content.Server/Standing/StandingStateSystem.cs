@@ -25,21 +25,23 @@ using Content.Shared.Hands.EntitySystems;
 using Content.Shared.Standing;
 using Content.Shared.Throwing;
 using Robust.Shared.Physics.Components;
+using Robust.Shared.Maths;
 using Robust.Shared.Random;
 
 namespace Content.Server.Standing;
 
 public sealed class StandingStateSystem : EntitySystem
 {
+    private const float DropHeldItemsSpread = 45f;
+
     [Dependency] private readonly IRobustRandom _random = default!;
     [Dependency] private readonly SharedHandsSystem _handsSystem = default!;
     [Dependency] private readonly ThrowingSystem _throwingSystem = default!;
-    [Dependency] private readonly SharedTransformSystem _transformSystem = default!;
 
     private void FallOver(EntityUid uid, StandingStateComponent component, DropHandItemsEvent args)
     {
-        var direction = EntityManager.TryGetComponent(uid, out PhysicsComponent? comp) ? comp.LinearVelocity / 50 : Vector2.Zero;
-        var dropAngle = _random.NextFloat(0.8f, 1.2f);
+        var holderVelocity = EntityManager.TryGetComponent(uid, out PhysicsComponent? comp) ? comp.LinearVelocity : Vector2.Zero;
+        var spreadMaxAngle = Angle.FromDegrees(DropHeldItemsSpread);
 
         var fellEvent = new FellDownEvent(uid);
         RaiseLocalEvent(uid, fellEvent, false);
@@ -47,19 +49,31 @@ public sealed class StandingStateSystem : EntitySystem
         if (!TryComp(uid, out HandsComponent? handsComp))
             return;
 
-        var worldRotation = _transformSystem.GetWorldRotation(uid).ToVec();
         foreach (var hand in handsComp.Hands.Values)
         {
             if (hand.HeldEntity is not EntityUid held)
                 continue;
 
+            var throwAttempt = new FellDownThrowAttemptEvent(uid);
+            RaiseLocalEvent(held, ref throwAttempt);
+            if (throwAttempt.Cancelled)
+                continue;
+
             if (!_handsSystem.TryDrop(uid, hand, null, checkActionBlocker: false, handsComp: handsComp))
                 continue;
 
+            var angleOffset = _random.NextAngle(-spreadMaxAngle, spreadMaxAngle);
+            var itemVelocity = angleOffset.RotateVec(holderVelocity);
+            itemVelocity *= _random.NextFloat(1f);
+            itemVelocity *= EntityManager.TryGetComponent(held, out PhysicsComponent? heldPhysics) ? heldPhysics.InvMass : 0f;
+            var throwSpeed = handsComp.BaseThrowspeed * _random.NextFloat(0.45f, 0.55f);
+
             _throwingSystem.TryThrow(held,
-                _random.NextAngle().RotateVec(direction / dropAngle + worldRotation / 50),
-                0.5f * dropAngle * _random.NextFloat(-0.9f, 1.1f),
-                uid, 0);
+                itemVelocity,
+                throwSpeed,
+                uid,
+                pushbackRatio: 0,
+                compensateFriction: false);
         }
     }
 

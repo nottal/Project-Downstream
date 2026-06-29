@@ -35,6 +35,8 @@
 
 using Content.Shared.ActionBlocker;
 using Content.Shared.Administration.Logs;
+using Content.Shared.Alert;
+using Content.Shared.Buckle.Components;
 using Content.Shared.Interaction;
 using Content.Shared.Interaction.Events;
 using Content.Shared.Inventory.Events;
@@ -45,18 +47,22 @@ using Content.Shared.DoAfter;
 using Content.Shared.Input;
 using Content.Shared.Damage.Components;
 using Content.Shared.Damage.Systems;
+using Content.Shared.Gravity;
 using Content.Shared.Hands;
+using Content.Shared.Hands.EntitySystems;
 using Content.Shared.Mobs;
 using Content.Shared.Mobs.Components;
 using Content.Shared.Mobs.Systems;
 using Content.Shared.Movement.Events;
 using Content.Shared.Movement.Systems;
+using Content.Shared.Rejuvenate;
 using Content.Shared.Standing;
 using Content.Shared.Physics;
 using Content.Shared.StatusEffect;
 using Content.Shared.Throwing;
 using Content.Shared.Whitelist;
 using Content.Shared.Popups;
+using Robust.Shared.Audio;
 using Robust.Shared.Audio.Systems;
 using Robust.Shared.Physics.Components;
 using Robust.Shared.Physics.Events;
@@ -72,6 +78,7 @@ using Robust.Shared.Input.Binding;
 using Robust.Shared.Map;
 using Robust.Shared.Maths;
 using Robust.Shared.Player;
+using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization;
 
 namespace Content.Shared.Stunnable;
@@ -83,15 +90,21 @@ public abstract partial class SharedStunSystem : EntitySystem
     private static readonly TimeSpan AutoStandRetryDelay = TimeSpan.FromSeconds(0.25);
     private static readonly TimeSpan ToggleKnockdownCooldown = TimeSpan.FromSeconds(0.8);
     private static readonly TimeSpan ManualStandAttemptCooldown = TimeSpan.FromSeconds(0.8);
+    public static readonly ProtoId<AlertPrototype> KnockdownAlert = "KnockedDown";
 
+    [Dependency] private readonly AlertsSystem _alerts = default!;
     [Dependency] private readonly ActionBlockerSystem _blocker = default!;
     [Dependency] private readonly SharedBroadphaseSystem _broadphase = default!;
     [Dependency] private readonly ISharedAdminLogManager _adminLogger = default!;
+    [Dependency] private readonly SharedGravitySystem _gravity = default!;
     [Dependency] private readonly MovementSpeedModifierSystem _movementSpeedModifier = default!;
     [Dependency] protected readonly SharedAppearanceSystem Appearance = default!;
     [Dependency] private readonly EntityWhitelistSystem _entityWhitelist = default!;
     [Dependency] private readonly StandingStateSystem _standingState = default!;
     [Dependency] private readonly StatusEffectsSystem _statusEffect = default!;
+    [Dependency] private readonly SharedAudioSystem _audio = default!;
+    [Dependency] private readonly SharedHandsSystem _hands = default!;
+    [Dependency] private readonly SharedStaminaSystem _stamina = default!;
     [Dependency] private readonly SharedStutteringSystem _stutter = default!; // goob edit
     [Dependency] private readonly SharedJitteringSystem _jitter = default!; // goob edit
     [Dependency] private readonly ClothingModifyStunTimeSystem _modify = default!; // goob edit
@@ -104,13 +117,17 @@ public abstract partial class SharedStunSystem : EntitySystem
 
     public override void Initialize()
     {
+        SubscribeLocalEvent<KnockedDownComponent, RejuvenateEvent>(OnKnockRejuvenate);
         SubscribeLocalEvent<KnockedDownComponent, ComponentInit>(OnKnockInit);
         SubscribeLocalEvent<KnockedDownComponent, ComponentShutdown>(OnKnockShutdown);
+        SubscribeLocalEvent<KnockedDownComponent, BuckleAttemptEvent>(OnBuckleAttempt);
         SubscribeLocalEvent<KnockedDownComponent, StandAttemptEvent>(OnStandAttempt);
         SubscribeLocalEvent<KnockedDownComponent, RefreshMovementSpeedModifiersEvent>(OnKnockedRefreshSpeed);
         SubscribeLocalEvent<CrawlerComponent, KnockedDownRefreshEvent>(OnCrawlerKnockedRefresh);
         SubscribeLocalEvent<CrawlerComponent, global::Content.Shared.Damage.DamageChangedEvent>(OnCrawlerDamaged);
         SubscribeLocalEvent<KnockedDownComponent, TryStandDoAfterEvent>(OnStandDoAfter);
+        SubscribeLocalEvent<KnockedDownComponent, KnockedDownAlertEvent>(OnKnockedDownAlert);
+        SubscribeAllEvent<ForceStandUpEvent>(OnForceStandup);
         SubscribeLocalEvent<KnockedDownComponent, DidEquipHandEvent>(OnHandEquippedWhileKnocked);
         SubscribeLocalEvent<KnockedDownComponent, DidUnequipHandEvent>(OnHandUnequippedWhileKnocked);
         SubscribeLocalEvent<KnockedDownComponent, HandCountChangedEvent>(OnHandCountChangedWhileKnocked);
@@ -239,19 +256,9 @@ public abstract partial class SharedStunSystem : EntitySystem
 
     private void OnKnockInit(EntityUid uid, KnockedDownComponent component, ComponentInit args)
     {
-        var dirty = false;
-
-        if (component.NextUpdate == TimeSpan.Zero)
-        {
-            component.NextUpdate = _timing.CurTime + TimeSpan.FromSeconds(0.5f);
-            dirty = true;
-        }
-
+        UpdateKnockdownAlert(uid, component);
         RefreshKnockedMovement(uid, component);
         _standingState.Down(uid, true, false);
-
-        if (dirty)
-            Dirty(uid, component);
     }
 
     private void OnKnockShutdown(EntityUid uid, KnockedDownComponent component, ComponentShutdown args)
@@ -260,7 +267,9 @@ public abstract partial class SharedStunSystem : EntitySystem
         _nextStandAttemptAt.Remove(uid);
         component.FrictionModifier = 1f;
         component.SpeedModifier = 1f;
+        CancelKnockdownDoAfter(uid, component);
         component.DoAfterId = null;
+        _alerts.ClearAlert(uid, KnockdownAlert);
 
         if (_mobState.IsIncapacitated(uid))
         {
@@ -271,14 +280,93 @@ public abstract partial class SharedStunSystem : EntitySystem
         _standingState.Stand(uid);
     }
 
+    private void OnKnockRejuvenate(EntityUid uid, KnockedDownComponent component, ref RejuvenateEvent args)
+    {
+        SetKnockdownNextUpdate(uid, component, _timing.CurTime);
+
+        if (component.AutoStand)
+            RemComp<KnockedDownComponent>(uid);
+    }
+
     private void ScheduleAutoStandRetry(EntityUid uid, KnockedDownComponent component)
     {
         var nextUpdate = _timing.CurTime + AutoStandRetryDelay;
         if (component.NextUpdate >= nextUpdate)
             return;
 
-        component.NextUpdate = nextUpdate;
+        SetKnockdownNextUpdate(uid, component, nextUpdate);
+    }
+
+    public void SetAutoStand(EntityUid uid, KnockedDownComponent? component = null, bool autoStand = false)
+    {
+        if (!Resolve(uid, ref component, false) || component.AutoStand == autoStand)
+            return;
+
+        component.AutoStand = autoStand;
         Dirty(uid, component);
+    }
+
+    public void CancelKnockdownDoAfter(EntityUid uid, KnockedDownComponent? component = null)
+    {
+        if (!Resolve(uid, ref component, false) || component.DoAfterId == null)
+            return;
+
+        _doAfter.Cancel(uid, component.DoAfterId.Value);
+        component.DoAfterId = null;
+        Dirty(uid, component);
+    }
+
+    private void OnBuckleAttempt(EntityUid uid, KnockedDownComponent component, ref BuckleAttemptEvent args)
+    {
+        if (args.User == uid && component.NextUpdate > _timing.CurTime)
+            args.Cancelled = true;
+    }
+
+    public void SetKnockdownTime(EntityUid uid, TimeSpan time, KnockedDownComponent? component = null)
+    {
+        if (!Resolve(uid, ref component, false))
+            return;
+
+        SetKnockdownNextUpdate(uid, component, _timing.CurTime + time);
+    }
+
+    public void UpdateKnockdownTime(EntityUid uid, TimeSpan time, bool refresh = true, KnockedDownComponent? component = null)
+    {
+        if (!Resolve(uid, ref component, false))
+            return;
+
+        if (refresh)
+        {
+            var knockedTime = _timing.CurTime + time;
+            if (component.NextUpdate < knockedTime)
+                SetKnockdownNextUpdate(uid, component, knockedTime);
+
+            return;
+        }
+
+        if (component.NextUpdate < _timing.CurTime)
+            SetKnockdownNextUpdate(uid, component, _timing.CurTime + time);
+        else
+            SetKnockdownNextUpdate(uid, component, component.NextUpdate + time);
+    }
+
+    private void SetKnockdownNextUpdate(EntityUid uid, KnockedDownComponent component, TimeSpan time)
+    {
+        if (_timing.CurTime > time)
+            time = _timing.CurTime;
+
+        component.NextUpdate = time;
+        Dirty(uid, component);
+        UpdateKnockdownAlert(uid, component);
+    }
+
+    private void UpdateKnockdownAlert(EntityUid uid, KnockedDownComponent component)
+    {
+        (TimeSpan, TimeSpan)? cooldown = component.NextUpdate > _timing.CurTime
+            ? (_timing.CurTime, component.NextUpdate)
+            : null;
+
+        _alerts.ShowAlert(uid, KnockdownAlert, cooldown: cooldown);
     }
 
     private void RefreshKnockedMovement(EntityUid uid, KnockedDownComponent component)
@@ -309,18 +397,17 @@ public abstract partial class SharedStunSystem : EntitySystem
 
     private void OnCrawlerDamaged(EntityUid uid, CrawlerComponent component, ref global::Content.Shared.Damage.DamageChangedEvent args)
     {
-        if (!TryComp(uid, out KnockedDownComponent? knocked) || !args.DamageIncreased || args.DamageDelta == null)
+        if (!TryComp(uid, out KnockedDownComponent? knocked) ||
+            !args.InterruptsDoAfters ||
+            !args.DamageIncreased ||
+            args.DamageDelta == null ||
+            _timing.ApplyingState)
+        {
             return;
+        }
 
         if (args.DamageDelta.GetTotal() >= component.KnockdownDamageThreshold)
-        {
-            var nextUpdate = _timing.CurTime + component.DefaultKnockedDuration;
-            if (knocked.NextUpdate < nextUpdate)
-            {
-                knocked.NextUpdate = nextUpdate;
-                Dirty(uid, knocked);
-            }
-        }
+            UpdateKnockdownTime(uid, component.DefaultKnockedDuration, component: knocked);
     }
 
     private void OnHandEquippedWhileKnocked(EntityUid uid, KnockedDownComponent component, ref DidEquipHandEvent args)
@@ -365,9 +452,6 @@ public abstract partial class SharedStunSystem : EntitySystem
         if (_mobState.IsIncapacitated(uid))
             return;
 
-        if (TryComp(uid, out KnockedDownComponent? activeKnocked) && activeKnocked.DoAfterId.HasValue)
-            return;
-
         if (_nextToggleKnockdownAt.TryGetValue(uid, out var nextToggle) && _timing.CurTime < nextToggle)
             return;
 
@@ -375,33 +459,21 @@ public abstract partial class SharedStunSystem : EntitySystem
 
         if (!TryComp(uid, out KnockedDownComponent? knocked))
         {
-            EnsureComp<KnockedDownComponent>(uid);
-            knocked = Comp<KnockedDownComponent>(uid);
-            knocked.AutoStand = false;
-            if (TryComp(uid, out CrawlerComponent? crawler))
-                knocked.NextUpdate = _timing.CurTime + crawler.DefaultKnockedDuration;
-            Dirty(uid, knocked);
+            var crawler = Comp<CrawlerComponent>(uid);
+            TryKnockdown(uid, crawler.DefaultKnockedDuration, true, autoStand: false, drop: false);
             return;
         }
 
-        var stand = true;
+        var stand = !knocked.DoAfterId.HasValue;
         if (_nextStandAttemptAt.TryGetValue(uid, out var nextStandAttempt) && _timing.CurTime < nextStandAttempt)
             return;
 
-        if (knocked.AutoStand != stand)
-        {
-            knocked.AutoStand = stand;
-            Dirty(uid, knocked);
-        }
+        SetAutoStand(uid, knocked, stand);
 
         if (!TryStanding(uid, knocked, popupOnBlocked: true))
         {
-            if (knocked.DoAfterId.HasValue)
-            {
-                _doAfter.Cancel(new DoAfterId(uid, knocked.DoAfterId.Value));
-                knocked.DoAfterId = null;
-                Dirty(uid, knocked);
-            }
+            if (!stand || knocked.DoAfterId.HasValue)
+                CancelKnockdownDoAfter(uid, knocked);
 
             _nextStandAttemptAt[uid] = _timing.CurTime + ManualStandAttemptCooldown;
         }
@@ -454,7 +526,19 @@ public abstract partial class SharedStunSystem : EntitySystem
         if (!Resolve(uid, ref knocked, false))
             return true;
 
-        if (knocked.NextUpdate > _timing.CurTime || _mobState.IsIncapacitated(uid) || !_blocker.CanMove(uid))
+        if (!KnockdownOver(uid, knocked) || _mobState.IsIncapacitated(uid))
+            return false;
+
+        var standEv = new StandUpAttemptEvent(knocked.AutoStand);
+        RaiseLocalEvent(uid, ref standEv);
+
+        if (standEv.Autostand != knocked.AutoStand)
+            SetAutoStand(uid, knocked, standEv.Autostand);
+
+        if (standEv.Message != null)
+            _popup.PopupClient(standEv.Message.Value.Item1, uid, uid, standEv.Message.Value.Item2);
+
+        if (standEv.Cancelled)
             return false;
 
         if (IntersectingStandingColliders(uid))
@@ -462,6 +546,7 @@ public abstract partial class SharedStunSystem : EntitySystem
             if (popupOnBlocked)
                 _popup.PopupClient(Loc.GetString("knockdown-component-stand-no-room"), uid, uid, PopupType.SmallCaution);
 
+            SetAutoStand(uid, knocked);
             ScheduleAutoStandRetry(uid, knocked);
             return false;
         }
@@ -475,7 +560,10 @@ public abstract partial class SharedStunSystem : EntitySystem
         if (knocked.DoAfterId != null)
             return false;
 
-        var doAfter = new DoAfterArgs(EntityManager, uid, crawler.StandTime, new TryStandDoAfterEvent(), uid, uid)
+        var getUpTime = new GetStandUpTimeEvent(crawler.StandTime);
+        RaiseLocalEvent(uid, ref getUpTime);
+
+        var doAfter = new DoAfterArgs(EntityManager, uid, getUpTime.DoAfterTime, new TryStandDoAfterEvent(), uid, uid)
         {
             BreakOnDamage = true,
             DamageThreshold = 5f,
@@ -488,15 +576,64 @@ public abstract partial class SharedStunSystem : EntitySystem
             return false;
 
         knocked.DoAfterId = id.Value.Index;
+        if (TryComp(uid, out StandingStateComponent? standing))
+        {
+            standing.CurrentState = StandingState.GettingUp;
+            Dirty(uid, standing);
+        }
+
         Dirty(uid, knocked);
         return true;
+    }
+
+    public bool KnockdownOver(EntityUid uid, KnockedDownComponent? knocked = null)
+    {
+        if (!Resolve(uid, ref knocked, false))
+            return true;
+
+        return knocked.NextUpdate <= _timing.CurTime && _blocker.CanMove(uid);
+    }
+
+    public bool CanStand(EntityUid uid, KnockedDownComponent? knocked = null)
+    {
+        if (!Resolve(uid, ref knocked, false))
+            return true;
+
+        if (!KnockdownOver(uid, knocked))
+            return false;
+
+        var ev = new StandUpAttemptEvent();
+        RaiseLocalEvent(uid, ref ev);
+        return !ev.Cancelled && !IntersectingStandingColliders(uid);
     }
 
     private void OnStandDoAfter(EntityUid uid, KnockedDownComponent knocked, ref TryStandDoAfterEvent args)
     {
         knocked.DoAfterId = null;
 
-        if (args.Cancelled || _mobState.IsIncapacitated(uid) || !_blocker.CanMove(uid))
+        if (TryComp(uid, out StandingStateComponent? standing) &&
+            standing.CurrentState == StandingState.GettingUp)
+        {
+            standing.CurrentState = StandingState.Lying;
+            Dirty(uid, standing);
+        }
+
+        if (args.Cancelled || !KnockdownOver(uid, knocked) || _mobState.IsIncapacitated(uid))
+        {
+            Dirty(uid, knocked);
+            return;
+        }
+
+        var standEv = new StandUpAttemptEvent(knocked.AutoStand);
+        RaiseLocalEvent(uid, ref standEv);
+
+        if (standEv.Autostand != knocked.AutoStand)
+            SetAutoStand(uid, knocked, standEv.Autostand);
+
+        if (standEv.Message != null)
+            _popup.PopupClient(standEv.Message.Value.Item1, uid, uid, standEv.Message.Value.Item2);
+
+        if (standEv.Cancelled)
         {
             Dirty(uid, knocked);
             return;
@@ -510,6 +647,97 @@ public abstract partial class SharedStunSystem : EntitySystem
         }
 
         RemComp<KnockedDownComponent>(uid);
+    }
+
+    private void OnForceStandup(ForceStandUpEvent msg, EntitySessionEventArgs args)
+    {
+        if (args.SenderSession.AttachedEntity is not { } user)
+            return;
+
+        ForceStandUp(user);
+    }
+
+    public void ForceStandUp(EntityUid uid, KnockedDownComponent? knocked = null)
+    {
+        if (!Resolve(uid, ref knocked, false))
+            return;
+
+        // If this fails now, keep trying to stand normally once the entity can.
+        SetAutoStand(uid, knocked, true);
+
+        if (StandingBlocked(uid, knocked))
+            return;
+
+        if (!_hands.TryGetEmptyHand(uid, out _))
+            return;
+
+        if (!TryForceStand(uid))
+            return;
+
+        CancelKnockdownDoAfter(uid, knocked);
+        RemComp<KnockedDownComponent>(uid);
+
+        _adminLogger.Add(LogType.Stamina, LogImpact.Medium,
+            $"{ToPrettyString(uid):user} has force stood up from knockdown.");
+    }
+
+    private bool StandingBlocked(EntityUid uid, KnockedDownComponent knocked)
+    {
+        if (!KnockdownOver(uid, knocked))
+            return true;
+
+        var standEv = new StandUpAttemptEvent(knocked.AutoStand);
+        RaiseLocalEvent(uid, ref standEv);
+
+        if (standEv.Autostand != knocked.AutoStand)
+            SetAutoStand(uid, knocked, standEv.Autostand);
+
+        if (standEv.Message != null)
+            _popup.PopupClient(standEv.Message.Value.Item1, uid, uid, standEv.Message.Value.Item2);
+
+        if (standEv.Cancelled)
+            return true;
+
+        if (!IntersectingStandingColliders(uid))
+            return false;
+
+        _popup.PopupClient(Loc.GetString("knockdown-component-stand-no-room"), uid, uid, PopupType.SmallCaution);
+        SetAutoStand(uid, knocked);
+        return true;
+    }
+
+    private bool TryForceStand(EntityUid uid)
+    {
+        if (!TryComp(uid, out StaminaComponent? stamina))
+            return false;
+
+        var ev = new TryForceStandEvent(stamina.ForceStandStamina);
+        RaiseLocalEvent(uid, ref ev);
+
+        if (!_stamina.TryTakeStamina(uid, ev.Stamina, stamina, visual: true))
+        {
+            _popup.PopupClient(Loc.GetString("knockdown-component-pushup-failure"), uid, uid, PopupType.MediumCaution);
+            return false;
+        }
+
+        _popup.PopupClient(Loc.GetString("knockdown-component-pushup-success"), uid, uid);
+        _audio.PlayPredicted(stamina.ForceStandSuccessSound, uid, uid,
+            AudioParams.Default.WithVariation(0.025f).WithVolume(5f));
+
+        return true;
+    }
+
+    private void OnKnockedDownAlert(EntityUid uid, KnockedDownComponent component, ref KnockedDownAlertEvent args)
+    {
+        if (args.Handled)
+            return;
+
+        SetAutoStand(uid, component, true);
+
+        if (!TryStanding(uid, component, popupOnBlocked: true))
+            ForceStandUp(uid, component);
+
+        args.Handled = true;
     }
 
     private void OnStandAttempt(EntityUid uid, KnockedDownComponent component, StandAttemptEvent args)
@@ -562,9 +790,9 @@ public abstract partial class SharedStunSystem : EntitySystem
         return true;
     }
 
-    public bool TryCrawling(EntityUid uid, bool refresh = true, bool autoStand = true)
+    public bool TryCrawling(EntityUid uid, bool refresh = true, bool autoStand = true, bool drop = true, bool force = false)
     {
-        return TryCrawling(uid, null, refresh, autoStand);
+        return TryCrawling(uid, null, refresh, autoStand, drop, force);
     }
 
     public void TrySetKnockedDownFrictionModifier(EntityUid uid, float frictionModifier, KnockedDownComponent? knocked = null)
@@ -580,7 +808,12 @@ public abstract partial class SharedStunSystem : EntitySystem
         Dirty(uid, knocked);
     }
 
-    public bool TryCrawling(EntityUid uid, TimeSpan? time, bool refresh = true, bool autoStand = true)
+    public bool TryCrawling(EntityUid uid,
+        TimeSpan? time,
+        bool refresh = true,
+        bool autoStand = true,
+        bool drop = true,
+        bool force = false)
     {
         if (!TryComp(uid, out CrawlerComponent? crawler))
             return false;
@@ -588,60 +821,96 @@ public abstract partial class SharedStunSystem : EntitySystem
         if (time == null)
             time = crawler.DefaultKnockedDuration;
 
-        if (!TryKnockdown(uid, time.Value, refresh))
-            return false;
-
-        if (TryComp(uid, out KnockedDownComponent? knocked) && knocked.AutoStand != autoStand)
-        {
-            knocked.AutoStand = autoStand;
-            Dirty(uid, knocked);
-        }
-
-        return true;
+        return TryKnockdown(uid, time.Value, refresh, autoStand: autoStand, drop: drop, force: force);
     }
 
     /// <summary>
     ///     Knocks down the entity, making it fall to the ground.
     /// </summary>
     public bool TryKnockdown(EntityUid uid, TimeSpan time, bool refresh,
-        StatusEffectsComponent? status = null)
+        StatusEffectsComponent? status = null,
+        bool autoStand = true,
+        bool drop = true,
+        bool force = false)
     {
         time *= _modify.GetModifier(uid); // Goobstation
 
         if (time <= TimeSpan.Zero)
             return false;
 
-        if (!Resolve(uid, ref status, false))
+        if (!CanKnockdown(uid, ref time, ref autoStand, ref drop, force))
             return false;
 
-        if (!_statusEffect.TryAddStatusEffect<KnockedDownComponent>(uid, "KnockedDown", time, refresh))
+        if (HasComp<CrawlerComponent>(uid) && _cfg.GetCVar(CCVars.MovementCrawling))
+        {
+            Knockdown(uid, time, refresh, autoStand, drop);
+            return true;
+        }
+
+        if (!Resolve(uid, ref status, false) ||
+            !_statusEffect.TryAddStatusEffect<KnockedDownComponent>(uid, "KnockedDown", time, refresh, status))
             return false;
 
         if (TryComp(uid, out KnockedDownComponent? knocked))
         {
-            var dirty = false;
-            var nextUpdate = _timing.CurTime + time;
-
-            if (knocked.NextUpdate < nextUpdate)
-            {
-                knocked.NextUpdate = nextUpdate;
-                dirty = true;
-            }
-
-            if (!knocked.AutoStand)
-            {
-                knocked.AutoStand = true;
-                dirty = true;
-            }
-
-            if (dirty)
-                Dirty(uid, knocked);
+            SetAutoStand(uid, knocked, autoStand);
+            UpdateKnockdownTime(uid, time, refresh, knocked);
         }
 
         var ev = new KnockedDownEvent();
         RaiseLocalEvent(uid, ref ev);
 
         return true;
+    }
+
+    private bool CanKnockdown(EntityUid uid,
+        ref TimeSpan time,
+        ref bool autoStand,
+        ref bool drop,
+        bool force = false)
+    {
+        if (time <= TimeSpan.Zero)
+            return false;
+
+        if (!HasComp<StandingStateComponent>(uid) || (!force && _gravity.IsWeightless(uid)))
+            return false;
+
+        var attempt = new KnockDownAttemptEvent(autoStand, drop, time);
+        RaiseLocalEvent(uid, ref attempt);
+
+        autoStand = attempt.AutoStand;
+        drop = attempt.Drop;
+        if (attempt.Time is { } newTime)
+            time = newTime;
+
+        return time > TimeSpan.Zero && (force || !attempt.Cancelled);
+    }
+
+    private void Knockdown(EntityUid uid, TimeSpan time, bool refresh, bool autoStand, bool drop)
+    {
+        var hadKnocked = TryComp(uid, out KnockedDownComponent? knocked);
+
+        if (!hadKnocked)
+        {
+            if (drop)
+                RaiseLocalEvent(uid, new DropHandItemsEvent(), false);
+
+            knocked = AddComp<KnockedDownComponent>(uid);
+        }
+        else
+        {
+            CancelKnockdownDoAfter(uid, knocked);
+            RefreshKnockedMovement(uid, knocked!);
+        }
+
+        SetAutoStand(uid, knocked, autoStand);
+        UpdateKnockdownTime(uid, time, refresh, knocked);
+
+        var ev = new KnockedDownEvent();
+        RaiseLocalEvent(uid, ref ev);
+
+        _adminLogger.Add(LogType.Stamina, LogImpact.Medium,
+            $"{ToPrettyString(uid):user} was knocked down for {time.TotalSeconds} seconds");
     }
 
     /// <summary>
@@ -737,6 +1006,27 @@ public record struct StunnedEvent;
 public record struct KnockedDownEvent;
 
 [ByRefEvent]
+public record struct KnockDownAttemptEvent(bool AutoStand, bool Drop, TimeSpan? Time)
+{
+    public bool Cancelled;
+}
+
+[ByRefEvent]
+public record struct StandUpAttemptEvent(bool Autostand)
+{
+    public bool Cancelled;
+    public (string, PopupType)? Message;
+}
+
+[ByRefEvent]
+public record struct GetStandUpTimeEvent(TimeSpan DoAfterTime);
+
+[ByRefEvent]
+public record struct TryForceStandEvent(float Stamina);
+
+public sealed partial class KnockedDownAlertEvent : BaseAlertEvent;
+
+[ByRefEvent]
 public record struct KnockedDownRefreshEvent()
 {
     public float SpeedModifier = 1f;
@@ -747,3 +1037,6 @@ public record struct KnockedDownRefreshEvent()
 [ByRefEvent]
 [Serializable, NetSerializable]
 public sealed partial class TryStandDoAfterEvent : SimpleDoAfterEvent;
+
+[Serializable, NetSerializable]
+public sealed class ForceStandUpEvent : EntityEventArgs;

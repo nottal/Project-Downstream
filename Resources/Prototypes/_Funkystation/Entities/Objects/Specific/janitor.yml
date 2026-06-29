@@ -18,7 +18,7 @@
         Slash: 0.95
   - type: Slippery
     slipData:
-      paralyzeTime: 5.0
+      knockdownTime: 5.0
       launchForwardsMultiplier: 3.0
   - type: StepTrigger
     intersectRatio: 0.2

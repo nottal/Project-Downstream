@@ -1909,7 +1909,7 @@
     delay: 0.8
   - type: Slippery
     slipData:
-      paralyzeTime: 0
+      knockdownTime: 0
     slipSound:
       collection: Parp
       params:

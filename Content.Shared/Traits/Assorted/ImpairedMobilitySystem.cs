@@ -22,6 +22,7 @@ public sealed class ImpairedMobilitySystem : EntitySystem
         SubscribeLocalEvent<ImpairedMobilityComponent, ComponentInit>(OnInit);
         SubscribeLocalEvent<ImpairedMobilityComponent, ComponentShutdown>(OnShutdown);
         SubscribeLocalEvent<ImpairedMobilityComponent, RefreshMovementSpeedModifiersEvent>(OnRefreshMovementSpeed);
+        SubscribeLocalEvent<ImpairedMobilityComponent, GetStandUpTimeEvent>(OnGetStandUpTime);
     }
 
     private void OnInit(Entity<ImpairedMobilityComponent> ent, ref ComponentInit args)
@@ -42,6 +43,11 @@ public sealed class ImpairedMobilitySystem : EntitySystem
             return;
 
         args.ModifySpeed(ent.Comp.SpeedModifier);
+    }
+
+    private void OnGetStandUpTime(Entity<ImpairedMobilityComponent> ent, ref GetStandUpTimeEvent args)
+    {
+        args.DoAfterTime *= ent.Comp.StandUpTimeModifier;
     }
 
     // Checks if the entity is holding any non-wielded mobility aids.

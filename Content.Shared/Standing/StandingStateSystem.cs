@@ -170,6 +170,13 @@ public sealed class StandingStateSystem : EntitySystem
 public sealed class DropHandItemsEvent : EventArgs
 {
 }
+
+/// <summary>
+/// Raised on a held entity before it is thrown from the hands of a falling entity.
+/// </summary>
+[ByRefEvent]
+public record struct FellDownThrowAttemptEvent(EntityUid Thrower, bool Cancelled = false);
+
 /// <summary>
 /// Subscribe if you can potentially block a down attempt.
 /// </summary>
