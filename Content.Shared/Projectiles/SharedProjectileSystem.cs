@@ -101,6 +101,9 @@ public abstract partial class SharedProjectileSystem : EntitySystem
             || component.DamagedEntity || component is { Weapon: null, OnlyCollideWhenShot: true })
             return;
 
+        if (_net.IsClient && HasComp<PredictedProjectileClientComponent>(uid))
+            return;
+
         ProjectileCollide((uid, component, args.OurBody), args.OtherEntity);
     }
 
@@ -161,7 +164,7 @@ public abstract partial class SharedProjectileSystem : EntitySystem
         var deleted = Deleted(target);
 
         var filter = Filter.Pvs(coordinates, entityMan: EntityManager);
-        if (_guns.GunPrediction &&
+        if (predicted && _guns.GunPrediction &&
             TryComp(projectile, out PredictedProjectileServerComponent? serverProjectile) &&
             serverProjectile.Shooter is { } shooter)
         {

@@ -53,8 +53,6 @@ public sealed class GunPredictionSystem : SharedGunPredictionSystem
         SubscribeLocalEvent<RequestShootEvent>(OnShootRequest);
 
         SubscribeLocalEvent<PredictedProjectileClientComponent, UpdateIsPredictedEvent>(OnClientProjectileUpdateIsPredicted);
-        SubscribeLocalEvent<PredictedProjectileClientComponent, StartCollideEvent>(OnClientProjectileStartCollide);
-
         SubscribeLocalEvent<PredictedProjectileServerComponent, ComponentStartup>(OnServerProjectileStartup);
 
         UpdatesBefore.Add(typeof(TransformSystem));
@@ -94,73 +92,28 @@ public sealed class GunPredictionSystem : SharedGunPredictionSystem
 
     private void OnClientProjectileUpdateIsPredicted(Entity<PredictedProjectileClientComponent> ent, ref UpdateIsPredictedEvent args)
     {
-        args.IsPredicted = true;
+        args.IsPredicted = !ent.Comp.Hit;
     }
 
-    private void OnClientProjectileStartCollide(Entity<PredictedProjectileClientComponent> ent, ref StartCollideEvent args)
-{
-    if (ent.Comp.Hit)
-        return;
-
-    if (!TryComp(ent, out ProjectileComponent? projectile) ||
-        !TryComp(ent, out PhysicsComponent? physics))
+    private void CollidePredictedProjectile(
+        EntityUid uid,
+        PredictedProjectileClientComponent predicted,
+        ProjectileComponent projectile,
+        PhysicsComponent physics,
+        EntityUid hit)
     {
-        return;
-    }
+        predicted.Hit = true;
+        _projectile.ProjectileCollide((uid, projectile, physics), hit, predicted: true);
 
-    // Skip collision with shooter and weapon if IgnoreShooter is true
-    if (args.OurFixtureId != ProjectileFixture || !args.OtherFixture.Hard ||
-        projectile.DamagedEntity || projectile is { Weapon: null, OnlyCollideWhenShot: true })
-        return;
-
-    // Skip puddles - they should never be hit by projectiles
-    if (HasComp<PuddleComponent>(args.OtherEntity))
-        return;
-
-    // Check if contact has physics component
-    if (!TryComp<PhysicsComponent>(args.OtherEntity, out var contactPhysics))
-        return;
-
-    // Check if contact is anchored for directional filtering
-    var isAnchored = false;
-    if (TryComp<TransformComponent>(args.OtherEntity, out var contactXform))
-        isAnchored = contactXform.Anchored;
-
-    // Additional filtering for non-anchored entities - match Update() logic
-    if (!isAnchored)
-    {
-        // Only hit non-anchored entities if they can be damaged or are mobs
-        var canBeHit = HasComp<DamageableComponent>(args.OtherEntity) ||
-                       HasComp<MobStateComponent>(args.OtherEntity);
-
-        if (!canBeHit)
+        if (!projectile.DeleteOnCollide)
             return;
+
+        if (_spriteQuery.TryComp(uid, out var sprite))
+            sprite.Visible = false;
+
+        RemComp<PredictedPhysicsComponent>(uid);
+        _physics.UpdateIsPredicted(uid);
     }
-
-    // For anchored entities (walls, fixtures), check if they're in the direction of travel
-    if (isAnchored && physics.LinearVelocity.LengthSquared() > 0.01f)
-    {
-        var projectileMapCoords = _transform.GetMapCoordinates(ent);
-        var contactMapCoords = _transform.GetMapCoordinates(args.OtherEntity);
-        var toContact = contactMapCoords.Position - projectileMapCoords.Position;
-
-        var toContactNormalized = toContact.Normalized();
-        var velocityNormalized = physics.LinearVelocity.Normalized();
-        var dot = Vector2.Dot(toContactNormalized, velocityNormalized);
-
-        // Only collide with anchored entities if they're in front
-        if (dot < 0.3f)
-            return;
-    }
-
-    var netEnt = GetNetEntity(args.OtherEntity);
-    var pos = _transform.GetMapCoordinates(args.OtherEntity);
-    var hit = new HashSet<(NetEntity, MapCoordinates)> { (netEnt, pos) };
-    var ev = new PredictedProjectileHitEvent(ent.Owner.Id, hit);
-    RaiseNetworkEvent(ev);
-
-    _projectile.ProjectileCollide((ent, projectile, physics), args.OtherEntity);
-}
 
     private void OnServerProjectileStartup(Entity<PredictedProjectileServerComponent> ent, ref ComponentStartup args)
     {
@@ -301,7 +254,7 @@ public override void Update(float frameTime)
         var ev = new PredictedProjectileHitEvent(uid.Id, hit);
         RaiseNetworkEvent(ev);
 
-        _projectile.ProjectileCollide((uid, projectile, physics), filteredContacts.First());
+        CollidePredictedProjectile(uid, predicted, projectile, physics, filteredContacts.First());
     }
 
     var predictedQuery = EntityQueryEnumerator<PredictedProjectileHitComponent, SpriteComponent, TransformComponent>();

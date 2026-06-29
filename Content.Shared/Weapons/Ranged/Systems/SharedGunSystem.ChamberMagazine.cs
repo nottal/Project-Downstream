@@ -410,7 +410,13 @@ public abstract partial class SharedGunSystem
                 if (relayedArgs.Ammo.Count > 0)
                 {
                     var newChamberEnt = relayedArgs.Ammo[^1].Entity;
-                    TryInsertChamber(uid, newChamberEnt!.Value);
+                    if (newChamberEnt is { } nextChamberEnt)
+                    {
+                        if (_netManager.IsClient && IsClientSide(nextChamberEnt))
+                            Del(nextChamberEnt);
+                        else
+                            TryInsertChamber(uid, nextChamberEnt);
+                    }
                 }
 
                 // Anything above the chamber-refill amount gets fired.
