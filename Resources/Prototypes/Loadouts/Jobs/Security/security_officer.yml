@@ -255,10 +255,16 @@
 
 # Service Weapon
 - type: loadout
-  id: SecurityOfficerEnergyGun
+  id: SecurityOfficerDisabler
   storage:
     back:
-    - WeaponEnergyGunEnergyPistol
+    - WeaponDisabler
+
+- type: loadout
+  id: SecurityOfficerStunbaton
+  storage:
+    back:
+    - Stunbaton
     
 - type: loadout
   id: SecurityOfficerPistol

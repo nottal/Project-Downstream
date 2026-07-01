@@ -736,7 +736,6 @@
   parent: [ WeaponDisablerPractice, BaseSecurityCommandContraband ]
   id: WeaponDisabler
   description: A self-defense weapon that exhausts organic targets, slowing them to a crawl.
-  suffix: DO NOT MAP # Funky
   categories: [ DoNotMap ] # Funky
   components:
   - type: Sprite

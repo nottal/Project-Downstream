@@ -1060,7 +1060,7 @@
   id: Instruments
   name: loadout-group-instruments
   minLimit: 0
-  maxLimit: 2
+  maxLimit: 3
   loadouts:
   - Glockenspiel
   - MusicBox
@@ -2019,7 +2019,8 @@
   name: loadout-group-security-weapon
   minLimit: 1
   loadouts:
-  - SecurityOfficerEnergyGun
+  - SecurityOfficerDisabler
+  - SecurityOfficerStunbaton
   - SecurityOfficerPistol
 
 # Medical

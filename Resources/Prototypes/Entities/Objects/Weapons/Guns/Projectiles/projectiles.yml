@@ -349,10 +349,10 @@
   - type: StunOnCollide # _Funkystation change
     stunAmount: 4 # NO STUN
     knockdownAmount: 0 # NO KNOCKDOWN
-    slowdownAmount: 1 # YOU WILL CHASE TIDERS WITH YOUR BATON LIKE A REAL SECOFF
-    walkSpeedMultiplier: 0.8
-    runSpeedMultiplier: 0.8
-    slowdownCap: 0.5 # Prevents from being able to be locked into a stand-still
+    slowdownAmount: 1 # Still applies a short slow on hit.
+    walkSpeedMultiplier: 0.9
+    runSpeedMultiplier: 0.9
+    slowdownCap: 0.25 # Prevents from being able to be locked into a stand-still
 
 - type: entity
   name : disabler bolt practice

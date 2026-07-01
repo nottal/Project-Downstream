@@ -70,7 +70,6 @@
   parent: [BaseItem, BaseSecurityContraband]
   id: Stunbaton
   description: A stun baton for incapacitating people with. Actively harming with this is considered bad tone.
-  suffix: DO NOT MAP # Funky
   categories: [ DoNotMap ] # Funky
   components:
   - type: Tag # goob edit
@@ -117,10 +116,10 @@
     soundHit:
       collection: MetalThud #fs - Thwack
   - type: StaminaDamageOnHit
-    damage: 30 #fs - Stunbaton 2-hit stun
+    damage: 20 #fs - Stunbaton 3-hit stun
     sound: /Audio/Weapons/egloves.ogg
   - type: StaminaDamageOnCollide
-    damage: 30 #fs - Stunbaton 2-hit stun
+    damage: 20 #fs - Stunbaton 3-hit stun
     sound: /Audio/Weapons/egloves.ogg
   - type: LandAtCursor # it deals stamina damage when thrown
   - type: Battery

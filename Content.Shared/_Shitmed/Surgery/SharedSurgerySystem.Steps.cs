@@ -42,6 +42,8 @@ public abstract partial class SharedSurgerySystem
 {
     private static readonly string[] BruteDamageTypes = { "Slash", "Blunt", "Piercing" };
     private static readonly string[] BurnDamageTypes = { "Heat", "Shock", "Cold", "Caustic" };
+    private const float SurgeryOffTablePatientPoison = 10f;
+    private const float SurgeryOffTableSurgeonPoison = 5f;
     private void InitializeSteps()
     {
         SubscribeLocalEvent<SurgeryStepComponent, SurgeryStepEvent>(OnToolStep);
@@ -188,6 +190,21 @@ public abstract partial class SharedSurgerySystem
             }
         }
 
+        if (_net.IsServer &&
+            HasComp<SurgeryOperatingTableConditionComponent>(ent) &&
+            !IsOnOperatingTable(args.Body))
+        {
+            var patientSepsis = new DamageSpecifier(_prototypes.Index<DamageTypePrototype>("Poison"), SurgeryOffTablePatientPoison);
+            var ev = new SurgeryStepDamageEvent(args.User, args.Body, args.Part, args.Surgery, patientSepsis, 0.5f);
+            RaiseLocalEvent(args.Body, ref ev);
+
+            if (args.User != args.Body)
+            {
+                var surgeonSepsis = new DamageSpecifier(_prototypes.Index<DamageTypePrototype>("Poison"), SurgeryOffTableSurgeonPoison);
+                _damageable.TryChangeDamage(args.User, surgeonSepsis, true, origin: args.Body, interruptsDoAfters: false);
+            }
+        }
+
         var dirtinessEv = new Content.Shared._DV.Surgery.SurgeryDirtinessEvent(args.User, args.Part, args.Tools, args.Step); // DeltaV: surgery cross contamination
         RaiseLocalEvent(args.Body, ref dirtinessEv); // DeltaV: surgery cross contamination
     }
@@ -278,16 +295,6 @@ public abstract partial class SharedSurgerySystem
 
     private void OnToolCanPerform(Entity<SurgeryStepComponent> ent, ref SurgeryCanPerformStepEvent args)
     {
-        if (HasComp<SurgeryOperatingTableConditionComponent>(ent))
-        {
-            if (!TryComp(args.Body, out BuckleComponent? buckle) ||
-                !HasComp<OperatingTableComponent>(buckle.BuckledTo))
-            {
-                args.Invalid = StepInvalidReason.NeedsOperatingTable;
-                return;
-            }
-        }
-
         if (_inventory.TryGetContainerSlotEnumerator(args.Body, out var containerSlotEnumerator, args.TargetSlots))
         {
             while (containerSlotEnumerator.MoveNext(out var containerSlot))
@@ -328,6 +335,12 @@ public abstract partial class SharedSurgerySystem
                 args.ValidTools[tool] = speed;
             }
         }
+    }
+
+    private bool IsOnOperatingTable(EntityUid body)
+    {
+        return TryComp(body, out BuckleComponent? buckle) &&
+            HasComp<OperatingTableComponent>(buckle.BuckledTo);
     }
 
     private EntProtoId? GetProtoId(EntityUid entityUid)

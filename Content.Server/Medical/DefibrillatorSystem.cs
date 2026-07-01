@@ -38,6 +38,7 @@ using Content.Server.PowerCell;
 using Content.Shared.Traits.Assorted;
 using Content.Shared.Damage;
 using Content.Shared.DoAfter;
+using Content.Shared.FixedPoint;
 using Content.Shared.Interaction;
 using Content.Shared.Interaction.Components;
 using Content.Shared.Interaction.Events;
@@ -61,6 +62,8 @@ namespace Content.Server.Medical;
 /// </summary>
 public sealed class DefibrillatorSystem : EntitySystem
 {
+    private static readonly FixedPoint2 DefibReviveDamageThreshold = FixedPoint2.New(100);
+
     [Dependency] private readonly ChatSystem _chatManager = default!;
     [Dependency] private readonly DamageableSystem _damageable = default!;
     [Dependency] private readonly DoAfterSystem _doAfter = default!;
@@ -131,14 +134,6 @@ public sealed class DefibrillatorSystem : EntitySystem
         if (!_powerCell.HasActivatableCharge(uid, user: user))
             return false;
 
-        // Prevent usage on dead people
-        if (_mobState.IsDead(target, mobState))
-        {
-            if (user != null)
-                _popup.PopupEntity(Loc.GetString("defibrillator-dead"), uid, user.Value); // Optional: Define this string in Loc or remove popup
-            return false;
-        }
-
         // Prevent usage on alive people
         if (!targetCanBeAlive && _mobState.IsAlive(target, mobState))
             return false;
@@ -199,15 +194,17 @@ public sealed class DefibrillatorSystem : EntitySystem
             return;
 
         if (!TryComp<MobStateComponent>(target, out var mob) ||
-            !TryComp<MobThresholdsComponent>(target, out var thresholds))
+            !TryComp<MobThresholdsComponent>(target, out var thresholds) ||
+            !TryComp<DamageableComponent>(target, out var damageable))
             return;
 
         _audio.PlayPvs(component.ZapSound, uid);
+        var damageBeforeZap = damageable.TotalDamage;
 
         // Apply shock damage
         _electrocution.TryDoElectrocution(target, null, component.ZapDamage, component.WritheDuration, true, ignoreInsulation: true);
 
-                var interacters = new HashSet<EntityUid>();
+        var interacters = new HashSet<EntityUid>();
         _interactionSystem.GetEntitiesInteractingWithTarget(target, interacters);
         foreach (var other in interacters)
         {
@@ -223,10 +220,66 @@ public sealed class DefibrillatorSystem : EntitySystem
         _useDelay.SetLength((uid, useDelay), component.ZapDelay, component.DelayId);
         _useDelay.TryResetDelay((uid, useDelay), id: component.DelayId);
 
+        var revived = false;
+        ICommonSession? session = null;
+
+        if (_mobState.IsDead(target, mob))
+        {
+            if (_rotting.IsRotten(target))
+            {
+                _chatManager.TrySendInGameICMessage(uid, Loc.GetString("defibrillator-rotten"),
+                    InGameICChatType.Speak, true);
+            }
+            else if (TryComp<UnrevivableComponent>(target, out var unrevivable))
+            {
+                _chatManager.TrySendInGameICMessage(uid, Loc.GetString(unrevivable.ReasonMessage),
+                    InGameICChatType.Speak, true);
+            }
+            else
+            {
+                _damageable.TryChangeDamage(target, component.ZapHeal, true, origin: uid, damageable: damageable);
+
+                var underReviveThreshold = damageable.TotalDamage < DefibReviveDamageThreshold ||
+                    damageBeforeZap < DefibReviveDamageThreshold;
+                var underDeadThreshold = !_mobThreshold.TryGetThresholdForState(target, MobState.Dead, out var deadThreshold, thresholds) ||
+                    damageable.TotalDamage < deadThreshold;
+
+                if (underReviveThreshold && underDeadThreshold)
+                {
+                    _mobThreshold.SetAllowRevives(target, true, thresholds);
+                    _mobThreshold.VerifyThresholds(target, thresholds, mob, damageable);
+                    _mobThreshold.SetAllowRevives(target, false, thresholds);
+
+                    if (_mobState.IsDead(target, mob))
+                        _mobState.ChangeMobState(target, MobState.Alive, mob, uid);
+
+                    revived = !_mobState.IsDead(target, mob);
+                }
+
+                if (_mind.TryGetMind(target, out _, out var mind) &&
+                    mind.Session is { } playerSession)
+                {
+                    session = playerSession;
+
+                    if (revived && mind.CurrentEntity != target)
+                        _euiManager.OpenEui(new ReturnToBodyEui(mind, _mind), session);
+                }
+                else
+                {
+                    _chatManager.TrySendInGameICMessage(uid, Loc.GetString("defibrillator-no-mind"),
+                        InGameICChatType.Speak, true);
+                }
+            }
+        }
+
         // Apply Healing (AirLoss reduction) ONLY if Critical
         if (_mobState.IsCritical(target, mob))
         {
             _damageable.TryChangeDamage(target, component.ZapHeal, true, origin: uid);
+            _audio.PlayPvs(component.SuccessSound, uid);
+        }
+        else if (revived)
+        {
             _audio.PlayPvs(component.SuccessSound, uid);
         }
         else
