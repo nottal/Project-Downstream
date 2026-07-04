@@ -106,6 +106,9 @@ namespace Content.Shared.Containers.ItemSlots
         {
             foreach (var slot in itemSlots.Slots.Values)
             {
+                if (slot.ContainerSlot != null)
+                    slot.ContainerSlot.OccludesLight = slot.OccludesLight;
+
                 if (slot.HasItem || string.IsNullOrEmpty(slot.StartingItem))
                     continue;
 
@@ -124,6 +127,7 @@ namespace Content.Shared.Containers.ItemSlots
             foreach (var (id, slot) in itemSlots.Slots)
             {
                 slot.ContainerSlot = _containers.EnsureContainer<ContainerSlot>(uid, id);
+                slot.ContainerSlot.OccludesLight = slot.OccludesLight;
             }
         }
 
@@ -147,6 +151,7 @@ namespace Content.Shared.Containers.ItemSlots
             }
 
             slot.ContainerSlot = _containers.EnsureContainer<ContainerSlot>(uid, id);
+            slot.ContainerSlot.OccludesLight = slot.OccludesLight;
             itemSlots.Slots[id] = slot;
             Dirty(uid, itemSlots);
         }
@@ -938,6 +943,7 @@ namespace Content.Shared.Containers.ItemSlots
                 {
                     itemSlot.CopyFrom(serverSlot);
                     itemSlot.ContainerSlot = _containers.EnsureContainer<ContainerSlot>(uid, serverKey);
+                    itemSlot.ContainerSlot.OccludesLight = serverSlot.OccludesLight;
                 }
                 else
                 {

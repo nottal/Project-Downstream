@@ -30,3 +30,27 @@
     layers:
       - state: green
       - state: centcom
+
+- type: entity
+  categories: [ HideSpawnMenu, Spawner ]
+  id: GhostBarSpawner
+  name: ghost role spawn point
+  suffix: ghost bar patron
+  parent: MarkerBase
+  components:
+  - type: GhostRole
+    name: ghost-role-information-ghostbar-name
+    description: ghost-role-information-ghostbar-description
+    rules: ghost-role-information-ghostbar-rules
+    mindRoles:
+    - MindRoleGhostRoleFamiliar
+    raffle:
+      settings: default
+  - type: GhostRoleMobSpawner
+    prototype: MobHuman
+  - type: Sprite
+    sprite: Markers/jobs.rsi
+    layers:
+    - state: green
+    - sprite: Mobs/Ghosts/ghost_human.rsi
+      state: icon

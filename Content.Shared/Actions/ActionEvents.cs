@@ -58,12 +58,18 @@ public sealed class GetItemActionsEvent : EntityEventArgs
     /// </summary>
     public bool InHands => SlotFlags == null;
 
-    public GetItemActionsEvent(ActionContainerSystem system, EntityUid user, EntityUid provider, SlotFlags? slotFlags = null)
+    /// <summary>
+    ///     Whether actions are being queried while equipping rather than unequipping.
+    /// </summary>
+    public bool IsEquipping;
+
+    public GetItemActionsEvent(ActionContainerSystem system, EntityUid user, EntityUid provider, SlotFlags? slotFlags = null, bool isEquipping = true)
     {
         _system = system;
         User = user;
         Provider = provider;
         SlotFlags = slotFlags;
+        IsEquipping = isEquipping;
     }
 
     /// <summary>

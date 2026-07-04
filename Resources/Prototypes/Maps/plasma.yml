@@ -91,6 +91,7 @@
             Lawyer: [ 1, 2 ]
             #supply - 8-10
             SalvageSpecialist: [ 4, 4 ]
+            ShaftMiner: [ 4, 4 ]
             CargoTechnician: [ 4, 6 ]
             #civilian - the tiders yearn for the mines
             Passenger: [ -1, -1 ]

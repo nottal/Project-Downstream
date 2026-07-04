@@ -123,12 +123,102 @@
   name: crusher
   description: An early design of the proto-kinetic accelerator.
   components:
+  - type: Appearance
   - type: Sharp
+  - type: Execution
+    doAfterDuration: 4.0
   - type: UnpoweredFlashlight
   - type: PointLight
     color: "#ffeead"
     enabled: false
     radius: 4
+  - type: MegafaunaWeaponLooter
+  - type: PressureDamageChange
+  - type: UseDelayBlockMelee
+  - type: ItemUpgradeable
+  - type: ContainerContainer
+    containers:
+      flashlight: !type:ContainerSlot
+      upgrade_slot_main: !type:ContainerSlot
+      upgrade_slot_blade: !type:ContainerSlot
+      upgrade_slot_handle: !type:ContainerSlot
+  - type: ItemSlots
+    slots:
+      flashlight:
+        name: weapon-upgrade-slot-name-flashlight
+        priority: 6
+        insertDelay: 0.4
+        ejectDelay: 0.2
+        ejectOnBreak: true
+        occludesLight: false
+        whitelist:
+          components:
+          - GunUpgradeFlashlight
+      upgrade_slot_main:
+        name: weapon-upgrade-slot-name-main
+        swap: false
+        priority: 5
+        insertDelay: 3.0
+        ejectDelay: 1.8
+        whitelist:
+          tags:
+          - CrusherUpgradeMain
+      upgrade_slot_handle:
+        name: weapon-upgrade-slot-name-handle
+        swap: false
+        priority: 3
+        insertDelay: 2.4
+        ejectDelay: 1.2
+        whitelist:
+          tags:
+          - CrusherUpgradeHandle
+      upgrade_slot_blade:
+        name: weapon-upgrade-slot-name-blade
+        swap: false
+        priority: 4
+        insertDelay: 2.4
+        ejectDelay: 1.2
+        whitelist:
+          tags:
+          - CrusherUpgradeBlade
+  - type: ItemMapper
+    mapLayers:
+      flashlight:
+        whitelist:
+          components:
+          - GunUpgradeFlashlight
+      upgrade-marker:
+        whitelist:
+          tags:
+          - CrusherUpgradeMainMarker
+      upgrade-rude-buster:
+        whitelist:
+          tags:
+          - CrusherUpgradeMainRudeBuster
+      upgrade-lava-aspect:
+        whitelist:
+          tags:
+          - CrusherUpgradeBladeLavaAspect
+      upgrade-ice-frost:
+        whitelist:
+          tags:
+          - CrusherUpgradeBladeIceFrost
+      upgrade-sharpness:
+        whitelist:
+          tags:
+          - CrusherUpgradeBladeSharpness
+      upgrade-handle-weights:
+        whitelist:
+          tags:
+          - CrusherUpgradeHandleWeights
+      upgrade-handle-lightweight:
+        whitelist:
+          tags:
+          - CrusherUpgradeHandleLightweight
+      upgrade-handle-range:
+        whitelist:
+          tags:
+          - CrusherUpgradeHandleRange
 
 - type: entity
   parent: [BaseWeaponCrusher, BaseSecurityCargoContraband]

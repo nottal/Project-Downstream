@@ -1,0 +1,23 @@
+- type: construction
+  id: CrusherUpgradeCrystalConstruction
+  graph: CrusherUpgradeCrystalConstructionGraph
+  category: construction-category-weapons
+  targetNode: crystal
+  objectType: Item
+  icon: { sprite: _Lavaland/Objects/Weapons/Upgrades/crusher.rsi, state: black-shard }
+
+- type: construction
+  id: CrusherUpgradeLavaCrystalConstruction
+  graph: CrusherUpgradeLavaCrystalConstructionGraph
+  category: construction-category-weapons
+  targetNode: crystal
+  objectType: Item
+  icon: { sprite: _Lavaland/Objects/Weapons/Upgrades/crusher.rsi, state: lava-shard }
+
+- type: construction
+  id: CrusherUpgradeIceCrystalConstruction
+  graph: CrusherUpgradeIceCrystalConstructionGraph
+  category: construction-category-weapons
+  targetNode: crystal
+  objectType: Item
+  icon: { sprite: _Lavaland/Objects/Weapons/Upgrades/crusher.rsi, state: ice-shard }

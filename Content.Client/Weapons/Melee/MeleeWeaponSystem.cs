@@ -38,7 +38,9 @@
 // SPDX-License-Identifier: MIT
 
 using System.Linq;
+using System.Numerics;
 using Content.Client.Gameplay;
+using Content.Goobstation.Common.Weapons.MeleeDash;
 using Content.Shared.CombatMode;
 using Content.Shared.Effects;
 using Content.Shared.Hands.Components;
@@ -213,6 +215,15 @@ public sealed partial class MeleeWeaponSystem : SharedMeleeWeaponSystem
                 return;
             }
 
+            if (HasComp<MeleeDashComponent>(weaponUid))
+            {
+                var direction = GetAttackDirection(entity, coordinates);
+                if (direction != Vector2.Zero)
+                    RaisePredictiveEvent(new MeleeDashEvent(GetNetEntity(weaponUid), direction));
+
+                return;
+            }
+
             ClientHeavyAttack(entity, coordinates, weaponUid, weapon);
             return;
         }
@@ -220,6 +231,19 @@ public sealed partial class MeleeWeaponSystem : SharedMeleeWeaponSystem
         // Light attack
         if (useDown == BoundKeyState.Down && !gunBoundToUse)
             ClientLightAttack(entity, mousePos, coordinates, weaponUid, weapon);
+    }
+
+    private Vector2 GetAttackDirection(EntityUid user, EntityCoordinates coordinates)
+    {
+        if (!_xformQuery.TryGetComponent(user, out var userXform))
+            return Vector2.Zero;
+
+        var targetMap = TransformSystem.ToMapCoordinates(coordinates);
+        if (targetMap.MapId != userXform.MapID)
+            return Vector2.Zero;
+
+        var userPos = TransformSystem.GetWorldPosition(userXform);
+        return targetMap.Position - userPos;
     }
 
     protected override bool InRange(EntityUid user, EntityUid target, float range, ICommonSession? session)

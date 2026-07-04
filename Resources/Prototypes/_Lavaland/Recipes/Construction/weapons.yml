@@ -1,0 +1,15 @@
+- type: construction
+  id: BoneAxeConstruction
+  graph: BoneAxeConstructionGraph
+  category: construction-category-weapons
+  targetNode: axe
+  objectType: Item
+  icon: { sprite: _Lavaland/Objects/Weapons/Melee/bone_axe.rsi, state: icon }
+
+- type: construction
+  id: BoneDaggerConstruction
+  graph: DaggerBoneConstructionGraph
+  category: construction-category-weapons
+  targetNode: dagger
+  objectType: Item
+  icon: { sprite: _Lavaland/Objects/Weapons/Melee/bone_dagger.rsi, state: icon }

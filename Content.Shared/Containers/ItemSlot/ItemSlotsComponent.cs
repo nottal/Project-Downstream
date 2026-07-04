@@ -267,6 +267,18 @@ namespace Content.Shared.Containers.ItemSlots
         [NonSerialized]
         public bool Local = true;
 
+        [DataField]
+        [Access(typeof(ItemSlotsSystem), Other = AccessPermissions.ReadWriteExecute)]
+        public bool OccludesLight = true;
+
+        [DataField]
+        [Access(typeof(ItemSlotsSystem), Other = AccessPermissions.ReadWriteExecute)]
+        public float? InsertDelay;
+
+        [DataField]
+        [Access(typeof(ItemSlotsSystem), Other = AccessPermissions.ReadWriteExecute)]
+        public float? EjectDelay;
+
         public void CopyFrom(ItemSlot other)
         {
             // These fields are mutable reference types. But they generally don't get modified, so this should be fine.
@@ -286,6 +298,9 @@ namespace Content.Shared.Containers.ItemSlots
             InsertSuccessPopup = other.InsertSuccessPopup;
             Swap = other.Swap;
             Priority = other.Priority;
+            OccludesLight = other.OccludesLight;
+            InsertDelay = other.InsertDelay;
+            EjectDelay = other.EjectDelay;
         }
     }
 

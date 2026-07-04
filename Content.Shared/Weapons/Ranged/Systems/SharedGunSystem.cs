@@ -48,6 +48,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Numerics;
+using Content.Shared._Lavaland.Weapons.Ranged.Events;
 using Content.Shared._RMC14.CCVar;
 using Content.Shared._RMC14.Random;
 using Content.Shared._RMC14.Weapons.Ranged.Prediction;
@@ -769,6 +770,10 @@ public abstract partial class SharedGunSystem : EntitySystem
                 for (var i = 0; i < ammoSpreadComp.Count; i++)
                 {
                     var newuid = Spawn(ammoSpreadComp.Proto, fromEnt);
+                    RaiseLocalEvent(gunUid, new ProjectileShotEvent
+                    {
+                        FiredProjectile = newuid,
+                    });
                     ShootOrThrow(newuid, angles[i].ToVec(), gunVelocity, gun, gunUid, user);
                     shotProjectiles.Add(newuid);
                     MarkPredicted(newuid, i);
@@ -780,6 +785,10 @@ public abstract partial class SharedGunSystem : EntitySystem
             }
             else
             {
+                RaiseLocalEvent(gunUid, new ProjectileShotEvent
+                {
+                    FiredProjectile = ammoEnt,
+                });
                 ShootOrThrow(ammoEnt, mapDirection, gunVelocity, gun, gunUid, user);
                 shotProjectiles.Add(ammoEnt);
             }

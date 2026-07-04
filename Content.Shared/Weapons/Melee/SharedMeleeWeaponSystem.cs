@@ -45,6 +45,8 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Numerics;
+using Content.Goobstation.Common.Weapons;
+using Content.Shared._Lavaland.Weapons;
 using Content.Shared.ActionBlocker;
 using Content.Shared.Administration.Logs;
 using Content.Shared.CombatMode;
@@ -327,6 +329,20 @@ public abstract class SharedMeleeWeaponSystem : EntitySystem
             if (EntityManager.TryGetComponent(held, out melee) &&
                 !melee.MustBeEquippedToUse)
             {
+                if (HasComp<MeleeWeaponRelayComponent>(held))
+                {
+                    var relay = new GetRelayMeleeWeaponEvent();
+                    RaiseLocalEvent(held, ref relay);
+                    if (relay.Handled &&
+                        relay.Found is { } relayed &&
+                        TryComp(relayed, out MeleeWeaponComponent? relayMelee))
+                    {
+                        weaponUid = relayed;
+                        melee = relayMelee;
+                        return true;
+                    }
+                }
+
                 weaponUid = held;
                 return true;
             }
@@ -493,19 +509,27 @@ public abstract class SharedMeleeWeaponSystem : EntitySystem
 
     protected abstract bool InRange(EntityUid user, EntityUid target, float range, ICommonSession? session);
 
+    public void DoLightAttackFromExternalSystem(EntityUid user, LightAttackEvent ev, EntityUid meleeUid, MeleeWeaponComponent component, ICommonSession? session)
+    {
+        DoLightAttack(user, ev, meleeUid, component, session);
+    }
+
     protected virtual void DoLightAttack(EntityUid user, LightAttackEvent ev, EntityUid meleeUid, MeleeWeaponComponent component, ICommonSession? session)
     {
         // If I do not come back later to fix Light Attacks being Heavy Attacks you can throw me in the spider pit -Errant
         var damage = GetDamage(meleeUid, user, component) * GetHeavyDamageModifier(meleeUid, user, component);
         var target = GetEntity(ev.Target);
         var resistanceBypass = GetResistanceBypass(meleeUid, user, component);
+        var rangeEv = new GetLightAttackRangeEvent(target, user, component.Range);
+        RaiseLocalEvent(meleeUid, ref rangeEv);
+        var range = rangeEv.Cancel ? component.Range : rangeEv.Range;
 
         // For consistency with wide attacks stuff needs damageable.
         if (Deleted(target) ||
             !HasComp<DamageableComponent>(target) ||
             !TryComp(target, out TransformComponent? targetXform) ||
             // Not in LOS.
-            !InRange(user, target.Value, component.Range, session))
+            !InRange(user, target.Value, range, session))
         {
             // Leave IsHit set to true, because the only time it's set to false
             // is when a melee weapon is examined. Misses are inferred from an

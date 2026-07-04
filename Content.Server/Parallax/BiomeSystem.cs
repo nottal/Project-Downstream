@@ -22,6 +22,7 @@ using System.Threading.Tasks;
 using Content.Server.Atmos;
 using Content.Server.Atmos.Components;
 using Content.Server.Atmos.EntitySystems;
+using Content.Server._Lavaland.Procedural;
 using Content.Server.Decals;
 using Content.Server.Ghost.Roles.Components;
 using Content.Server.Shuttles.Events;
@@ -470,6 +471,12 @@ public sealed partial class BiomeSystem : SharedBiomeSystem
 
         foreach (var chunk in active)
         {
+            var ev = new BeforeLoadChunkEvent(chunk);
+            RaiseLocalEvent(gridUid, ref ev);
+
+            if (ev.Cancelled)
+                continue;
+
             LoadChunkMarkers(component, gridUid, grid, chunk, seed);
 
             if (!component.LoadedChunks.Add(chunk))
@@ -908,6 +915,12 @@ public sealed partial class BiomeSystem : SharedBiomeSystem
 
         foreach (var chunk in component.LoadedChunks)
         {
+            var ev = new UnLoadChunkEvent(chunk);
+            RaiseLocalEvent(gridUid, ref ev);
+
+            if (ev.Cancelled)
+                continue;
+
             if (active.Contains(chunk) || !component.LoadedChunks.Remove(chunk))
                 continue;
 

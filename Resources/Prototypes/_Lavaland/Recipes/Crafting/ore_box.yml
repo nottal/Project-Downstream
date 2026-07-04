@@ -1,0 +1,15 @@
+- type: construction
+  id: OreBox
+  graph: OreBox
+  targetNode: crate
+  category: construction-category-storage
+  objectType: Structure
+  icon: { sprite: Structures/Storage/orebox.rsi, state: orebox }
+
+- type: construction
+  id: OreBoxAshwood
+  graph: OreBoxAshwood
+  targetNode: crate
+  category: construction-category-storage
+  objectType: Structure
+  icon: { sprite: _Lavaland/Structures/Storage/orebox.rsi, state: orebox }

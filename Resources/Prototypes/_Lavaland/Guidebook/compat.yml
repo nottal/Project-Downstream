@@ -1,0 +1,19 @@
+- type: guideEntry
+  id: ServiceSOP
+  name: guide-entry-service-sop
+  text: "/ServerInfo/Funkystation/Guidebook/Service/ServiceSOP.xml"
+
+- type: guideEntry
+  id: ScienceSOP
+  name: guide-entry-science-sop
+  text: "/ServerInfo/Funkystation/Guidebook/Science/ScienceSOP.xml"
+
+- type: guideEntry
+  id: CommandTrainingManual
+  name: guide-entry-command-training-manual
+  text: "/ServerInfo/Funkystation/Guidebook/Command/CommandTrainingManual.xml"
+
+- type: guideEntry
+  id: SecurityTrainingManual
+  name: guide-entry-security-training-manual
+  text: "/ServerInfo/Funkystation/Guidebook/Security/SecurityTrainingManual.xml"

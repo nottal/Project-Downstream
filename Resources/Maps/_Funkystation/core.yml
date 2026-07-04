@@ -73,7 +73,7 @@ meta:
   forkId: ""
   forkVersion: ""
   time: 01/29/2026 11:44:53
-  entityCount: 29312
+  entityCount: 29316
 maps:
 - 17546
 grids:
@@ -200246,4 +200246,33 @@ entities:
     - type: Physics
       angularDamping: 0
       linearDamping: 0
+- proto: AirlockExternalGlassShuttleMiningFilled
+  entities:
+  - uid: 29313
+    components:
+    - type: Transform
+      rot: 1.5707963267948966 rad
+      pos: -45.5,-68.5
+      parent: 2
+- proto: ComputerShuttleMiningLavaland
+  entities:
+  - uid: 29314
+    components:
+    - type: Transform
+      pos: -5.5,-61.5
+      parent: 2
+- proto: GatewayLavalandStation
+  entities:
+  - uid: 29315
+    components:
+    - type: Transform
+      pos: -4.5,-61.5
+      parent: 2
+- proto: SpawnPointShaftMiner
+  entities:
+  - uid: 29316
+    components:
+    - type: Transform
+      pos: -60.5,-71.5
+      parent: 2
 ...

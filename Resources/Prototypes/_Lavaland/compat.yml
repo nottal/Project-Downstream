@@ -1,0 +1,573 @@
+- type: entity
+  abstract: true
+  id: BaseAction
+
+- type: entity
+  abstract: true
+  id: AllowSuitStorageClothing
+  components:
+  - type: AllowSuitStorage
+
+- type: entity
+  id: BaseSetSelector
+  abstract: true
+  components:
+  - type: SetSelector
+  - type: ActivatableUI
+    key: enum.SetSelectorUIKey.Key
+  - type: UserInterface
+    interfaces:
+      enum.SetSelectorUIKey.Key:
+        type: SetSelectorBoundUserInterface
+
+- type: entity
+  id: LockerShaftMiner
+  parent: LockerBase
+  name: shaft miner's locker
+  description: Contains equipment useful for planet exploration.
+  components:
+  - type: Appearance
+  - type: EntityStorageVisuals
+    stateBaseClosed: mining
+    stateDoorOpen: mining_open
+    stateDoorClosed: mining_door
+  - type: AccessReader
+    access: [["Salvage"]]
+
+- type: entity
+  id: ClothingUniformJumpsuitShaftMiner
+  parent: ClothingUniformBase
+  name: shaft miner's jumpsuit
+  description: It's a snappy jumpsuit. It looks a bit burnt.
+  components:
+  - type: Sprite
+    sprite: _Goobstation/Clothing/Uniforms/Jumpsuit/Cargo/shaft_miner.rsi
+  - type: Clothing
+    sprite: _Goobstation/Clothing/Uniforms/Jumpsuit/Cargo/shaft_miner.rsi
+
+- type: entity
+  id: ClothingBackpackMessengerSalvage
+  parent: ClothingBackpackSalvage
+  name: salvage messenger bag
+  description: A robust bag for stashing Lavaland loot.
+
+- type: entity
+  id: MeleeHammer
+  parent: BaseItem
+  name: hammer
+  description: A compact hammer for rugged field work.
+  components:
+  - type: Sprite
+    sprite: _Goobstation/Objects/Weapons/Melee/hammer.rsi
+    state: icon
+  - type: MeleeWeapon
+    animationRotation: -90
+    wideAnimationRotation: -135
+    attackRate: 1
+    damage:
+      types:
+        Blunt: 12
+    soundHit:
+      collection: MetalThud
+  - type: Item
+    size: Small
+    sprite: _Goobstation/Objects/Weapons/Melee/hammer.rsi
+  - type: Tag
+    tags:
+    - Hammer
+  - type: Tool
+    qualities:
+    - Hammering
+    useSound:
+      path: /Audio/Items/trayhit2.ogg
+
+- type: entity
+  id: SupermatterGrenade
+  parent: SingularityGrenade
+  name: supermatter grenade
+  description: A grenade that simulates a supermatter delamination, pulling things in before collapsing.
+
+- type: alertCategory
+  id: TileMovement
+
+- type: npcFaction
+  id: Lavafauna
+  hostile:
+  - NanoTrasen
+  - Mouse
+  - Passive
+  - PetsNT
+  - SimpleHostile
+  - SimpleNeutral
+  - Syndicate
+  - Xeno
+  - Zombie
+  - Revolutionary
+
+- type: Tag
+  id: DroneUsable
+
+- type: Tag
+  id: Hammer
+
+- type: Tag
+  id: OreGold
+
+- type: tool
+  id: Hammering
+  name: tool-quality-hammering-name
+  toolName: tool-quality-hammering-tool-name
+  spawn: MeleeHammer
+  icon: { sprite: _Goobstation/Objects/Weapons/Melee/hammer.rsi, state: icon }
+
+- type: biomeMarkerLayer
+  id: OreBananium
+  entityMask:
+    AsteroidRock: AsteroidRockBananium
+    WallRock: WallRockBananium
+    WallRockBasalt: WallRockBasaltBananium
+    WallRockChromite: WallRockChromiteBananium
+    WallRockSand: WallRockSandBananium
+    WallRockSnow: WallRockSnowBananium
+  maxCount: 6
+  minGroupSize: 1
+  maxGroupSize: 2
+  radius: 4
+
+- type: biomeMarkerLayer
+  id: OreBSCrystal
+  entityMask:
+    AsteroidRock: MeteorRockBSCrystal
+    WallRock: WallRockBSCrystal
+    WallRockBasalt: WallRockBasaltBSCrystal
+    WallRockChromite: WallRockChromiteBSCrystal
+    WallRockSand: WallRockSandBSCrystal
+    WallRockSnow: WallRockSnowBSCrystal
+  maxCount: 6
+  minGroupSize: 1
+  maxGroupSize: 2
+  radius: 4
+
+- type: constructionGraph
+  id: LavaPortal
+  start: start
+  graph:
+  - node: start
+  - node: Lavaportal
+    entity: GatewayLavalandStation
+    edges:
+    - to: start
+      completed:
+      - !type:SpawnPrototype
+        prototype: GatewayFlatpackLavaland
+        amount: 1
+      - !type:DeleteEntity
+      steps:
+      - tool: Welding
+        doAfter: 3
+
+- type: tile
+  id: FloorWoodDark
+  name: tiles-wood-dark
+  sprite: /Textures/Tiles/wood.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  baseTurf: Plating
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  footstepSounds:
+    collection: FootstepWood
+  barestepSounds:
+    collection: BarestepWood
+  itemDrop: FloorTileItemWood
+  heatCapacity: 10000
+
+- type: tile
+  id: FloorAbductor
+  name: tiles-steel-floor
+  sprite: /Textures/Tiles/steel.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  baseTurf: Plating
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  footstepSounds:
+    collection: FootstepHull
+  itemDrop: FloorTileItemSteel
+  heatCapacity: 10000
+
+- type: entity
+  id: TelecomTransmitter
+  parent: TelecomServer
+  name: telecommunication transmitter
+  description: A compact transmitter used to extend telecomms coverage.
+
+- type: entity
+  id: ChemistryBottleEZNutrient
+  parent: EZNutrientChemistryBottle
+
+- type: entity
+  id: ChemistryBottleNocturine
+  parent: NocturineChemistryBottle
+
+- type: entity
+  id: ChemistryBottlePax
+  parent: PaxChemistryBottle
+
+- type: entity
+  id: ChemistryBottleRadium
+  parent: RadiumChemistryVial
+  name: radium bottle
+
+- type: entity
+  id: ChemistryBottleRobustHarvest
+  parent: RobustHarvestChemistryBottle
+
+- type: entity
+  id: ChemistryBottleUnstableMutagen
+  parent: UnstableMutagenChemistryBottle
+
+- type: entity
+  id: ClothingOuterEVASuitSyndicate
+  parent: ClothingOuterHardsuitSyndicate
+  name: syndicate EVA suit
+
+- type: entity
+  id: MedkitCombatBlueFilled
+  parent: MedkitCombatFilled
+  name: blue combat medkit
+
+- type: entity
+  id: NutrimentImplanter
+  parent: BaseImplantOnlyImplanterSyndi
+  suffix: Nutriment Pump
+
+- type: entity
+  id: SpawnVehicleChairOfficeLight
+  name: light office chair spawner
+  parent: MarkerBase
+  components:
+  - type: Sprite
+    layers:
+    - state: green
+    - sprite: Structures/Furniture/chairs.rsi
+      state: office-white
+  - type: ConditionalSpawner
+    prototypes:
+    - ChairOfficeLight
+
+- type: entity
+  id: SpawnVehicleChairOfficeDark
+  name: dark office chair spawner
+  parent: MarkerBase
+  components:
+  - type: Sprite
+    layers:
+    - state: green
+    - sprite: Structures/Furniture/chairs.rsi
+      state: office-dark
+  - type: ConditionalSpawner
+    prototypes:
+    - ChairOfficeDark
+
+- type: entity
+  id: UraniumChemistryVial
+  parent: BaseChemistryEmptyVial
+  suffix: uranium
+  components:
+  - type: Label
+    currentLabel: reagent-name-uranium
+  - type: SolutionContainerManager
+    solutions:
+      beaker:
+        maxVol: 5
+        reagents:
+        - ReagentId: Uranium
+          Quantity: 5
+
+- type: entity
+  id: WeaponDisablerSyndicate
+  parent: WeaponDisabler
+  name: syndicate disabler
+
+- type: entity
+  id: CrateFunSyndicateSegway
+  parent: CrateFunToyBox
+  name: syndicate segway crate
+
+- type: entity
+  id: Monolith
+  parent: Memorial
+  name: monolith
+  description: A stark slab of black stone. It feels expensive.
+  components:
+  - type: Sprite
+    color: "#1a1a22"
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeAabb
+          bounds: "-0.45,-0.45,0.45,0.20"
+        density: 1500
+        mask:
+        - MachineMask
+        layer:
+        - MachineLayer
+  - type: Anchorable
+  - type: StaticPrice
+    price: 25000
+  - type: Prayable
+    sentMessage: prayer-popup-notify-monolith-sent
+    notificationPrefix: prayer-chat-notify-monolith
+    verb: prayer-verbs-worship
+
+- type: entity
+  id: HandheldArtifactContainer
+  parent: CrateArtifactContainer
+  name: handheld artifact container
+  description: A compact artifact container used to safely move small artifacts.
+
+- type: entity
+  id: ChemistryBottleOmnizine
+  parent: OmnizineChemistryBottle
+
+- type: entity
+  id: AbductorExperimentator
+  parent: MobHuman
+  name: abductor experimenter
+
+- type: entity
+  id: AbductorOperatingTable
+  parent: OperatingTable
+  name: abductor operating table
+
+- type: entity
+  id: TableAbductor
+  parent: Table
+  name: abductor table
+
+- type: entity
+  id: WallAbductor
+  parent: WallSolid
+  name: abductor wall
+
+- type: entity
+  id: WallAbductorDiagonal
+  parent: WallSolid
+  name: abductor wall
+
+- type: entity
+  id: ClothingBackpackAbductor
+  parent: ClothingBackpack
+  name: abductor backpack
+
+- type: entity
+  id: ClothingUniformJumpsuitAbductor
+  parent: ClothingUniformJumpsuitColorWhite
+  name: abductor jumpsuit
+
+- type: entity
+  id: PlushieAbductor
+  parent: PlushieLizard
+  name: abductor plushie
+
+- type: entity
+  id: OrganAbductorBrain
+  parent: OrganHumanBrain
+  name: abductor brain
+
+- type: entity
+  id: OrganAbductorHeart
+  parent: OrganHumanHeart
+  name: abductor heart
+
+- type: entity
+  id: OrganAbductorLungs
+  parent: OrganHumanLungs
+  name: abductor lungs
+
+- type: entity
+  id: OrganXenomorphStomach
+  parent: OrganHumanStomach
+  name: xenomorph stomach
+
+- type: entity
+  id: BarrelFire
+  parent: Bonfire
+  name: burn barrel
+
+- type: entity
+  id: BorgModuleAdvancedTreatment
+  parent: BorgModuleTopicals
+  name: advanced treatment cyborg module
+
+- type: entity
+  id: DeadRatvar
+  parent: MobHuman
+  name: inert construct
+
+- type: entity
+  id: FoamWonderprod
+  parent: FoamCutlass
+  name: foam wonderprod
+
+- type: entity
+  id: MachineFTLDriveAutomated
+  parent: BaseMachinePowered
+  name: automated FTL drive
+
+- type: entity
+  id: MedicalStitches
+  parent: Brutepack
+  name: medical stitches
+
+- type: entity
+  id: ClothingHeadHelmetBasicAlt
+  parent: ClothingHeadHelmetBasic
+  name: helmet
+
+- type: entity
+  id: PosterLegitGoobFaded
+  parent: PosterBroken
+  name: faded poster
+
+- type: entity
+  id: PuddleBlood
+  parent: Puddle
+  name: blood puddle
+
+- type: entity
+  id: RandomCableMVSpawner
+  parent: MarkerBase
+  name: random medium-voltage cable spawner
+  components:
+  - type: ConditionalSpawner
+    prototypes:
+    - CableMVStack10
+
+- type: entity
+  id: RandomChemistryBottleMedicalSpawner
+  parent: MarkerBase
+  name: random medical chemistry bottle spawner
+  components:
+  - type: ConditionalSpawner
+    prototypes:
+    - OmnizineChemistryBottle
+
+- type: entity
+  id: RandomChemistryBottleMedicalTier1Spawner
+  parent: RandomChemistryBottleMedicalSpawner
+
+- type: entity
+  id: RandomChemistryBottleMedicalTier2Spawner
+  parent: RandomChemistryBottleMedicalSpawner
+
+- type: entity
+  id: RandomChemistryBottleMedicalTier3Spawner
+  parent: RandomChemistryBottleMedicalSpawner
+
+- type: entity
+  id: ResinDoor
+  parent: BaseStructure
+  name: resin door
+
+- type: entity
+  id: ResinNest
+  parent: BaseStructure
+  name: resin nest
+
+- type: entity
+  id: ResinWeed
+  parent: BaseStructure
+  name: resin weed
+
+- type: entity
+  id: ResinWeedNode
+  parent: BaseStructure
+  name: resin weed node
+
+- type: entity
+  id: WallResin
+  parent: WallSolid
+  name: resin wall
+
+- type: entity
+  id: XenomorphEggBurst
+  parent: BaseStructure
+  name: burst xenomorph egg
+
+- type: entity
+  id: SpawnMobXenomorphDrone
+  parent: SpawnMobXenoDrone
+
+- type: entity
+  id: SpawnMobXenomorphPraetorian
+  parent: SpawnMobXenoPraetorian
+
+- type: entity
+  id: SpawnMobXenomorphQueen
+  parent: SpawnMobXenoQueen
+
+- type: entity
+  id: RMCContainerNovarisLeft
+  parent: CrateGenericSteel
+  name: container
+
+- type: entity
+  id: RMCContainerNovarisMiddle
+  parent: CrateGenericSteel
+  name: container
+
+- type: entity
+  id: RMCContainerNovarisRight
+  parent: CrateGenericSteel
+  name: container
+
+- type: entity
+  id: RMCOverheadRoadsignAlt3
+  parent: BaseStructure
+  name: overhead road sign
+
+- type: entity
+  id: RMCOverheadSignNeonBar
+  parent: BaseStructure
+  name: neon bar sign
+
+- type: entity
+  id: RMCOverheadSignNeonCafe
+  parent: BaseStructure
+  name: neon cafe sign
+
+- type: entity
+  id: ShrapnelPayload
+  parent: SheetSteel1
+  name: shrapnel payload
+
+- type: entity
+  id: SyringeGun
+  parent: WeaponPistolMk58
+  name: syringe gun
+
+- type: entity
+  id: SyringePoisonLethalInjection
+  parent: Syringe
+  name: lethal injection syringe
+
+- type: entity
+  id: VulpkaninCube
+  parent: MonkeyCube
+  name: vulpkanin cube
+
+- type: entity
+  id: WallDirectional
+  parent: WallSolid
+  name: wall

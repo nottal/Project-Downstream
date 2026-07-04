@@ -13,7 +13,10 @@
     sprite: Objects/Tools/upgrade.rsi
   - type: Item
     size: Small
+  - type: ItemUpgrade
+    name: gun-upgrade-damage-name
   - type: GunUpgrade
+    examineText: gun-upgrade-examine-text-generic
   - type: StaticPrice
     price: 750
   - type: Tag
@@ -37,11 +40,15 @@
   - type: GunUpgrade
     tags: [ GunUpgradeDamage ]
     examineText: gun-upgrade-examine-text-damage
+  - type: ItemUpgrade
+    name: gun-upgrade-damage-name
   - type: GunUpgradeDamage
     damage:
       types:
         Blunt: 10
         Structural: 15
+  - type: LavalandGunUpgradeDamage
+    modifier: 1.25
 
 - type: entity
   id: PKAUpgradeRange
@@ -60,8 +67,12 @@
   - type: GunUpgrade
     tags: [ GunUpgradeRange ]
     examineText: gun-upgrade-examine-text-range
+  - type: ItemUpgrade
+    name: gun-upgrade-range-name
   - type: GunUpgradeSpeed
     coefficient: 1.5
+  - type: LavalandGunUpgradeSpeed
+    coefficient: 1.30
 
 - type: entity
   id: PKAUpgradeFireRate
@@ -80,5 +91,9 @@
   - type: GunUpgrade
     tags: [ GunUpgradeReloadSpeed ]
     examineText: gun-upgrade-examine-text-reload
+  - type: ItemUpgrade
+    name: gun-upgrade-reload-name
   - type: GunUpgradeFireRate
     coefficient: 1.5
+  - type: LavalandGunUpgradeFireRate
+    coefficient: 1.20

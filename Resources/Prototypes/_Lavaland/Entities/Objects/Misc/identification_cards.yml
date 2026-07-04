@@ -1,0 +1,14 @@
+- type: entity
+  parent: IDCardStandard
+  id: MinerIDCard
+  name: miner ID card
+  components:
+  - type: Sprite
+    layers:
+    - state: default #base
+    - state: decal-stripe-cargo #decal
+    - sprite: _Lavaland/Interface/Misc/job_icons.rsi #icon
+      offset: "-0.125, 0.09375"
+      state: LavaShaftMiner
+  - type: PresetIdCard
+    job: ShaftMiner

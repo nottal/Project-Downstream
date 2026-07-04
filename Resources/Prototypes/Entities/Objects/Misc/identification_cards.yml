@@ -722,7 +722,7 @@
   description: Marks the wearer as a licensed bounty hunter contractor.
   components:
   - type: IdCard
-    jobTitle: Bounty Hunter
+    jobTitle: job-title-bounty-hunter
   - type: Access
     tags:
     - FugitiveHunter

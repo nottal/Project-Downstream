@@ -111928,4 +111928,11 @@ entities:
     - type: Transform
       pos: -63.702835,43.846817
       parent: 2
+- proto: SpawnPointShaftMiner
+  entities:
+  - uid: 17684
+    components:
+    - type: Transform
+      pos: 13.5,65.5
+      parent: 2
 ...

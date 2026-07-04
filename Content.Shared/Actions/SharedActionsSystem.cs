@@ -48,6 +48,7 @@ using Robust.Shared.Audio.Systems;
 using Robust.Shared.GameStates;
 using Robust.Shared.Map;
 using Robust.Shared.Network; // EE edit
+using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
 using Robust.Shared.Utility;
 
@@ -566,6 +567,132 @@ public abstract class SharedActionsSystem : EntitySystem
 
         // All checks passed. Perform the action!
         PerformAction(user, component, actionEnt, action, performEvent, curTime);
+    }
+
+    public bool TryGetActionById(EntityUid performer, EntProtoId prototype, out Entity<BaseActionComponent?> action)
+    {
+        action = default;
+
+        if (!TryComp<ActionsComponent>(performer, out var actions))
+            return false;
+
+        foreach (var actionId in actions.Actions)
+        {
+            if (MetaData(actionId).EntityPrototype?.ID != prototype.Id
+                || !TryGetActionData(actionId, out var actionComp))
+                continue;
+
+            action = (actionId, actionComp);
+            return true;
+        }
+
+        return false;
+    }
+
+    public bool CanPerformAction(EntityUid user, Entity<BaseActionComponent?> action, RequestPerformActionEvent ev)
+    {
+        return TryBuildActionEvent(user, action.Owner, action.Comp, ev, out _);
+    }
+
+    public bool TryPerformAction(EntityUid user, RequestPerformActionEvent ev)
+    {
+        if (!TryComp(user, out ActionsComponent? component))
+            return false;
+
+        var actionEnt = GetEntity(ev.Action);
+        if (!component.Actions.Contains(actionEnt)
+            || !TryGetActionData(actionEnt, out var action)
+            || !TryBuildActionEvent(user, actionEnt, action, ev, out var performEvent))
+            return false;
+
+        PerformAction(user, component, actionEnt, action, performEvent, GameTiming.CurTime);
+        return true;
+    }
+
+    private bool TryBuildActionEvent(EntityUid user, EntityUid actionEnt, BaseActionComponent? action, RequestPerformActionEvent ev, out BaseActionEvent? performEvent)
+    {
+        performEvent = null;
+
+        if (action == null || !action.Enabled)
+            return false;
+
+        var attemptEv = new ActionAttemptEvent(user);
+        RaiseLocalEvent(actionEnt, ref attemptEv);
+        if (attemptEv.Cancelled)
+            return false;
+
+        var curTime = GameTiming.CurTime;
+        if (IsCooldownActive(action, curTime))
+            return false;
+
+        if (action is { Charges: < 1, RenewCharges: true })
+            ResetCharges(actionEnt, true, true);
+
+        if (action.CheckConsciousness && !_actionBlockerSystem.CanConsciouslyPerformAction(user))
+            return false;
+
+        switch (action)
+        {
+            case EntityTargetActionComponent entityAction:
+                if (ev.EntityTarget is not { Valid: true } netTarget)
+                    return false;
+
+                var entityTarget = GetEntity(netTarget);
+                if (!ValidateEntityTarget(user, entityTarget, (actionEnt, entityAction)))
+                    return false;
+
+                if (entityAction.Event != null)
+                {
+                    entityAction.Event.Target = entityTarget;
+                    Dirty(actionEnt, entityAction);
+                    performEvent = entityAction.Event;
+                }
+
+                break;
+            case WorldTargetActionComponent worldAction:
+                if (ev.EntityCoordinatesTarget is not { } netCoordinatesTarget)
+                    return false;
+
+                var entityCoordinatesTarget = GetCoordinates(netCoordinatesTarget);
+                if (!ValidateWorldTarget(user, entityCoordinatesTarget, (actionEnt, worldAction)))
+                    return false;
+
+                if (worldAction.Event != null)
+                {
+                    worldAction.Event.Target = entityCoordinatesTarget;
+                    Dirty(actionEnt, worldAction);
+                    performEvent = worldAction.Event;
+                }
+
+                break;
+            case EntityWorldTargetActionComponent entityWorldAction:
+                var actionEntity = GetEntity(ev.EntityTarget);
+                var actionCoords = GetCoordinates(ev.EntityCoordinatesTarget);
+
+                if (actionEntity is null && actionCoords is null)
+                    return false;
+
+                if (!ValidateEntityWorldTarget(user, actionEntity, actionCoords, (actionEnt, entityWorldAction)))
+                    return false;
+
+                if (entityWorldAction.Event != null)
+                {
+                    entityWorldAction.Event.Entity = actionEntity;
+                    entityWorldAction.Event.Coords = actionCoords;
+                    Dirty(actionEnt, entityWorldAction);
+                    performEvent = entityWorldAction.Event;
+                }
+
+                break;
+            case InstantActionComponent instantAction:
+                if (action.CheckCanInteract && !_actionBlockerSystem.CanInteract(user, null))
+                    return false;
+
+                performEvent = instantAction.Event;
+                break;
+        }
+
+        return true;
     }
 
     public bool ValidateEntityTarget(EntityUid user, EntityUid target, Entity<EntityTargetActionComponent> actionEnt)
@@ -1137,6 +1264,9 @@ public abstract class SharedActionsSystem : EntitySystem
         if (GameTiming.ApplyingState)
             return;
 
+        var ev = new GetItemActionsEvent(_actionContainer, args.Equipee, args.Equipment, isEquipping: false);
+        RaiseLocalEvent(args.Equipment, ev);
+
         RemoveProvidedActions(uid, args.Equipment, component);
     }
 
@@ -1144,6 +1274,9 @@ public abstract class SharedActionsSystem : EntitySystem
     {
         if (GameTiming.ApplyingState)
             return;
+
+        var ev = new GetItemActionsEvent(_actionContainer, args.User, args.Unequipped, isEquipping: false);
+        RaiseLocalEvent(args.Unequipped, ev);
 
         RemoveProvidedActions(uid, args.Unequipped, component);
     }

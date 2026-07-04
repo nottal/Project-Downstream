@@ -11,6 +11,7 @@
 // SPDX-License-Identifier: MIT
 
 using Content.Shared.Examine;
+using Content.Shared._Goobstation.Weapons.Ranged;
 using Content.Shared.Weapons.Ranged.Components;
 using Robust.Shared.Audio;
 using Robust.Shared.Audio.Systems;
@@ -65,7 +66,10 @@ public sealed class RechargeBasicEntityAmmoSystem : EntitySystem
                 continue;
             }
 
-            recharge.NextCharge = recharge.NextCharge.Value + TimeSpan.FromSeconds(recharge.RechargeCooldown);
+            var ev = new RechargeBasicEntityAmmoGetCooldownModifiersEvent(1f);
+            RaiseLocalEvent(uid, ref ev);
+
+            recharge.NextCharge = recharge.NextCharge.Value + TimeSpan.FromSeconds(recharge.RechargeCooldown * ev.Multiplier);
             Dirty(uid, recharge);
         }
     }
@@ -100,7 +104,10 @@ public sealed class RechargeBasicEntityAmmoSystem : EntitySystem
 
         if (recharge.NextCharge == null || recharge.NextCharge < _timing.CurTime)
         {
-            recharge.NextCharge = _timing.CurTime + TimeSpan.FromSeconds(recharge.RechargeCooldown);
+            var ev = new RechargeBasicEntityAmmoGetCooldownModifiersEvent(1f);
+            RaiseLocalEvent(uid, ref ev);
+
+            recharge.NextCharge = _timing.CurTime + TimeSpan.FromSeconds(recharge.RechargeCooldown * ev.Multiplier);
             Dirty(uid, recharge);
         }
     }
