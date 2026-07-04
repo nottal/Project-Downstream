@@ -12,10 +12,14 @@
 
 using Content.Server.Administration;
 using Content.Shared.Administration;
+using Content.Shared.Damage;
+using Content.Shared.Damage.Components;
+using Content.Shared.Mobs.Components;
 using Content.Shared.Weather;
 using Robust.Shared.Console;
 using Robust.Shared.GameStates;
 using Robust.Shared.Map;
+using Robust.Shared.Map.Components;
 using System.Linq;
 
 namespace Content.Server.Weather;
@@ -23,7 +27,10 @@ namespace Content.Server.Weather;
 public sealed class WeatherSystem : SharedWeatherSystem
 {
     [Dependency] private readonly IConsoleHost _console = default!;
+    [Dependency] private readonly DamageableSystem _damage = default!;
     [Dependency] private readonly SharedMapSystem _mapSystem = default!;
+
+    private readonly Dictionary<(EntityUid MapUid, string Weather), TimeSpan> _nextDamageTick = new();
 
     public override void Initialize()
     {
@@ -39,6 +46,54 @@ public sealed class WeatherSystem : SharedWeatherSystem
     private void OnWeatherGetState(EntityUid uid, WeatherComponent component, ref ComponentGetState args)
     {
         args.State = new WeatherComponentState(component.Weather);
+    }
+
+    protected override void Run(EntityUid uid, WeatherData weather, WeatherPrototype weatherProto, float frameTime)
+    {
+        if (weatherProto.Damage == null ||
+            weather.State is WeatherState.Invalid or WeatherState.Ending)
+        {
+            return;
+        }
+
+        var curTime = Timing.CurTime;
+        var key = (uid, weatherProto.ID);
+        if (_nextDamageTick.TryGetValue(key, out var nextTick) && nextTick > curTime)
+            return;
+
+        var interval = MathF.Max(0.1f, weatherProto.DamageInterval);
+        _nextDamageTick[key] = curTime + TimeSpan.FromSeconds(interval);
+
+        var percent = GetPercent(weather, uid);
+        if (percent <= 0f)
+            return;
+
+        var damage = percent >= 1f
+            ? weatherProto.Damage
+            : weatherProto.Damage * percent;
+
+        var query = EntityQueryEnumerator<MobStateComponent, DamageableComponent, TransformComponent>();
+        while (query.MoveNext(out var mob, out _, out var damageable, out var xform))
+        {
+            if (xform.MapUid != uid || xform.GridUid == null)
+                continue;
+
+            var gridUid = xform.GridUid.Value;
+            if (!TryComp<MapGridComponent>(gridUid, out var grid) ||
+                !_mapSystem.TryGetTileRef(gridUid, grid, xform.Coordinates, out var tileRef) ||
+                !CanWeatherAffect(gridUid, grid, tileRef))
+            {
+                continue;
+            }
+
+            _damage.TryChangeDamage(mob, damage, interruptsDoAfters: false, damageable: damageable);
+        }
+    }
+
+    protected override void EndWeather(EntityUid uid, WeatherComponent component, string proto)
+    {
+        _nextDamageTick.Remove((uid, proto));
+        base.EndWeather(uid, component, proto);
     }
 
     [AdminCommand(AdminFlags.Fun)]

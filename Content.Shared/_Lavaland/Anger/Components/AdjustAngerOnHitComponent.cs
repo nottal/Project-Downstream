@@ -1,7 +1,9 @@
 
+using Robust.Shared.GameStates;
+
 namespace Content.Shared._Lavaland.Anger.Components;
 
-[RegisterComponent]
+[RegisterComponent, NetworkedComponent]
 public sealed partial class AdjustAngerOnHitComponent : Component
 {
     [DataField]

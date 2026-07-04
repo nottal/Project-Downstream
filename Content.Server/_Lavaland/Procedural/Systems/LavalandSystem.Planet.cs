@@ -13,6 +13,7 @@ using Content.Shared.Parallax.Biomes;
 using Content.Shared.Salvage;
 using Content.Shared.Shuttles.Components;
 using Robust.Shared.Map;
+using Robust.Shared.Map.Components;
 using Robust.Shared.Prototypes;
 
 namespace Content.Server._Lavaland.Procedural.Systems;
@@ -92,6 +93,7 @@ public sealed partial class LavalandSystem
 
         // Preload here to prevent biome entities from overlaying with everything else
         _biome.Preload(lavalandMap, Comp<BiomeComponent>(lavalandMap), loadBox);
+        _biome.ForceLoadMarkerArea(lavalandMap, loadBox, Comp<BiomeComponent>(lavalandMap), Comp<MapGridComponent>(lavalandMap));
 
         return true;
     }

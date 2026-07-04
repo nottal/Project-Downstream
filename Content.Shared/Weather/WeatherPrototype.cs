@@ -9,6 +9,7 @@
 // SPDX-License-Identifier: MIT
 
 using Robust.Shared.Audio;
+using Content.Shared.Damage;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Utility;
 
@@ -30,4 +31,16 @@ public sealed partial class WeatherPrototype : IPrototype
     /// </summary>
     [ViewVariables(VVAccess.ReadWrite), DataField("sound")]
     public SoundSpecifier? Sound;
+
+    /// <summary>
+    /// Optional damage applied by this weather while an entity is on an affected tile.
+    /// </summary>
+    [ViewVariables(VVAccess.ReadWrite), DataField("damage")]
+    public DamageSpecifier? Damage;
+
+    /// <summary>
+    /// Delay in seconds between weather damage ticks.
+    /// </summary>
+    [ViewVariables(VVAccess.ReadWrite), DataField("damageInterval")]
+    public float DamageInterval = 1f;
 }

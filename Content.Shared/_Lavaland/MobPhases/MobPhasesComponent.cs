@@ -4,6 +4,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 using Content.Shared.FixedPoint;
+using Robust.Shared.GameStates;
 
 namespace Content.Shared._Lavaland.MobPhases;
 
@@ -15,21 +16,22 @@ namespace Content.Shared._Lavaland.MobPhases;
 /// some attacks to be picked only at specific phases.
 /// </summary>
 [RegisterComponent, Access(typeof(MobPhasesSystem))]
+[NetworkedComponent, AutoGenerateComponentState]
 public sealed partial class MobPhasesComponent : Component
 {
-    [DataField]
+    [DataField, AutoNetworkedField]
     public int CurrentPhase = 1;
 
     /// <summary>
     /// If true, when the boss heals the damage, allows them to switch to a previous phase.
     /// </summary>
-    [DataField]
+    [DataField, AutoNetworkedField]
     public bool CanSwitchBack;
 
     /// <summary>
     /// At which damage this megafauna switches phases.
     /// </summary>
-    [ViewVariables]
+    [ViewVariables, AutoNetworkedField]
     public Dictionary<FixedPoint2, int> PhaseThresholds = new();
 
     /// <summary>

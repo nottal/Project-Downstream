@@ -578,7 +578,13 @@ public sealed partial class BiomeSystem : SharedBiomeSystem
 
                         foreach (var (lockLayer, nodes) in layers)
                         {
-                            lockMarkers[lockLayer] = nodes;
+                            if (!lockMarkers.TryGetValue(lockLayer, out var lockNodes))
+                            {
+                                lockMarkers[lockLayer] = nodes;
+                                continue;
+                            }
+
+                            lockNodes.AddRange(nodes);
                         }
                     }
                 }
@@ -1172,5 +1178,42 @@ public sealed partial class BiomeSystem : SharedBiomeSystem
 
         // Clear temporary active chunks
         _activeChunks.Remove(biome);
+    }
+
+    /// <summary>
+    /// Forces biome marker entities in the area to spawn without loading every tile/entity chunk.
+    /// Useful for generated planets where large marker layers need to exist before players enter the map.
+    /// </summary>
+    public void ForceLoadMarkerArea(EntityUid gridUid, Box2 area, BiomeComponent? biome = null, MapGridComponent? grid = null)
+    {
+        if (!Resolve(gridUid, ref biome, ref grid, false))
+            return;
+
+        if (!biome.Enabled)
+            return;
+
+        _markerChunks.GetOrNew(biome);
+
+        foreach (var layer in biome.MarkerLayers)
+        {
+            var layerProto = ProtoManager.Index(layer);
+            var markerEnumerator = new ChunkIndicesEnumerator(area, layerProto.Size);
+            var markerChunks = _markerChunks[biome].GetOrNew(layer);
+
+            while (markerEnumerator.MoveNext(out var markerChunk))
+            {
+                markerChunks.Add(markerChunk.Value * layerProto.Size);
+            }
+        }
+
+        BuildMarkerChunks(biome, gridUid, grid, biome.Seed);
+
+        var chunkEnumerator = new ChunkIndicesEnumerator(area, ChunkSize);
+        while (chunkEnumerator.MoveNext(out var chunkOrigin))
+        {
+            LoadChunkMarkers(biome, gridUid, grid, chunkOrigin.Value * ChunkSize, biome.Seed);
+        }
+
+        _markerChunks.Remove(biome);
     }
 }

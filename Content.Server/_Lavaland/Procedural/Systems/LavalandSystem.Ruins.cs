@@ -35,26 +35,16 @@ public sealed partial class LavalandSystem
         SetupGridRuins(pool.GridRuins, lavaland, preloader, ref coords, ref usedSpace);
 
         // Create a new list that excludes all already used spaces that intersect with big ruins.
-        var newCoords = coords.ToHashSet();
-        foreach (var usedBox in usedSpace)
-        {
-            var list = coords.Where(coord => !usedBox.Contains(coord)).ToHashSet();
-            newCoords = newCoords.Concat(list).ToHashSet();
-        }
-
-        coords = newCoords.ToList();
+        coords = coords
+            .Where(coord => usedSpace.All(usedBox => !usedBox.Contains(coord)))
+            .ToList();
 
         SetupDungeonRuins(pool.DungeonRuins, lavaland, preloader, random, ref coords, ref usedSpace);
 
         // Do that again
-        newCoords = coords.ToHashSet();
-        foreach (var usedBox in usedSpace)
-        {
-            var list = coords.Where(coord => !usedBox.Contains(coord)).ToHashSet();
-            newCoords = newCoords.Concat(list).ToHashSet();
-        }
-
-        coords = newCoords.ToList();
+        coords = coords
+            .Where(coord => usedSpace.All(usedBox => !usedBox.Contains(coord)))
+            .ToList();
 
         SetupMarkerRuins(pool.MarkerRuins, lavaland, ref coords, ref usedSpace);
     }
@@ -171,7 +161,7 @@ public sealed partial class LavalandSystem
             return;
         }
 
-        usedSpace.Add(ruinBox);
+        usedSpace.Add(ruinBox.Translated(coord.Value));
         coords.Remove(coord.Value);
 
         // Teleport it into place on preloader map
@@ -235,7 +225,7 @@ public sealed partial class LavalandSystem
 
         Spawn(ruin.SpawnedMarker, new EntityCoordinates(lavaland, coord.Value));
 
-        usedSpace.Add(ruinBox);
+        usedSpace.Add(ruinBox.Translated(coord.Value));
         coords.Remove(coord.Value);
     }
 

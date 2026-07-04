@@ -5,10 +5,11 @@
 
 using Content.Shared._Lavaland.Megafauna.NumberSelectors;
 using Content.Shared._Lavaland.Megafauna.Selectors;
+using Robust.Shared.GameStates;
 
 namespace Content.Shared._Lavaland.Megafauna.Components;
 
-[RegisterComponent]
+[RegisterComponent, NetworkedComponent, AutoGenerateComponentState]
 public sealed partial class MegafaunaAiComponent : Component
 {
     /// <summary>
@@ -28,7 +29,7 @@ public sealed partial class MegafaunaAiComponent : Component
     /// <summary>
     /// True if this megafauna can execute any attacks now.
     /// </summary>
-    [ViewVariables]
+    [ViewVariables, AutoNetworkedField]
     public bool Active;
 
     [ViewVariables(VVAccess.ReadOnly)]

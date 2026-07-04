@@ -4,6 +4,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 using Content.Shared.FixedPoint;
+using Robust.Shared.GameStates;
 
 namespace Content.Shared._Lavaland.Anger.Components;
 
@@ -11,33 +12,33 @@ namespace Content.Shared._Lavaland.Anger.Components;
 /// Makes megafauna stronger when it takes more damage.
 /// Aggression value can be used in MegafaunaActions to control their power.
 /// </summary>
-[RegisterComponent]
+[RegisterComponent, NetworkedComponent, AutoGenerateComponentState]
 public sealed partial class AngerComponent : Component
 {
     /// <summary>
     /// Current percentage of anger. By just receiving damage goes up to 1,
     /// but can be
     /// </summary>
-    [ViewVariables]
+    [ViewVariables, AutoNetworkedField]
     public float CurrentAnger = 0f;
 
     /// <summary>
     /// Total HP of a boss.
     /// </summary>
-    [DataField(required: true)]
+    [DataField(required: true), AutoNetworkedField]
     public FixedPoint2 TotalHp = 1;
 
     /// <summary>
     /// Minimal amount of anger.
     /// </summary>
-    [DataField]
+    [DataField, AutoNetworkedField]
     public float DefaultMinAnger;
 
     /// <summary>
     /// Soft-cap for anger that can be obtained with low HP.
     /// Other sources can make it even higher than this value.
     /// </summary>
-    [DataField]
+    [DataField, AutoNetworkedField]
     public float DefaultMaxAnger = 1f;
 
     /// <summary>
@@ -49,12 +50,12 @@ public sealed partial class AngerComponent : Component
     /// <summary>
     /// Dynamic minimum anger that can be scaled by other sources.
     /// </summary>
-    [ViewVariables]
+    [ViewVariables, AutoNetworkedField]
     public float MinAnger;
 
     /// <summary>
     /// Dynamic maximum anger that can be scaled by other sources.
     /// </summary>
-    [ViewVariables]
+    [ViewVariables, AutoNetworkedField]
     public float MaxAnger;
 }
