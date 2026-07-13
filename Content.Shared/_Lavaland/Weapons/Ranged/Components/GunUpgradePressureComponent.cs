@@ -27,7 +27,7 @@ public sealed partial class GunUpgradePressureComponent : Component
     public float? NewAppliedModifier = 2f;
 
     [ViewVariables]
-    public float SavedLowerBound = Atmospherics.OneAtmosphere * 0.2f;
+    public float SavedLowerBound = 0f;
 
     [ViewVariables]
     public float SavedUpperBound = Atmospherics.OneAtmosphere * 0.5f;

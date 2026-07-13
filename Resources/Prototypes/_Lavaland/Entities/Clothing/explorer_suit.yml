@@ -67,6 +67,9 @@
     node: start
   - type: FireResistance
     damageCoefficient: 0.6
+  - type: PressureProtection
+    highPressureMultiplier: 0.3
+    lowPressureMultiplier: 1000
   - type: PressureArmorChange
   - type: Tag
     tags:
@@ -108,6 +111,9 @@
         Piercing: 0.7
         Heat: 0.65
         Caustic: 0.65
+  - type: PressureProtection
+    highPressureMultiplier: 0.6
+    lowPressureMultiplier: 1000
   - type: PressureArmorChange
 
 - type: entity

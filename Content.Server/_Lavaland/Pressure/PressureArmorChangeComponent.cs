@@ -11,7 +11,7 @@ namespace Content.Server._Lavaland.Pressure;
 public sealed partial class PressureArmorChangeComponent : Component
 {
     [DataField]
-    public float LowerBound = Atmospherics.OneAtmosphere * 0.2f;
+    public float LowerBound = 0f;
 
     [DataField]
     public float UpperBound = Atmospherics.OneAtmosphere * 0.5f;

@@ -35,6 +35,9 @@
     damageCoefficient: 0.3
   - type: FireResistance
     damageCoefficient: 0.3
+  - type: PressureProtection
+    highPressureMultiplier: 0.02
+    lowPressureMultiplier: 1000
   - type: ContainerContainer
     containers:
       toggleable-clothing: !type:ContainerSlot {}
@@ -77,4 +80,7 @@
         Piercing: 0.7
         Heat: 0.65
         Caustic: 0.65
+  - type: PressureProtection
+    highPressureMultiplier: 0.08
+    lowPressureMultiplier: 1000
   - type: PressureArmorChange
